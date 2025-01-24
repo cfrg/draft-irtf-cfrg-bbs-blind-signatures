@@ -20,7 +20,7 @@ subject to a Simplified BSD License) in Contributions.
 ## Working Group Information
 
 Discussion of this work occurs on the [Crypto Forum
- mailing list](mailto:cfrg@ietf.org)
+Research Group mailing list](mailto:cfrg@ietf.org)
 ([archive](https://mailarchive.ietf.org/arch/browse/cfrg),
 [subscribe](https://mailman.irtf.org/mailman/listinfo/cfrg)).
 In addition to contributions in GitHub, you are encouraged to participate in
@@ -30,4 +30,4 @@ discussions there.
 technical issues needs to occur on the mailing list.
 
 You might also like to familiarize yourself with other
-[ documents](https://datatracker.ietf.org/rg/cfrg/documents/).
+[Research Group documents](https://datatracker.ietf.org/rg/cfrg/documents/).
