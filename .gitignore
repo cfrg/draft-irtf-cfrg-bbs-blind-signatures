@@ -7,9 +7,9 @@
 *~
 .tags
 /*-[0-9][0-9].xml
+/.*.mk
 /.gems/
 /.refcache
-/.targets.mk
 /.venv/
 /.vscode/
 /lib
@@ -17,10 +17,7 @@
 /versioned/
 Gemfile.lock
 archive.json
-draft-bbs-blind-signatures.xml
+draft-irtf-cfrg-bbs-blind-signatures.xml
 package-lock.json
 report.xml
 !requirements.txt
-*.log
-*.lock
-/fixtures/node_modules
