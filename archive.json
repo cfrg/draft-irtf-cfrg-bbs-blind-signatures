@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-01-28T01:04:39.592533+00:00",
+  "timestamp": "2025-01-30T01:03:42.038099+00:00",
   "repo": "cfrg/draft-irtf-cfrg-bbs-blind-signatures",
   "labels": [
     {
@@ -49,6 +49,66 @@
       "color": "ffffff"
     }
   ],
-  "issues": [],
-  "pulls": []
+  "issues": [
+    {
+      "number": 2,
+      "id": "I_kwDONvJlbc6n4Y9Y",
+      "title": "Blind BBS API Review and Suggestions",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-bbs-blind-signatures/issues/2",
+      "state": "OPEN",
+      "author": "Wind4Greg",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Here is a quick review/summary of the current Blind BBS API with a few small suggestions. This draft follows the the BBS Signature Scheme naming conventions that use camel case for external API and core function names and snake case for helper and utility functions. Also the consistent use of the *BBS.get_random_scalars()* function call where random values are needed allows for insertion of mocked random scalars for test vector generation.\n\n## Commitment Computaion\n\n(commitment_with_proof, secret_prover_blind) = **commit**(committed_messages, api_id)\n\nUses *BBS.messages_to_scalars(...)*, *BBS.create_generators(...)*, and *CoreCommit(...)*.\n\nBetter names? **Commit**. Why is this lower case when all other start with upper case.\n\n## Core Commitment Computation\n\n(commit_with_proof, secret_prover_blind) = **CoreCommit**(blind_generators, committed_messages, api_id)\n\nUses *BBS.get_random_scalars()*, *calculate_blind_challenge(...)*, and *commitment_with_proof_to_octets(...)*\n\n## Commitment Validation and Deserialization\n\ncommit = **deserialize_and_validate_commit**(commitment_with_proof, blind_generators, api_id)\n\nUses *octets_to_commitment_with_proof(...)* and *CoreCommitVerify(...)*\n\n## Core Commitment Verification\n\nresult = **CoreCommitVerify**(commitment, commitment_proof, blind_generators, api_id)\n\nUses *calculate_blind_challenge(...)*.\n\n## Blind Signature Generation\n\nblind_signature = **BlindSign**(SK, PK, commitment_with_proof, header, messages)\n\nUses *BBS.create_generators(...)*, *BBS.messages_to_scalars(...)*, *deserialize_and_validate_commit(...)*, and *FinalizeBlindSign(...)*.\n\n## Blind Signature Verification\n\nresult = **Verify**(PK, signature, header, messages, committed_messages, secret_prover_blind)\n\nUses *prepare_parameters(...)* and *BBS.CoreVerify(...)*.\n\nBetter names? **BlindVerify**, **VerifyBlind**, i.e. mimic *BlindSign*.\n\n## Proof Generation\n\nproof = **BlindProofGen**(PK, signature, header, ph, messages, committed_messages, disclosed_indexes, disclosed_commitment_indexes, secret_prover_blind)\n\nUses *prepare_parameters(...)*, and *BBS.CoreProofGen(...)*.\n\n## Proof Verification\n\nresult = **BlindProofVerify**(PK, proof, header, ph, L, disclosed_messages, disclosed_committed_messages,disclosed_indexes, disclosed_committed_indexes)\n\nUses *prepare_parameters(...)* and *BBS.CoreProofVerify(...)*.\n\n## Finalize Blind Sign\n\nblind_signature = **FinalizeBlindSign**(SK, PK, B, generators, blind_generators, header, api_id)\n\nUses: *BBS.calculate_domain(...)*, *serialize(...)*, *BBS.hash_to_scalar(...)*, and *signature_to_octets*",
+      "createdAt": "2025-01-28T19:46:28Z",
+      "updatedAt": "2025-01-28T19:46:28Z",
+      "closedAt": null,
+      "comments": []
+    },
+    {
+      "number": 3,
+      "id": "I_kwDONvJlbc6oBloQ",
+      "title": "Current Blind BBS Test Cases/Vectors and Needed Updates",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-bbs-blind-signatures/issues/3",
+      "state": "OPEN",
+      "author": "Wind4Greg",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "These are in the repo but not in the draft. Also need to be verified. There is a similar set for SHAKE-256. Due to signature API change all signature and proof computations need to be recomputed and the files edited appropriately.\n\n### Commitments\n\nPerformed by _prover_ prior to blind signing.\n\n- filename: bls12-381-sha-256/commit/commit001.json\n-     case: valid no committed messages commitment with proof\n- filename: bls12-381-sha-256/commit/commit002.json\n-     case: valid multiple committed messages commitment with proof\n\n### Signatures\n\nBlind and unblind signing from the issuer.  **Issue**: the API has been modified and there is no longer a `signerBlind` parameter. All signatures need to be recalculated and the case of \"no signer blind\" (signature005.json) no longer makes sense. **Note** there is a difference between \"no commitment\" and a \"commitment on no messages\". These are different edge cases and are included below.\n\n- filename: bls12-381-sha-256/signature/signature001.json\n-     case: valid no prover committed messages, no signer messages signature\n- filename: bls12-381-sha-256/signature/signature002.json\n-     case: valid multi prover committed messages, no signer messages signature\n- filename: bls12-381-sha-256/signature/signature003.json\n-     case: valid no prover committed messages, multiple signer messages signature\n- filename: bls12-381-sha-256/signature/signature004.json\n-     case: valid multiple signer and prover committed messages signature\n- filename: bls12-381-sha-256/signature/signature005.json\n-     case: valid multiple signer and prover committed messages, no signer blind signature\n- filename: bls12-381-sha-256/signature/signature006.json\n-     case: valid no commitment signature\n\n### Proofs\n\nProofs generated by the holder. Need to be updated with recomputed signatures.\n\n- filename: bls12-381-sha-256/proof/proof001.json\n-     case: valid all prover committed messages and signer messages revealed proof\n- filename: bls12-381-sha-256/proof/proof002.json\n-     case: valid half prover committed messages and all signer messages revealed proof\n- filename: bls12-381-sha-256/proof/proof003.json\n-     case: valid all prover committed messages and half signer messages revealed proof\n- filename: bls12-381-sha-256/proof/proof004.json\n-     case: valid half prover committed messages and half signer messages revealed proof\n- filename: bls12-381-sha-256/proof/proof005.json\n-     case: valid no prover committed messages and half signer messages revealed proof\n- filename: bls12-381-sha-256/proof/proof006.json\n-     case: valid half prover committed messages and no signer messages revealed proof\n- filename: bls12-381-sha-256/proof/proof007.json\n-     case: valid no prover committed messages and no signer messages revealed proof\n- filename: bls12-381-sha-256/proof/proof008.json\n-     case: valid no commitment, half signer messages revealed proof\n\n",
+      "createdAt": "2025-01-29T18:54:13Z",
+      "updatedAt": "2025-01-29T18:54:13Z",
+      "closedAt": null,
+      "comments": []
+    }
+  ],
+  "pulls": [
+    {
+      "number": 1,
+      "id": "PR_kwDONvJlbc6JRjQD",
+      "title": "Small API Fixes",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-bbs-blind-signatures/pull/1",
+      "state": "OPEN",
+      "author": "Wind4Greg",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "This PR contains small fixes to function return parameters, and to indicate that some functions come from the BBS spec. ",
+      "createdAt": "2025-01-28T19:37:23Z",
+      "updatedAt": "2025-01-28T19:37:24Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-bbs-blind-signatures",
+      "baseRefName": "main",
+      "baseRefOid": "c1aa595594cc3482d13ccda12a0333783a8aea79",
+      "headRepository": "cfrg/draft-irtf-cfrg-bbs-blind-signatures",
+      "headRefName": "api-fixes",
+      "headRefOid": "095898f4968478ec610be6d125aaa9a98fd1da52",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    }
+  ]
 }
