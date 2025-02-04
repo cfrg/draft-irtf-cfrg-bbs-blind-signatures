@@ -1619,7 +1619,7 @@ Procedure:
 <p id="section-4.2.2-1">This operation validates a blind BBS signature (<code>signature</code>), given the Signer's public key (<code>PK</code>), a header (<code>header</code>), a set of, known to the Signer, messages (<code>messages</code>) and if used, a set of committed messages (<code>committed_messages</code>) and the <code>secret_prover_blind</code> as returned by the <code>Commit</code> operation (<a href="#commitment-computation" class="auto internal xref">Section 4.1.1</a>).<a href="#section-4.2.2-1" class="pilcrow">¶</a></p>
 <p id="section-4.2.2-2">This operation makes use of the <code>CoreVerify</code> operation as defined in <a href="https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-coreverify">Section 3.6.2</a> of <span>[<a href="#I-D.irtf-cfrg-bbs-signatures" class="cite xref">I-D.irtf-cfrg-bbs-signatures</a>]</span>.<a href="#section-4.2.2-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4.2.2-3">
-<pre>result = Verify(PK, signature, header, messages, committed_messages,
+<pre>result = VerifyBlindSign(PK, signature, header, messages, committed_messages,
                                                     secret_prover_blind)
 
 Inputs:
