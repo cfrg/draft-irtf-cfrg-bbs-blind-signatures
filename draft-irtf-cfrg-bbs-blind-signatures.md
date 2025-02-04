@@ -156,7 +156,7 @@ This document makes use of various operations defined by the BBS Signature Schem
 This operation is used by the Prover to create a `commitment` to a set of messages (`committed_messages`), that they intend to include in the blind signature. Note that this operation returns both the serialized combination of the commitment and its proof of correctness (`commitment_with_proof`), as well as the random scalar used to blind the commitment (`secret_prover_blind`).
 
 ```
-(commitment_with_proof, secret_prover_blind) = commit(
+(commitment_with_proof, secret_prover_blind) = Commit(
                                                    committed_messages,
                                                    api_id)
 
