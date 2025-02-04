@@ -188,7 +188,7 @@ Procedure:
                              blind_generators, api_id)
 ```
 
-###  Commitment Validation and Deserialization
+### Commitment Validation and Deserialization
 
 The following is a helper operation used by the `BlindSign` procedure ((#blind-signature-generation)) to validate an optional commitment. If a `commitment` is not supplied, or if it is the `Identity_G1`, the following operation will return the `Identity_G1` as the "default" commitment point, which will be ignored by all computations during `BlindSign`.
 
@@ -549,7 +549,8 @@ Procedure:
 ### Core Commitment Computation
 
 ```
-commit_with_proof = CoreCommit(blind_generators, committed_messages, api_id)
+(commit_with_proof, secret_prover_blind) = CoreCommit(blind_generators,
+                                              committed_messages, api_id)
 
 Inputs:
 
@@ -676,10 +677,10 @@ Procedure:
 
 1. domain = BBS.calculate_domain(PK, Q_1, (H_1, ..., H_L, J_1, ..., J_M),
                                                          header, api_id)
-2. e_octs = serialize((SK, B, domain))
+2. e_octs = BBS.serialize((SK, B, domain))
 3. e = BBS.hash_to_scalar(e_octs, signature_dst)
 4. A = B * (1 / (SK + e))
-5. return signature_to_octets((A, e))
+5. return BBS.signature_to_octets((A, e))
 ```
 
 # Utilities
@@ -795,7 +796,7 @@ Procedure:
 
 1. c_arr = (M)
 2. c_arr.append(generators)
-3. c_octs = serialize(c_arr.append(C, Cbar))
+3. c_octs = BBS.serialize(c_arr.append(C, Cbar))
 4. return BBS.hash_to_scalar(c_octs, blind_challenge_dst)
 ```
 
@@ -818,9 +819,9 @@ Outputs:
 
 Procedure:
 
-1. commitment_octs = serialize(commitment)
+1. commitment_octs = BBS.serialize(commitment)
 2. if commitment_octs is INVALID, return INVALID
-3. proof_octs = serialize(proof)
+3. proof_octs = BBS.serialize(proof)
 4. if proof_octs is INVALID, return INVALID
 5. return commitment_octs || proof_octs
 ```
