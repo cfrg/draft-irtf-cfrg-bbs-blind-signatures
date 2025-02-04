@@ -319,7 +319,7 @@ This operation validates a blind BBS signature (`signature`), given the Signer's
 This operation makes use of the `CoreVerify` operation as defined in [Section 3.6.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-coreverify) of [@!I-D.irtf-cfrg-bbs-signatures].
 
 ```
-result = Verify(PK, signature, header, messages, committed_messages,
+result = VerifyBlindSign(PK, signature, header, messages, committed_messages,
                                                     secret_prover_blind)
 
 Inputs:
