@@ -5,8 +5,8 @@
 CFRG                                                            V. Kalos
 Internet-Draft                                                     MATTR
 Intended status: Informational                              G. Bernstein
-Expires: 8 August 2025                                 Grotto Networking
-                                                         4 February 2025
+Expires: 15 August 2025                                Grotto Networking
+                                                        11 February 2025
 
 
                           Blind BBS Signatures
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 8 August 2025.
+   This Internet-Draft will expire on 15 August 2025.
 
 Copyright Notice
 
@@ -303,7 +303,7 @@ Table of Contents
    (commitment_with_proof), as well as the random scalar used to blind
    the commitment (secret_prover_blind).
 
-(commitment_with_proof, secret_prover_blind) = commit(
+(commitment_with_proof, secret_prover_blind) = Commit(
                                                    committed_messages,
                                                    api_id)
 
@@ -501,7 +501,7 @@ Procedure:
    signatures-05.html#name-coreverify) of
    [I-D.irtf-cfrg-bbs-signatures].
 
-result = Verify(PK, signature, header, messages, committed_messages,
+result = VerifyBlindSign(PK, signature, header, messages, committed_messages,
                                                     secret_prover_blind)
 
 Inputs:
