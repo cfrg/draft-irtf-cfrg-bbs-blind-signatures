@@ -156,7 +156,7 @@ This document makes use of various operations defined by the BBS Signature Schem
 This operation is used by the Prover to create a `commitment` to a set of messages (`committed_messages`), that they intend to include in the blind signature. Note that this operation returns both the serialized combination of the commitment and its proof of correctness (`commitment_with_proof`), as well as the random scalar used to blind the commitment (`secret_prover_blind`).
 
 ```
-(commitment_with_proof, secret_prover_blind) = commit(
+(commitment_with_proof, secret_prover_blind) = Commit(
                                                    committed_messages,
                                                    api_id)
 
@@ -319,7 +319,7 @@ This operation validates a blind BBS signature (`signature`), given the Signer's
 This operation makes use of the `CoreVerify` operation as defined in [Section 3.6.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-coreverify) of [@!I-D.irtf-cfrg-bbs-signatures].
 
 ```
-result = Verify(PK, signature, header, messages, committed_messages,
+result = VerifyBlindSign(PK, signature, header, messages, committed_messages,
                                                     secret_prover_blind)
 
 Inputs:
