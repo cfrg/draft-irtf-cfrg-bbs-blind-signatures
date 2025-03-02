@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-02-27T01:07:55.027198+00:00",
+  "timestamp": "2025-03-02T01:12:22.867925+00:00",
   "repo": "cfrg/draft-irtf-cfrg-bbs-blind-signatures",
   "labels": [
     {
@@ -183,6 +183,88 @@
       },
       "comments": [],
       "reviews": []
+    },
+    {
+      "number": 6,
+      "id": "PR_kwDONvJlbc6M1_A5",
+      "title": "Enhance Test Vectors",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-bbs-blind-signatures/pull/6",
+      "state": "MERGED",
+      "author": "Wind4Greg",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Add generator test vectors. Add random scalar trace to commit test vectors.",
+      "createdAt": "2025-02-27T19:04:13Z",
+      "updatedAt": "2025-02-28T15:14:15Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-bbs-blind-signatures",
+      "baseRefName": "main",
+      "baseRefOid": "5fdc737e1c53187b50e67e10b63714541b8981b0",
+      "headRepository": "cfrg/draft-irtf-cfrg-bbs-blind-signatures",
+      "headRefName": "more-test-vectors",
+      "headRefOid": "00f7f020c1a0cc4e8ae80919ace66ab1dd2bd3bd",
+      "closedAt": "2025-02-28T15:14:14Z",
+      "mergedAt": "2025-02-28T15:14:14Z",
+      "mergedBy": "BasileiosKal",
+      "mergeCommit": {
+        "oid": "f6af7190a23e498a2989d9e97f2cd3161866d75f"
+      },
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONvJlbc6eA6SW",
+          "commit": {
+            "abbreviatedOid": "00f7f02"
+          },
+          "author": "BasileiosKal",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "",
+          "createdAt": "2025-02-28T15:13:56Z",
+          "updatedAt": "2025-02-28T15:13:56Z",
+          "comments": []
+        }
+      ]
+    },
+    {
+      "number": 7,
+      "id": "PR_kwDONvJlbc6NBrLU",
+      "title": "Add the test vectors to the document",
+      "url": "https://github.com/cfrg/draft-irtf-cfrg-bbs-blind-signatures/pull/7",
+      "state": "OPEN",
+      "author": "BasileiosKal",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2025-03-01T09:48:06Z",
+      "updatedAt": "2025-03-01T11:25:45Z",
+      "baseRepository": "cfrg/draft-irtf-cfrg-bbs-blind-signatures",
+      "baseRefName": "main",
+      "baseRefOid": "f6af7190a23e498a2989d9e97f2cd3161866d75f",
+      "headRepository": "cfrg/draft-irtf-cfrg-bbs-blind-signatures",
+      "headRefName": "vasilis/test-vectors",
+      "headRefOid": "2e4d0792edf64a5f922b101790052bc1da9bb285",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
+      "comments": [],
+      "reviews": [
+        {
+          "id": "PRR_kwDONvJlbc6eGFL7",
+          "commit": {
+            "abbreviatedOid": "2e4d079"
+          },
+          "author": "Wind4Greg",
+          "authorAssociation": "COLLABORATOR",
+          "state": "APPROVED",
+          "body": "Thanks Vasilis!",
+          "createdAt": "2025-03-01T11:25:45Z",
+          "updatedAt": "2025-03-01T11:25:45Z",
+          "comments": []
+        }
+      ]
     }
   ]
 }
