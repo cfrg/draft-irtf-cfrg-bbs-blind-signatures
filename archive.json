@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2025-03-02T01:12:22.867925+00:00",
+  "timestamp": "2025-03-04T01:09:11.985923+00:00",
   "repo": "cfrg/draft-irtf-cfrg-bbs-blind-signatures",
   "labels": [
     {
@@ -231,24 +231,26 @@
       "id": "PR_kwDONvJlbc6NBrLU",
       "title": "Add the test vectors to the document",
       "url": "https://github.com/cfrg/draft-irtf-cfrg-bbs-blind-signatures/pull/7",
-      "state": "OPEN",
+      "state": "MERGED",
       "author": "BasileiosKal",
       "authorAssociation": "COLLABORATOR",
       "assignees": [],
       "labels": [],
       "body": "",
       "createdAt": "2025-03-01T09:48:06Z",
-      "updatedAt": "2025-03-01T11:25:45Z",
+      "updatedAt": "2025-03-03T18:39:05Z",
       "baseRepository": "cfrg/draft-irtf-cfrg-bbs-blind-signatures",
       "baseRefName": "main",
       "baseRefOid": "f6af7190a23e498a2989d9e97f2cd3161866d75f",
       "headRepository": "cfrg/draft-irtf-cfrg-bbs-blind-signatures",
       "headRefName": "vasilis/test-vectors",
       "headRefOid": "2e4d0792edf64a5f922b101790052bc1da9bb285",
-      "closedAt": null,
-      "mergedAt": null,
-      "mergedBy": null,
-      "mergeCommit": null,
+      "closedAt": "2025-03-03T18:39:05Z",
+      "mergedAt": "2025-03-03T18:39:05Z",
+      "mergedBy": "BasileiosKal",
+      "mergeCommit": {
+        "oid": "e44be53da00826bde51800a64d93373eeba8dcf4"
+      },
       "comments": [],
       "reviews": [
         {
