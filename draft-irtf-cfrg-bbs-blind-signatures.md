@@ -755,10 +755,10 @@ Outputs:
 
 Deserialization:
 
-1. L = length(messages)
+1. L = length(message_scalars)
 2. if length(generators) != L + 1, return INVALID
 3. (Q_1, H_1, ..., H_L) = generators
-4. (msg_1, ..., msg_L) = messages
+4. (msg_1, ..., msg_L) = message_scalars
 
 Procedure:
 
