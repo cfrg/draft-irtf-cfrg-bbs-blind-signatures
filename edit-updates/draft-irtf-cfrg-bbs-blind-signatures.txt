@@ -567,7 +567,7 @@ Procedure:
    operation of [I-D.irtf-cfrg-bbs-signatures] (see Section 3.5.3
    (https://identity.foundation/bbs-signature/draft-irtf-cfrg-bbs-
    signatures.html#name-proof-generation-proofgen)), the ProofGen
-   operation defined in this section accepts 2 different lists of
+   operation defined in this section accepts two different lists of
    messages and disclosed indexes, one for the messages known to the
    Signer (messages) and the corresponding disclosed indexes
    (disclosed_indexes) and one for the messages committed by the Prover
@@ -675,12 +675,12 @@ Procedure:
 
    The ProofVerify operation validates a BBS proof, given the Signer's
    public key (PK), a header and presentation header values, two arrays
-   of disclosed messages (the ones known to the Signer and the ones
-   committed by the prover) and two corresponding arrays of indexes
+   of disclosed messages (the ones provided by the Signer and the ones
+   committed by the prover) and two corresponding arrays of indexes that
    those messages had in the original vectors of signed messages.  In
    addition, the BlindProofVerify operation defined in this section
    accepts the integer L, representing the total number of signed
-   messages known by the Signer.
+   messages provided by the Signer.
 
    This operation makes use of the CoreProofVerify operation as defined
    in Section 3.6.4 (https://identity.foundation/bbs-signature/draft-
