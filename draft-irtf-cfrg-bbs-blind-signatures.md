@@ -550,12 +550,12 @@ Procedure:
 
 ```
 (commit_with_proof, secret_prover_blind) = CoreCommit(blind_generators,
-                                              committed_messages, api_id)
+                                              committed_scalars, api_id)
 
 Inputs:
 
 - blind_generators (REQUIRED), vector of pseudo-random points in G1.
-- committed_messages (OPTIONAL), a vector of scalars. If not supplied,
+- committed_scalars (OPTIONAL), a vector of scalars. If not supplied,
                                  it defaults to the empty array ("()").
 - api_id (OPTIONAL), an octet string. If not supplied it defaults to the
                      empty octet string ("").
@@ -565,6 +565,7 @@ Deserialization:
 1. M = length(committed_messages)
 2. if length(blind_generators) != M + 1, return INVALID
 3. (Q_2, J_1, ..., J_M) = blind_generators
+4. (msg_1, ..., msg_M) = committed_scalars
 
 Procedure:
 
