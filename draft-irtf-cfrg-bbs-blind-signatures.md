@@ -39,15 +39,15 @@ This document defines an extension to the BBS Signature scheme that supports bli
 
 # Introduction
 
-Blind signatures are cryptographic protocols that allow for a signer to create a signature over content without actually knowing the content. They form a useful cryptographic primitive particularly in situations that are privacy sensitive. The concept has existed for quite some time and is well explained in Chaum's 1985 popular article “Security without identification: transaction systems to make big brother obsolete” [@Chaum85]. In [@!RFC9474], "RSA Blind Signatures", the RSA signature scheme was extended to provide for blind signing, in this document the BBS digital signature scheme, as defined in [@!I-D.irtf-cfrg-bbs-signatures], is extended to provide blind BBS signatures.
+Blind signatures are cryptographic protocols that allow for a signer to create a signature over content without actually knowing the content. They form a useful cryptographic primitive particularly in situations that are privacy sensitive. The concept has existed for quite some time and is well explained in Chaum's 1985 popular article “Security without identification: transaction systems to make big brother obsolete” [@Chaum85]. In [@!RFC9474], "RSA Blind Signatures", the RSA signature scheme was extended to provide for blind signing. In this document the BBS digital signature scheme, as defined in [@!I-D.irtf-cfrg-bbs-signatures], is extended to provide blind BBS signatures.
 
 Like BBS signatures blind BBS signatures work with a three party model of *Signer*, *Prover*, and *Verifier*. The blind BBS protocol defined here has the following useful properties:
 
 1. Provides a signature over an ordered set of messages from the *Prover* that are kept secret from the *Signer* via a statistically hiding cryptographic commitment.
-2. The *Prover* provides the *Signer* with a zero knowledge proof of knowledge of the ordered set of secret prover messages. The *Signer* will not issue a signature over the commitment without this proof of knowledge.
-3. The Blind BBS signature produced is of the same size as current BBS signatures based on the same elliptic curve pairing.
-4. In addition to the *Prover* provided secret messages, the *Signer* can optionally sign over an additional ordered set of messages that they provide.
-5. Using the Blind BBS signature created by the *Signer* the *Prover* can disclose any subset of both the secret *Prover* messages or the *Pigner*'s messages and prove that these were in the signed sets.
+2. The *Signer* will produce a signature for the *Prover*, only if the later can prove knowledge of the set of messages they choose. This will be done through a zero-knowledge proof-of-knowledge of the ordered set of secret *Prover* messages. The *Signer* will not issue a signature without this proof of knowledge.
+3. The Blind BBS signature produced is of the same size as current BBS signatures based on the same elliptic curve.
+4. In addition to the *Prover* provided secret messages, the *Signer* can optionally sign over an additional ordered set of messages of their choosing.
+5. Using the Blind BBS signature created by the *Signer* the *Prover* can disclose any subset of both the secret *Prover* messages or the *Signer*'s messages and prove that these were in the signed sets.
 6. Without knowledge of the ordered set of secret messages no selective disclosure proof can be generated even solely for a subset of the *Signer* messages. (within the security assumptions of the BBS signature scheme).
 
 ## Blind BBS Protocol Overview
