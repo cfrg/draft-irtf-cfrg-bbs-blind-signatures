@@ -367,7 +367,7 @@ Procedure:
 
 ### Proof Generation
 
-This operation creates a BBS proof, which is a zero-knowledge, proof-of-knowledge, of a BBS signature, while optionally disclosing any subset of the signed messages. Note that in contrast to the `ProofGen` operation of [@!I-D.irtf-cfrg-bbs-signatures] (see [Section 3.5.3](https://identity.foundation/bbs-signature/draft-irtf-cfrg-bbs-signatures.html#name-proof-generation-proofgen)), the `ProofGen` operation defined in this section accepts 2 different lists of messages and disclosed indexes, one for the messages known to the Signer (`messages`) and the corresponding disclosed indexes (`disclosed_indexes`) and one for the messages committed by the Prover (`committed_messages`) and the corresponding disclosed indexes (`disclosed_commitment_indexes`).
+This operation creates a BBS proof, which is a zero-knowledge, proof-of-knowledge, of a BBS signature, while optionally disclosing any subset of the signed messages. Note that in contrast to the `ProofGen` operation of [@!I-D.irtf-cfrg-bbs-signatures] (see [Section 3.5.3](https://identity.foundation/bbs-signature/draft-irtf-cfrg-bbs-signatures.html#name-proof-generation-proofgen)), the `ProofGen` operation defined in this section accepts two different lists of messages and disclosed indexes, one for the messages known to the Signer (`messages`) and the corresponding disclosed indexes (`disclosed_indexes`) and one for the messages committed by the Prover (`committed_messages`) and the corresponding disclosed indexes (`disclosed_commitment_indexes`).
 
 Furthermore, the operation also expects the `secret_prover_blind` (as returned from the `Commit` operation defined in (#commitment-computation)) value. If the BBS signature is generated using a commitment value, then the `secret_prover_blind` returned by the `Commit` operation used to generate the commitment should be provided to the `ProofGen` operation (otherwise the resulting proof will be invalid).
 
@@ -462,7 +462,7 @@ Procedure:
 
 ### Proof Verification
 
-The ProofVerify operation validates a BBS proof, given the Signer's public key (PK), a header and presentation header values, two arrays of disclosed messages (the ones known to the Signer and the ones committed by the prover) and two corresponding arrays of indexes those messages had in the original vectors of signed messages. In addition, the `BlindProofVerify` operation defined in this section accepts the integer `L`, representing the total number of signed messages known by the Signer.
+The ProofVerify operation validates a BBS proof, given the Signer's public key (PK), a header and presentation header values, two arrays of disclosed messages (the ones provided by the Signer and the ones committed by the prover) and two corresponding arrays of indexes that those messages had in the original vectors of signed messages. In addition, the `BlindProofVerify` operation defined in this section accepts the integer `L`, representing the total number of signed messages provided by the Signer.
 
 This operation makes use of the `CoreProofVerify` operation as defined in [Section 3.6.4](https://identity.foundation/bbs-signature/draft-irtf-cfrg-bbs-signatures.html#name-coreproofverify) of [@!I-D.irtf-cfrg-bbs-signatures].
 
@@ -550,12 +550,12 @@ Procedure:
 
 ```
 (commit_with_proof, secret_prover_blind) = CoreCommit(blind_generators,
-                                              committed_messages, api_id)
+                                              committed_scalars, api_id)
 
 Inputs:
 
 - blind_generators (REQUIRED), vector of pseudo-random points in G1.
-- committed_messages (OPTIONAL), a vector of scalars. If not supplied,
+- committed_scalars (OPTIONAL), a vector of scalars. If not supplied,
                                  it defaults to the empty array ("()").
 - api_id (OPTIONAL), an octet string. If not supplied it defaults to the
                      empty octet string ("").
@@ -565,6 +565,7 @@ Deserialization:
 1. M = length(committed_messages)
 2. if length(blind_generators) != M + 1, return INVALID
 3. (Q_2, J_1, ..., J_M) = blind_generators
+4. (msg_1, ..., msg_M) = committed_scalars
 
 Procedure:
 
@@ -754,10 +755,10 @@ Outputs:
 
 Deserialization:
 
-1. L = length(messages)
+1. L = length(message_scalars)
 2. if length(generators) != L + 1, return INVALID
 3. (Q_1, H_1, ..., H_L) = generators
-4. (msg_1, ..., msg_L) = messages
+4. (msg_1, ..., msg_L) = message_scalars
 
 Procedure:
 
