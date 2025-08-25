@@ -5,8 +5,8 @@
 CFRG                                                            V. Kalos
 Internet-Draft                                                     MATTR
 Intended status: Informational                              G. Bernstein
-Expires: 31 January 2026                               Grotto Networking
-                                                            30 July 2025
+Expires: 26 February 2026                              Grotto Networking
+                                                          25 August 2025
 
 
                           Blind BBS Signatures
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 31 January 2026.
+   This Internet-Draft will expire on 26 February 2026.
 
 Copyright Notice
 
@@ -122,8 +122,8 @@ Table of Contents
    quite some time and is well explained in Chaum's 1985 popular article
    “Security without identification: transaction systems to make big
    brother obsolete” [Chaum85].  In [RFC9474], "RSA Blind Signatures",
-   the RSA signature scheme was extended to provide for blind signing,
-   in this document the BBS digital signature scheme, as defined in
+   the RSA signature scheme was extended to provide for blind signing.
+   In this document the BBS digital signature scheme, as defined in
    [I-D.irtf-cfrg-bbs-signatures], is extended to provide blind BBS
    signatures.
 
@@ -134,18 +134,19 @@ Table of Contents
    1.  Provides a signature over an ordered set of messages from the
        _Prover_ that are kept secret from the _Signer_ via a
        statistically hiding cryptographic commitment.
-   2.  The _Prover_ provides the _Signer_ with a zero knowledge proof of
-       knowledge of the ordered set of secret prover messages.  The
-       _Signer_ will not issue a signature over the commitment without
-       this proof of knowledge.
+   2.  The _Signer_ will produce a signature for the _Prover_, only if
+       the later can prove knowledge of the set of messages they choose.
+       This will be done through a zero-knowledge proof-of-knowledge of
+       the ordered set of secret _Prover_ messages.  The _Signer_ will
+       not issue a signature without this proof of knowledge.
    3.  The Blind BBS signature produced is of the same size as current
-       BBS signatures based on the same elliptic curve pairing.
+       BBS signatures based on the same elliptic curve.
    4.  In addition to the _Prover_ provided secret messages, the
        _Signer_ can optionally sign over an additional ordered set of
-       messages that they provide.
+       messages of their choosing.
    5.  Using the Blind BBS signature created by the _Signer_ the
        _Prover_ can disclose any subset of both the secret _Prover_
-       messages or the _Pigner_'s messages and prove that these were in
+       messages or the _Signer_'s messages and prove that these were in
        the signed sets.
    6.  Without knowledge of the ordered set of secret messages no
        selective disclosure proof can be generated even solely for a

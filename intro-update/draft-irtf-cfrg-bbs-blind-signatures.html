@@ -1044,11 +1044,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Blind BBS Signatures</td>
-<td class="right">July 2025</td>
+<td class="right">August 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Kalos &amp; Bernstein</td>
-<td class="center">Expires 31 January 2026</td>
+<td class="center">Expires 26 February 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1061,12 +1061,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-irtf-cfrg-bbs-blind-signatures-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-07-30" class="published">30 July 2025</time>
+<time datetime="2025-08-25" class="published">25 August 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-01-31">31 January 2026</time></dd>
+<dd class="expires"><time datetime="2026-02-26">26 February 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1115,7 +1115,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 31 January 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 26 February 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1327,18 +1327,18 @@ svg :is([fill="white"], [fill^="#fff"]) {
       <h2 id="name-introduction">
 <a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
       </h2>
-<p id="section-1-1">Blind signatures are cryptographic protocols that allow for a signer to create a signature over content without actually knowing the content. They form a useful cryptographic primitive particularly in situations that are privacy sensitive. The concept has existed for quite some time and is well explained in Chaum's 1985 popular article “Security without identification: transaction systems to make big brother obsolete” <span>[<a href="#Chaum85" class="cite xref">Chaum85</a>]</span>. In <span>[<a href="#RFC9474" class="cite xref">RFC9474</a>]</span>, "RSA Blind Signatures", the RSA signature scheme was extended to provide for blind signing, in this document the BBS digital signature scheme, as defined in <span>[<a href="#I-D.irtf-cfrg-bbs-signatures" class="cite xref">I-D.irtf-cfrg-bbs-signatures</a>]</span>, is extended to provide blind BBS signatures.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<p id="section-1-1">Blind signatures are cryptographic protocols that allow for a signer to create a signature over content without actually knowing the content. They form a useful cryptographic primitive particularly in situations that are privacy sensitive. The concept has existed for quite some time and is well explained in Chaum's 1985 popular article “Security without identification: transaction systems to make big brother obsolete” <span>[<a href="#Chaum85" class="cite xref">Chaum85</a>]</span>. In <span>[<a href="#RFC9474" class="cite xref">RFC9474</a>]</span>, "RSA Blind Signatures", the RSA signature scheme was extended to provide for blind signing. In this document the BBS digital signature scheme, as defined in <span>[<a href="#I-D.irtf-cfrg-bbs-signatures" class="cite xref">I-D.irtf-cfrg-bbs-signatures</a>]</span>, is extended to provide blind BBS signatures.<a href="#section-1-1" class="pilcrow">¶</a></p>
 <p id="section-1-2">Like BBS signatures blind BBS signatures work with a three party model of <em>Signer</em>, <em>Prover</em>, and <em>Verifier</em>. The blind BBS protocol defined here has the following useful properties:<a href="#section-1-2" class="pilcrow">¶</a></p>
 <ol start="1" type="1" class="compact type-1" id="section-1-3">
 <li id="section-1-3.1">Provides a signature over an ordered set of messages from the <em>Prover</em> that are kept secret from the <em>Signer</em> via a statistically hiding cryptographic commitment.<a href="#section-1-3.1" class="pilcrow">¶</a>
 </li>
-        <li id="section-1-3.2">The <em>Prover</em> provides the <em>Signer</em> with a zero knowledge proof of knowledge of the ordered set of secret prover messages. The <em>Signer</em> will not issue a signature over the commitment without this proof of knowledge.<a href="#section-1-3.2" class="pilcrow">¶</a>
+        <li id="section-1-3.2">The <em>Signer</em> will produce a signature for the <em>Prover</em>, only if the later can prove knowledge of the set of messages they choose. This will be done through a zero-knowledge proof-of-knowledge of the ordered set of secret <em>Prover</em> messages. The <em>Signer</em> will not issue a signature without this proof of knowledge.<a href="#section-1-3.2" class="pilcrow">¶</a>
 </li>
-        <li id="section-1-3.3">The Blind BBS signature produced is of the same size as current BBS signatures based on the same elliptic curve pairing.<a href="#section-1-3.3" class="pilcrow">¶</a>
+        <li id="section-1-3.3">The Blind BBS signature produced is of the same size as current BBS signatures based on the same elliptic curve.<a href="#section-1-3.3" class="pilcrow">¶</a>
 </li>
-        <li id="section-1-3.4">In addition to the <em>Prover</em> provided secret messages, the <em>Signer</em> can optionally sign over an additional ordered set of messages that they provide.<a href="#section-1-3.4" class="pilcrow">¶</a>
+        <li id="section-1-3.4">In addition to the <em>Prover</em> provided secret messages, the <em>Signer</em> can optionally sign over an additional ordered set of messages of their choosing.<a href="#section-1-3.4" class="pilcrow">¶</a>
 </li>
-        <li id="section-1-3.5">Using the Blind BBS signature created by the <em>Signer</em> the <em>Prover</em> can disclose any subset of both the secret <em>Prover</em> messages or the <em>Pigner</em>'s messages and prove that these were in the signed sets.<a href="#section-1-3.5" class="pilcrow">¶</a>
+        <li id="section-1-3.5">Using the Blind BBS signature created by the <em>Signer</em> the <em>Prover</em> can disclose any subset of both the secret <em>Prover</em> messages or the <em>Signer</em>'s messages and prove that these were in the signed sets.<a href="#section-1-3.5" class="pilcrow">¶</a>
 </li>
         <li id="section-1-3.6">Without knowledge of the ordered set of secret messages no selective disclosure proof can be generated even solely for a subset of the <em>Signer</em> messages. (within the security assumptions of the BBS signature scheme).<a href="#section-1-3.6" class="pilcrow">¶</a>
 </li>
