@@ -10,21 +10,21 @@
 <meta content="
        This document defines an extension to the BBS Signature scheme that supports blind digital signatures, i.e., signatures over messages not known to the Signer. 
     " name="description">
-<meta content="xml2rfc 3.28.0" name="generator">
+<meta content="xml2rfc 3.30.0" name="generator">
 <meta content="draft-irtf-cfrg-bbs-blind-signatures-latest" name="ietf.draft">
 <!-- Generator version information:
-  xml2rfc 3.28.0
-    Python 3.12.9
+  xml2rfc 3.30.0
+    Python 3.12.11
     ConfigArgParse 1.7
     google-i18n-address 3.1.1
     intervaltree 3.1.0
-    Jinja2 3.1.5
-    lxml 5.3.0
-    platformdirs 4.3.6
+    Jinja2 3.1.6
+    lxml 5.3.1
+    platformdirs 4.3.8
     pycountry 24.6.1
     PyYAML 6.0.2
-    requests 2.32.3
-    setuptools 70.3.0
+    requests 2.32.4
+    setuptools 80.9.0
     wcwidth 0.2.13
 -->
 <link href="draft-irtf-cfrg-bbs-blind-signatures.xml" rel="alternate" type="application/rfc+xml">
@@ -1044,11 +1044,11 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <thead><tr>
 <td class="left">Internet-Draft</td>
 <td class="center">Blind BBS Signatures</td>
-<td class="right">March 2025</td>
+<td class="right">August 2025</td>
 </tr></thead>
 <tfoot><tr>
 <td class="left">Kalos &amp; Bernstein</td>
-<td class="center">Expires 4 September 2025</td>
+<td class="center">Expires 26 February 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1061,12 +1061,12 @@ svg :is([fill="white"], [fill^="#fff"]) {
 <dd class="internet-draft">draft-irtf-cfrg-bbs-blind-signatures-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2025-03-03" class="published">3 March 2025</time>
+<time datetime="2025-08-25" class="published">25 August 2025</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2025-09-04">4 September 2025</time></dd>
+<dd class="expires"><time datetime="2026-02-26">26 February 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1115,7 +1115,7 @@ svg :is([fill="white"], [fill^="#fff"]) {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 4 September 2025.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 26 February 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -1718,7 +1718,7 @@ Procedure:
           <h4 id="name-proof-generation">
 <a href="#section-4.2.3" class="section-number selfRef">4.2.3. </a><a href="#name-proof-generation" class="section-name selfRef">Proof Generation</a>
           </h4>
-<p id="section-4.2.3-1">This operation creates a BBS proof, which is a zero-knowledge, proof-of-knowledge, of a BBS signature, while optionally disclosing any subset of the signed messages. Note that in contrast to the <code>ProofGen</code> operation of <span>[<a href="#I-D.irtf-cfrg-bbs-signatures" class="cite xref">I-D.irtf-cfrg-bbs-signatures</a>]</span> (see <a href="https://identity.foundation/bbs-signature/draft-irtf-cfrg-bbs-signatures.html#name-proof-generation-proofgen">Section 3.5.3</a>), the <code>ProofGen</code> operation defined in this section accepts 2 different lists of messages and disclosed indexes, one for the messages known to the Signer (<code>messages</code>) and the corresponding disclosed indexes (<code>disclosed_indexes</code>) and one for the messages committed by the Prover (<code>committed_messages</code>) and the corresponding disclosed indexes (<code>disclosed_commitment_indexes</code>).<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-1">This operation creates a BBS proof, which is a zero-knowledge, proof-of-knowledge, of a BBS signature, while optionally disclosing any subset of the signed messages. Note that in contrast to the <code>ProofGen</code> operation of <span>[<a href="#I-D.irtf-cfrg-bbs-signatures" class="cite xref">I-D.irtf-cfrg-bbs-signatures</a>]</span> (see <a href="https://identity.foundation/bbs-signature/draft-irtf-cfrg-bbs-signatures.html#name-proof-generation-proofgen">Section 3.5.3</a>), the <code>ProofGen</code> operation defined in this section accepts two different lists of messages and disclosed indexes, one for the messages known to the Signer (<code>messages</code>) and the corresponding disclosed indexes (<code>disclosed_indexes</code>) and one for the messages committed by the Prover (<code>committed_messages</code>) and the corresponding disclosed indexes (<code>disclosed_commitment_indexes</code>).<a href="#section-4.2.3-1" class="pilcrow">¶</a></p>
 <p id="section-4.2.3-2">Furthermore, the operation also expects the <code>secret_prover_blind</code> (as returned from the <code>Commit</code> operation defined in <a href="#commitment-computation" class="auto internal xref">Section 4.1.1</a>) value. If the BBS signature is generated using a commitment value, then the <code>secret_prover_blind</code> returned by the <code>Commit</code> operation used to generate the commitment should be provided to the <code>ProofGen</code> operation (otherwise the resulting proof will be invalid).<a href="#section-4.2.3-2" class="pilcrow">¶</a></p>
 <p id="section-4.2.3-3">This operation makes use of the <code>CoreProofGen</code> operation as defined in <a href="https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-coreproofgen">Section 3.6.3</a> of <span>[<a href="#I-D.irtf-cfrg-bbs-signatures" class="cite xref">I-D.irtf-cfrg-bbs-signatures</a>]</span>.<a href="#section-4.2.3-3" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4.2.3-4">
@@ -1816,7 +1816,7 @@ Procedure:
           <h4 id="name-proof-verification">
 <a href="#section-4.2.4" class="section-number selfRef">4.2.4. </a><a href="#name-proof-verification" class="section-name selfRef">Proof Verification</a>
           </h4>
-<p id="section-4.2.4-1">The ProofVerify operation validates a BBS proof, given the Signer's public key (PK), a header and presentation header values, two arrays of disclosed messages (the ones known to the Signer and the ones committed by the prover) and two corresponding arrays of indexes those messages had in the original vectors of signed messages. In addition, the <code>BlindProofVerify</code> operation defined in this section accepts the integer <code>L</code>, representing the total number of signed messages known by the Signer.<a href="#section-4.2.4-1" class="pilcrow">¶</a></p>
+<p id="section-4.2.4-1">The ProofVerify operation validates a BBS proof, given the Signer's public key (PK), a header and presentation header values, two arrays of disclosed messages (the ones provided by the Signer and the ones committed by the prover) and two corresponding arrays of indexes that those messages had in the original vectors of signed messages. In addition, the <code>BlindProofVerify</code> operation defined in this section accepts the integer <code>L</code>, representing the total number of signed messages provided by the Signer.<a href="#section-4.2.4-1" class="pilcrow">¶</a></p>
 <p id="section-4.2.4-2">This operation makes use of the <code>CoreProofVerify</code> operation as defined in <a href="https://identity.foundation/bbs-signature/draft-irtf-cfrg-bbs-signatures.html#name-coreproofverify">Section 3.6.4</a> of <span>[<a href="#I-D.irtf-cfrg-bbs-signatures" class="cite xref">I-D.irtf-cfrg-bbs-signatures</a>]</span>.<a href="#section-4.2.4-2" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4.2.4-3">
 <pre>result = BlindProofVerify(PK,
@@ -1913,12 +1913,12 @@ Procedure:
           </h4>
 <div class="alignLeft art-text artwork" id="section-4.3.1-1">
 <pre>(commit_with_proof, secret_prover_blind) = CoreCommit(blind_generators,
-                                              committed_messages, api_id)
+                                              committed_scalars, api_id)
 
 Inputs:
 
 - blind_generators (REQUIRED), vector of pseudo-random points in G1.
-- committed_messages (OPTIONAL), a vector of scalars. If not supplied,
+- committed_scalars (OPTIONAL), a vector of scalars. If not supplied,
                                  it defaults to the empty array ("()").
 - api_id (OPTIONAL), an octet string. If not supplied it defaults to the
                      empty octet string ("").
@@ -1928,6 +1928,7 @@ Deserialization:
 1. M = length(committed_messages)
 2. if length(blind_generators) != M + 1, return INVALID
 3. (Q_2, J_1, ..., J_M) = blind_generators
+4. (msg_1, ..., msg_M) = committed_scalars
 
 Procedure:
 
@@ -2146,10 +2147,10 @@ Outputs:
 
 Deserialization:
 
-1. L = length(messages)
+1. L = length(message_scalars)
 2. if length(generators) != L + 1, return INVALID
 3. (Q_1, H_1, ..., H_L) = generators
-4. (msg_1, ..., msg_L) = messages
+4. (msg_1, ..., msg_L) = message_scalars
 
 Procedure:
 
@@ -3712,7 +3713,7 @@ proof = {{ $proofFixtures.bls12-381-shake-256.proof008.proof }}
 <dl class="references">
 <dt id="I-D.irtf-cfrg-bbs-signatures">[I-D.irtf-cfrg-bbs-signatures]</dt>
         <dd>
-<span class="refAuthor">Looker, T.</span>, <span class="refAuthor">Kalos, V.</span>, <span class="refAuthor">Whitehead, A.</span>, and <span class="refAuthor">M. Lodder</span>, <span class="refTitle">"The BBS Signature Scheme"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-irtf-cfrg-bbs-signatures-07</span>, <time datetime="2024-09-23" class="refDate">23 September 2024</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-07">https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-07</a>&gt;</span>. </dd>
+<span class="refAuthor">Looker, T.</span>, <span class="refAuthor">Kalos, V.</span>, <span class="refAuthor">Whitehead, A.</span>, and <span class="refAuthor">M. Lodder</span>, <span class="refTitle">"The BBS Signature Scheme"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-irtf-cfrg-bbs-signatures-09</span>, <time datetime="2025-07-07" class="refDate">7 July 2025</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-09">https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-signatures-09</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="RFC2119">[RFC2119]</dt>
         <dd>
