@@ -111,7 +111,7 @@ Figure: Basic diagram capturing the main entities involved in using the scheme.
 
 **Note** The protocols implied by the items annotated by an asterisk are out of scope for this specification
 
-This document, in addition to defining the operation for creating and verifying a commitment, also details a core signature generation operation, different from the one presented in [@!I-D.irtf-cfrg-bbs-signatures], meant to handle the computation of the blind signature. The document will also define a new BBS Interface, which is needed to handle the different inputs, i.e., messages committed by the Prover or chosen by the Signer etc... The signature verification and proof generation core cryptographic operations however, will work as described in [@!I-D.irtf-cfrg-bbs-signatures]. To further facilitate deployment, both the exposed interface as well as the core cryptographic operation of proof verification will be the same as the one detailed in [@!I-D.irtf-cfrg-bbs-signatures].
+This document, in addition to defining the operation for creating and verifying a commitment, also details a core signature generation operation, different from the one presented in [@!I-D.irtf-cfrg-bbs-signatures], meant to handle the computation of the blind signature. The document will also define a new BBS Interface, which is needed to handle the different inputs, i.e., messages committed by the *Prover* or chosen by the Signer etc.. The signature verification and proof generation and verification core cryptographic operations however, will work as described in [@!I-D.irtf-cfrg-bbs-signatures].
 
 ## Example Blind BBS Applications
 
