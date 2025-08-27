@@ -89,28 +89,30 @@ Table of Contents
      5.4.  Serialize
        5.4.1.  Commitment with Proof to Octets
        5.4.2.  Octet to Commitment with Proof
-   6.  Security Considerations
-     6.1.  Prover Blind Factor
-     6.2.  Key Binding
-   7.  Ciphersuites
-   8.  Test Vectors
-     8.1.  BLS12-381-SHA-256
-       8.1.1.  Generators
-       8.1.2.  Blind Generators
-       8.1.3.  Commitment
-       8.1.4.  Signature Test Vectors
-       8.1.5.  Proof Test Vectors
-     8.2.  BLS12-381-SHAKE-256
-       8.2.1.  Generators
-       8.2.2.  Blind Generators
-       8.2.3.  Commitment
-       8.2.4.  Blind Generators
-       8.2.5.  Signature Test Vectors
-       8.2.6.  Proof Test Vectors
-   9.  IANA Considerations
-   10. References
-     10.1.  Normative References
-     10.2.  Informative References
+   6.  Privacy Considerations
+     6.1.  Total Number and Index of Committed Messages
+   7.  Security Considerations
+     7.1.  Prover Blind Factor
+     7.2.  Key Binding
+   8.  Ciphersuites
+   9.  Test Vectors
+     9.1.  BLS12-381-SHA-256
+       9.1.1.  Generators
+       9.1.2.  Blind Generators
+       9.1.3.  Commitment
+       9.1.4.  Signature Test Vectors
+       9.1.5.  Proof Test Vectors
+     9.2.  BLS12-381-SHAKE-256
+       9.2.1.  Generators
+       9.2.2.  Blind Generators
+       9.2.3.  Commitment
+       9.2.4.  Blind Generators
+       9.2.5.  Signature Test Vectors
+       9.2.6.  Proof Test Vectors
+   10. IANA Considerations
+   11. References
+     11.1.  Normative References
+     11.2.  Informative References
    Authors' Addresses
 
 1.  Introduction
@@ -1130,14 +1132,40 @@ Procedure:
 18. if j >= 3, set msg_commitment = (s_2, ..., s_(j-1))
 19. return (C, (s_0, msg_commitments, s_j))
 
-6.  Security Considerations
+6.  Privacy Considerations
+
+   The privacy considerations discussed in Section 5
+   (https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-
+   09.html#name-privacy-considerations) of
+   [I-D.irtf-cfrg-bbs-signatures] apply to this draft as well.
+
+6.1.  Total Number and Index of Committed Messages
+
+   When a Prover submits a commitment to the Signer, the Prover's
+   committed messages are "perfectly" (statistically) hidden from the
+   Signer.  However, the proof of the committed messages, which is also
+   sent from the Prover to the Signer, contains the number of committed
+   messages.
+
+   In the proof sent from the Prover to the Verifier the number of
+   committed messages can be inferred.  In addition, indexes of
+   disclosed committed messages are revealed to the Verifier.  In
+   Section 5.2 (https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-
+   signatures-09.html#name-total-number-and-index-of-s) of
+   [I-D.irtf-cfrg-bbs-signatures] the threats to unlinkability and
+   mitigations for this information with respect to Signer messages is
+   discussed.  These threats and mitigations apply to the Prover total
+   number of committed messages and the disclosed committed indexes as
+   well.
+
+7.  Security Considerations
 
    Security considerations detailed in Section 6
    (https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-
-   05.html#name-security-considerations) of
+   09.html#name-security-considerations) of
    [I-D.irtf-cfrg-bbs-signatures] apply to this draft as well.
 
-6.1.  Prover Blind Factor
+7.1.  Prover Blind Factor
 
    The random scalar value secret_prover_blind calculated and returned
    by the Commit operation is responsible for "hiding" the committed
@@ -1148,12 +1176,12 @@ Procedure:
    secret_prover_blind MUST remain private by the Prover and it MUST be
    generated using a cryptographically secure pseudo-random number
    generator.  See Section 6.7 (https://www.ietf.org/archive/id/draft-
-   irtf-cfrg-bbs-signatures-05.html#name-randomness-requirements) of
+   irtf-cfrg-bbs-signatures-09.html#name-randomness-requirements) of
    [I-D.irtf-cfrg-bbs-signatures] on recommendations and requirements
    for implementing the BBS.get_random_scalars operation (which is used
    to calculate the secret_prover_blind value).
 
-6.2.  Key Binding
+7.2.  Key Binding
 
    One natural use case for the blind signatures extension of the BBS
    scheme is key binding.  In the context of BBS Signatures, key binding
@@ -1165,7 +1193,7 @@ Procedure:
    (similar to any signed message).  The Prover MUST NOT disclose that
    key as part of a proof generation procedure.  Note also that the
    secret_prover_blind value returned by the Commit operation defined in
-   Section 4.1.1 (see Section 6.1), has a similar property, i.e., it's
+   Section 4.1.1 (see Section 7.1), has a similar property, i.e., it's
    knowledge is required to generate a proof from a blind signature.
    Many applications however, requiring key binding, mandate that the
    same private key is used among multiple signatures, whereas the
@@ -1173,7 +1201,7 @@ Procedure:
    issuance request.  In those cases, a commitment to a private key must
    be used, as described above.
 
-7.  Ciphersuites
+8.  Ciphersuites
 
    This document uses the BBS_BLS12381G1_XOF:SHAKE-256_SSWU_RO_ and
    BBS_BLS12381G1_XMD:SHA-256_SSWU_RO_ defined in Section 7.2.1
@@ -1183,11 +1211,11 @@ Procedure:
    signatures.html#name-bls12-381-sha-256) correspondingly, of
    [I-D.irtf-cfrg-bbs-signatures].
 
-8.  Test Vectors
+9.  Test Vectors
 
-8.1.  BLS12-381-SHA-256
+9.1.  BLS12-381-SHA-256
 
-8.1.1.  Generators
+9.1.1.  Generators
 
 api_id = {{ $generatorFixtures.bls12-381-sha-256.generators.api_id }}
 
@@ -1209,7 +1237,7 @@ H_9 = {{ $generatorFixtures.bls12-381-sha-256.generators.MsgGenerators[9] }}
 
 }
 
-8.1.2.  Blind Generators
+9.1.2.  Blind Generators
 
 api_id = {{ $generatorFixtures.bls12-381-sha-256.blindGenerators.api_id }}
 
@@ -1226,14 +1254,14 @@ J_4 = {{ $generatorFixtures.bls12-381-sha-256.blindGenerators.MsgGenerators[4] }
 
 }
 
-8.1.3.  Commitment
+9.1.3.  Commitment
 
    Mocked random scalar parameters
 
 seed = {{ $commitmentFixtures.bls12-381-sha-256.commit001.mockRngParameters.SEED }}
 dst = {{ $commitmentFixtures.bls12-381-sha-256.commit001.mockRngParameters.commit.DST }}
 
-8.1.3.1.  valid no committed messages commitment with proof
+9.1.3.1.  valid no committed messages commitment with proof
 
 committedMessages = {{ $commitmentFixtures.bls12-381-sha-256.commit001.committedMessages }}
 proverBlind = {{ $commitmentFixtures.bls12-381-sha-256.commit001.proverBlind }}
@@ -1245,7 +1273,7 @@ m_tildes = {{ $commitmentFixtures.bls12-381-sha-256.commit001.trace.random_scala
 
 commitmentWithProof = {{ $commitmentFixtures.bls12-381-sha-256.commit001.commitmentWithProof }}
 
-8.1.3.2.  valid multiple committed messages commitment with proof
+9.1.3.2.  valid multiple committed messages commitment with proof
 
 committedMessages = {{ $commitmentFixtures.bls12-381-sha-256.commit002.committedMessages }}
 proverBlind = {{ $commitmentFixtures.bls12-381-sha-256.commit002.proverBlind }}
@@ -1257,9 +1285,9 @@ m_tildes = {{ $commitmentFixtures.bls12-381-sha-256.commit002.trace.random_scala
 
 commitmentWithProof = {{ $commitmentFixtures.bls12-381-sha-256.commit002.commitmentWithProof }}
 
-8.1.4.  Signature Test Vectors
+9.1.4.  Signature Test Vectors
 
-8.1.4.1.  valid no prover committed messages, no signer messages
+9.1.4.1.  valid no prover committed messages, no signer messages
           signature
 
 secretKey = {{ $signatureFixtures.bls12-381-sha-256.signature001.signerKeyPair.secretKey }}
@@ -1281,7 +1309,7 @@ domain = {{ $signatureFixtures.bls12-381-sha-256.signature001.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-sha-256.signature001.signature }}
 
-8.1.4.2.  valid multi prover committed messages, no signer messages
+9.1.4.2.  valid multi prover committed messages, no signer messages
           signature
 
 secretKey = {{ $signatureFixtures.bls12-381-sha-256.signature002.signerKeyPair.secretKey }}
@@ -1303,7 +1331,7 @@ domain = {{ $signatureFixtures.bls12-381-sha-256.signature002.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-sha-256.signature002.signature }}
 
-8.1.4.3.  valid no prover committed messages, multiple signer messages
+9.1.4.3.  valid no prover committed messages, multiple signer messages
           signature
 
 secretKey = {{ $signatureFixtures.bls12-381-sha-256.signature003.signerKeyPair.secretKey }}
@@ -1325,7 +1353,7 @@ domain = {{ $signatureFixtures.bls12-381-sha-256.signature003.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-sha-256.signature003.signature }}
 
-8.1.4.4.  valid multiple signer and prover committed messages signature
+9.1.4.4.  valid multiple signer and prover committed messages signature
 
 secretKey = {{ $signatureFixtures.bls12-381-sha-256.signature004.signerKeyPair.secretKey }}
 publicKey = {{ $signatureFixtures.bls12-381-sha-256.signature004.signerKeyPair.publicKey }}
@@ -1346,7 +1374,7 @@ domain = {{ $signatureFixtures.bls12-381-sha-256.signature004.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-sha-256.signature004.signature }}
 
-8.1.4.5.  valid no commitment signature
+9.1.4.5.  valid no commitment signature
 
 secretKey = {{ $signatureFixtures.bls12-381-sha-256.signature005.signerKeyPair.secretKey }}
 publicKey = {{ $signatureFixtures.bls12-381-sha-256.signature005.signerKeyPair.publicKey }}
@@ -1367,14 +1395,14 @@ domain = {{ $signatureFixtures.bls12-381-sha-256.signature005.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-sha-256.signature005.signature }}
 
-8.1.5.  Proof Test Vectors
+9.1.5.  Proof Test Vectors
 
    Mocked random scalar parameters
 
 seed = {{ $proofFixtures.bls12-381-sha-256.proof001.mockRngParameters.SEED }}
 dst = {{ $proofFixtures.bls12-381-sha-256.proof001.mockRngParameters.proof.DST }}
 
-8.1.5.1.  valid all prover committed messages and signer messages
+9.1.5.1.  valid all prover committed messages and signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof001.signerPublicKey }}
@@ -1427,7 +1455,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof001.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof001.proof }}
 
-8.1.5.2.  valid half prover committed messages and all signer messages
+9.1.5.2.  valid half prover committed messages and all signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof002.signerPublicKey }}
@@ -1477,7 +1505,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof002.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof002.proof }}
 
-8.1.5.3.  valid half prover committed messages and all signer messages
+9.1.5.3.  valid half prover committed messages and all signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof003.signerPublicKey }}
@@ -1524,7 +1552,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof003.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof003.proof }}
 
-8.1.5.4.  valid half prover committed messages and half signer messages
+9.1.5.4.  valid half prover committed messages and half signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof004.signerPublicKey }}
@@ -1571,7 +1599,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof004.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof004.proof }}
 
-8.1.5.5.  valid no prover committed messages and half signer messages
+9.1.5.5.  valid no prover committed messages and half signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof005.signerPublicKey }}
@@ -1611,7 +1639,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof005.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof005.proof }}
 
-8.1.5.6.  valid half prover committed messages and no signer messages
+9.1.5.6.  valid half prover committed messages and no signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof006.signerPublicKey }}
@@ -1650,7 +1678,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof006.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof006.proof }}
 
-8.1.5.7.  valid no prover committed messages and no signer messages
+9.1.5.7.  valid no prover committed messages and no signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof007.signerPublicKey }}
@@ -1684,7 +1712,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof007.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof007.proof }}
 
-8.1.5.8.  valid all prover committed messages and signer messages
+9.1.5.8.  valid all prover committed messages and signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof008.signerPublicKey }}
@@ -1711,9 +1739,9 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof008.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof008.proof }}
 
-8.2.  BLS12-381-SHAKE-256
+9.2.  BLS12-381-SHAKE-256
 
-8.2.1.  Generators
+9.2.1.  Generators
 
 api_id = {{ $generatorFixtures.bls12-381-shake-256.generators.api_id }}
 
@@ -1735,7 +1763,7 @@ H_9 = {{ $generatorFixtures.bls12-381-shake-256.generators.MsgGenerators[9] }}
 
 }
 
-8.2.2.  Blind Generators
+9.2.2.  Blind Generators
 
 api_id = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.api_id }}
 
@@ -1752,14 +1780,14 @@ J_4 = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.MsgGenerators[4]
 
 }
 
-8.2.3.  Commitment
+9.2.3.  Commitment
 
    Mocked random scalar parameters
 
 seed = {{ $commitmentFixtures.bls12-381-shake-256.commit001.mockRngParameters.SEED }}
 dst = {{ $commitmentFixtures.bls12-381-shake-256.commit001.mockRngParameters.commit.DST }}
 
-8.2.3.1.  valid no committed messages commitment with proof
+9.2.3.1.  valid no committed messages commitment with proof
 
 committedMessages = {{ $commitmentFixtures.bls12-381-shake-256.commit001.committedMessages }}
 proverBlind = {{ $commitmentFixtures.bls12-381-shake-256.commit001.proverBlind }}
@@ -1771,7 +1799,7 @@ m_tildes = {{ $commitmentFixtures.bls12-381-shake-256.commit001.trace.random_sca
 
 commitmentWithProof = {{ $commitmentFixtures.bls12-381-shake-256.commit001.commitmentWithProof }}
 
-8.2.3.2.  valid multiple committed messages commitment with proof
+9.2.3.2.  valid multiple committed messages commitment with proof
 
 committedMessages = {{ $commitmentFixtures.bls12-381-shake-256.commit002.committedMessages }}
 proverBlind = {{ $commitmentFixtures.bls12-381-shake-256.commit002.proverBlind }}
@@ -1783,7 +1811,7 @@ m_tildes = {{ $commitmentFixtures.bls12-381-shake-256.commit001.trace.random_sca
 
 commitmentWithProof = {{ $commitmentFixtures.bls12-381-shake-256.commit002.commitmentWithProof }}
 
-8.2.4.  Blind Generators
+9.2.4.  Blind Generators
 
 api_id = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.api_id }}
 
@@ -1800,9 +1828,9 @@ J_4 = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.MsgGenerators[4]
 
 }
 
-8.2.5.  Signature Test Vectors
+9.2.5.  Signature Test Vectors
 
-8.2.5.1.  valid no prover committed messages, no signer messages
+9.2.5.1.  valid no prover committed messages, no signer messages
           signature
 
 secretKey = {{ $signatureFixtures.bls12-381-shake-256.signature001.signerKeyPair.secretKey }}
@@ -1822,7 +1850,7 @@ domain = {{ $signatureFixtures.bls12-381-shake-256.signature001.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-shake-256.signature001.signature }}
 
-8.2.5.2.  valid multi prover committed messages, no signer messages
+9.2.5.2.  valid multi prover committed messages, no signer messages
           signature
 
 secretKey = {{ $signatureFixtures.bls12-381-shake-256.signature002.signerKeyPair.secretKey }}
@@ -1842,7 +1870,7 @@ domain = {{ $signatureFixtures.bls12-381-shake-256.signature002.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-shake-256.signature002.signature }}
 
-8.2.5.3.  valid no prover committed messages, multiple signer messages
+9.2.5.3.  valid no prover committed messages, multiple signer messages
           signature
 
 secretKey = {{ $signatureFixtures.bls12-381-shake-256.signature003.signerKeyPair.secretKey }}
@@ -1862,7 +1890,7 @@ domain = {{ $signatureFixtures.bls12-381-shake-256.signature003.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-shake-256.signature003.signature }}
 
-8.2.5.4.  valid multiple signer and prover committed messages signature
+9.2.5.4.  valid multiple signer and prover committed messages signature
 
 secretKey = {{ $signatureFixtures.bls12-381-shake-256.signature004.signerKeyPair.secretKey }}
 publicKey = {{ $signatureFixtures.bls12-381-shake-256.signature004.signerKeyPair.publicKey }}
@@ -1881,7 +1909,7 @@ domain = {{ $signatureFixtures.bls12-381-shake-256.signature004.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-shake-256.signature004.signature }}
 
-8.2.5.5.  valid no commitment signature
+9.2.5.5.  valid no commitment signature
 
 secretKey = {{ $signatureFixtures.bls12-381-shake-256.signature005.signerKeyPair.secretKey }}
 publicKey = {{ $signatureFixtures.bls12-381-shake-256.signature005.signerKeyPair.publicKey }}
@@ -1900,14 +1928,14 @@ domain = {{ $signatureFixtures.bls12-381-shake-256.signature005.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-shake-256.signature005.signature }}
 
-8.2.6.  Proof Test Vectors
+9.2.6.  Proof Test Vectors
 
    Mocked random scalar parameters
 
 seed = {{ $proofFixtures.bls12-381-shake-256.proof001.mockRngParameters.SEED }}
 dst = {{ $proofFixtures.bls12-381-shake-256.proof001.mockRngParameters.proof.DST }}
 
-8.2.6.1.  valid all prover committed messages and signer messages
+9.2.6.1.  valid all prover committed messages and signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof001.signerPublicKey }}
@@ -1959,7 +1987,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof001.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof001.proof }}
 
-8.2.6.2.  valid half prover committed messages and all signer messages
+9.2.6.2.  valid half prover committed messages and all signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof002.signerPublicKey }}
@@ -2009,7 +2037,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof002.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof002.proof }}
 
-8.2.6.3.  valid half prover committed messages and all signer messages
+9.2.6.3.  valid half prover committed messages and all signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof003.signerPublicKey }}
@@ -2056,7 +2084,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof003.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof003.proof }}
 
-8.2.6.4.  valid half prover committed messages and half signer messages
+9.2.6.4.  valid half prover committed messages and half signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof004.signerPublicKey }}
@@ -2101,7 +2129,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof004.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof004.proof }}
 
-8.2.6.5.  valid no prover committed messages and half signer messages
+9.2.6.5.  valid no prover committed messages and half signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof005.signerPublicKey }}
@@ -2141,7 +2169,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof005.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof005.proof }}
 
-8.2.6.6.  valid half prover committed messages and no signer messages
+9.2.6.6.  valid half prover committed messages and no signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof006.signerPublicKey }}
@@ -2180,7 +2208,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof006.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof006.proof }}
 
-8.2.6.7.  valid no prover committed messages and no signer messages
+9.2.6.7.  valid no prover committed messages and no signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof007.signerPublicKey }}
@@ -2214,7 +2242,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof007.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof007.proof }}
 
-8.2.6.8.  valid all prover committed messages and signer messages
+9.2.6.8.  valid all prover committed messages and signer messages
           revealed proof
 
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof008.signerPublicKey }}
@@ -2241,13 +2269,13 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof008.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof008.proof }}
 
-9.  IANA Considerations
+10.  IANA Considerations
 
    This document does not make any requests of IANA.
 
-10.  References
+11.  References
 
-10.1.  Normative References
+11.1.  Normative References
 
    [I-D.irtf-cfrg-bbs-signatures]
               Looker, T., Kalos, V., Whitehead, A., and M. Lodder, "The
@@ -2269,7 +2297,7 @@ proof = {{ $proofFixtures.bls12-381-shake-256.proof008.proof }}
               Signatures", RFC 9474, DOI 10.17487/RFC9474, October 2023,
               <https://www.rfc-editor.org/info/rfc9474>.
 
-10.2.  Informative References
+11.2.  Informative References
 
    [BG18]     Bootle, J. and J. Groth, "Efficient Batch Zero-Knowledge
               Arguments for Low Degree Polynomials", In CRYPTO, 2018,
