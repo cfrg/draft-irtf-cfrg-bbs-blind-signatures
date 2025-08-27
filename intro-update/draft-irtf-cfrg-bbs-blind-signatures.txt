@@ -5,8 +5,8 @@
 CFRG                                                            V. Kalos
 Internet-Draft                                                     MATTR
 Intended status: Informational                              G. Bernstein
-Expires: 26 February 2026                              Grotto Networking
-                                                          25 August 2025
+Expires: 28 February 2026                              Grotto Networking
+                                                          27 August 2025
 
 
                           Blind BBS Signatures
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 26 February 2026.
+   This Internet-Draft will expire on 28 February 2026.
 
 Copyright Notice
 
@@ -234,13 +234,10 @@ Table of Contents
    [I-D.irtf-cfrg-bbs-signatures], meant to handle the computation of
    the blind signature.  The document will also define a new BBS
    Interface, which is needed to handle the different inputs, i.e.,
-   messages committed by the Prover or chosen by the Signer etc... The
-   signature verification and proof generation core cryptographic
-   operations however, will work as described in
-   [I-D.irtf-cfrg-bbs-signatures].  To further facilitate deployment,
-   both the exposed interface as well as the core cryptographic
-   operation of proof verification will be the same as the one detailed
-   in [I-D.irtf-cfrg-bbs-signatures].
+   messages committed by the _Prover_ or chosen by the Signer etc.. The
+   signature verification and proof generation and verification core
+   cryptographic operations however, will work as described in
+   [I-D.irtf-cfrg-bbs-signatures].
 
 1.2.  Example Blind BBS Applications
 
