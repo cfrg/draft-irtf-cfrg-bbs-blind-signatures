@@ -113,6 +113,7 @@ Table of Contents
    11. References
      11.1.  Normative References
      11.2.  Informative References
+   Appendix A.  Document History
    Authors' Addresses
 
 1.  Introduction
@@ -2319,6 +2320,23 @@ proof = {{ $proofFixtures.bls12-381-shake-256.proof008.proof }}
    [P91]      Pedersen, T., "Non-Interactive and Information-Theoretic
               Secure Verifiable Secret Sharing", In CRYPTO, 1991,
               <https://ia.cr/2023/275>.
+
+Appendix A.  Document History
+
+   -00
+
+   *  Initial Version
+
+   -01
+
+   *  Change committed_messages to committed_scalars in CoreCommit
+   *  Added explanatory text
+   *  Added test vectors
+
+   -02
+
+   *  Expanded privacy and security considerations
+   *  Updated the introduction
 
 Authors' Addresses
 
