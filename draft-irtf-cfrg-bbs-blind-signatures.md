@@ -2047,6 +2047,22 @@ This document does not make any requests of IANA.
 
 {backmatter}
 
+# Document History
+
+-00
+
+* Initial Version
+
+-01
+
+* Change `committed_messages` to `committed_scalars` in `CoreCommit`
+* Added explanatory text
+
+-02
+
+* Expanded privacy and security considerations
+* Updated the introduction
+
 <reference anchor="Chaum85" target="https://dl.acm.org/doi/pdf/10.1145/4372.4373">
  <front>
    <title>Security without identification: transaction systems to make big brother obsolete</title>
