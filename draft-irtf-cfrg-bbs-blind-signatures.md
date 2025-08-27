@@ -2057,6 +2057,7 @@ This document does not make any requests of IANA.
 
 * Change `committed_messages` to `committed_scalars` in `CoreCommit`
 * Added explanatory text
+* Added test vectors
 
 -02
 
