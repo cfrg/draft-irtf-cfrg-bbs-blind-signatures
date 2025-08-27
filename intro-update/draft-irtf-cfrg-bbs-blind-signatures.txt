@@ -241,18 +241,19 @@ Table of Contents
 
 1.2.  Example Blind BBS Applications
 
-   By allowing the Prover to acquire a valid signature over messages not
-   known to the Signer, blind signatures address some limitations of
-   their plain digital signature counterparts.  In the BBS scheme,
-   knowledge of a valid signature allows generation of BBS proofs.  As a
-   result, a signature compromise (by an eavesdropper, a phishing
-   attack, a leakage of the Signer's logs etc.,) can lead to
-   impersonation of the Prover by malicious actors (especially in cases
-   involving "long-lived" signatures, as in digital credentials
-   applications etc.,).  Using Blind BBS Signatures on the other hand,
-   the Prover can commit to a secret message (for example, a private
-   key) before issuance, guaranteeing that no one will be able to
-   generate a valid proof without knowledge of their secret.
+   By allowing the _Prover_ to acquire a valid signature over messages
+   not known to the Signer, blind signatures address some limitations of
+   their plain digital signature counterparts.  In the BBS Signature
+   scheme, knowledge of a valid signature and set of signed messages
+   allows generation of BBS proofs.  As a result, a signature compromise
+   (for example by a Signer database leakage, a phishing attack etc.,)
+   can lead to impersonation of the _Prover_ by malicious actors
+   (especially in cases involving "long-lived" signatures, as in digital
+   credentials applications etc.,).  Using Blind BBS Signatures on the
+   other hand, the _Prover_ can commit to a secret message (for example,
+   a private key) before issuance, guaranteeing that no one will be able
+   to generate a valid BBS proof without knowledge of that secret
+   message.
 
    Furthermore, applications like Privacy Pass
    ([I-D.ietf-privacypass-protocol]) may require a signature to be
