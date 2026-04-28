@@ -340,13 +340,13 @@ Procedure:
 
 ### Blind Signature Verification
 
-This operation validates a blind BBS signature (`signature`), given the Signer's public key (`PK`), a header (`header`), a set of, known to the Signer, messages (`messages`) and if used, a set of committed messages (`committed_messages`) and the `secret_prover_blind` as returned by the `Commit` operation ((#commitment-computation)).
+This operation validates a blind BBS signature (`signature`), given the Signer's public key (`PK`), a header (`header`), a set of messages (`messages`), including first the messages chosen by the Issuer and then the ones chosen (and committed to) by the Prover and if used, the `secret_prover_blind` as returned by the `Commit` operation ((#commitment-computation)).
 
 This operation makes use of the `CoreVerify` operation as defined in [Section 3.6.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-coreverify) of [@!I-D.irtf-cfrg-bbs-signatures].
 
 ```
-result = VerifyBlindSign(PK, signature, header, messages, committed_messages,
-                                                    secret_prover_blind)
+result = VerifyBlindSign(PK, signature, header, messages,
+                          issuer_known_messages_no, secret_prover_blind)
 
 Inputs:
 
@@ -359,9 +359,8 @@ Inputs:
                      to an empty string.
 - messages (OPTIONAL), a vector of octet strings. If not supplied, it
                        defaults to the empty array "()".
-- committed_messages (OPTIONAL), a vector of octet strings. If not
-                                 supplied, it defaults to the empty
-                                 array "()".
+- issuer_known_messages_no (OPTIONAL), a non-negative integer. If not
+                                       supplied, it defaults to 0.
 - secret_prover_blind (OPTIONAL), a scalar value. If not supplied it
                                   defaults to zero "0".
 
@@ -371,33 +370,61 @@ Parameters:
 - api_id, the octet string ciphersuite_id || "BLIND_H2G_HM2S_", where
           ciphersuite_id is defined by the ciphersuite and
           "BLIND_H2G_HM2S_"is an ASCII string composed of 15 bytes.
+- Q2, a point of G1, defined by the ciphersuite.
 
 Outputs:
 
 - result: either VALID or INVALID
 
+Deserialization:
+
+1. L = length(messages)
+
 Procedure:
 
-1. (message_scalars, generators) = prepare_parameters(
-                                         messages,
-                                         committed_messages,
-                                         length(messages) + 1,
-                                         length(committed_messages) + 1,
-                                         secret_prover_blind,
-                                         api_id)
+1. generators = BBS.create_generators(issuer_known_messages_no, api_id)
+2. blind_generators = BBS.create_generators(
+                       L - issuer_known_messages_no, "BLIND_" || api_id)
 
-2. res = BBS.CoreVerify(PK, signature, generators, header,
-                                                message_scalars, api_id)
-3. return res
+3. message_scalars = BBS.messages_to_scalars(messages, api_id)
+
+4. res = BBS.CoreVerify(PK,
+                        signature,
+                        generators.append(blind_generators).append(Q2),
+                        header,
+                        message_scalars.append(secret_prover_blind),
+                        api_id)
+5. return res
 ```
 
 ### Proof Generation
 
-This operation creates a BBS proof, which is a zero-knowledge, proof-of-knowledge, of a BBS signature, while optionally disclosing any subset of the signed messages. Note that in contrast to the `ProofGen` operation of [@!I-D.irtf-cfrg-bbs-signatures] (see [Section 3.5.3](https://identity.foundation/bbs-signature/draft-irtf-cfrg-bbs-signatures.html#name-proof-generation-proofgen)), the `ProofGen` operation defined in this section accepts two different lists of messages and disclosed indexes, one for the messages known to the Signer (`messages`) and the corresponding disclosed indexes (`disclosed_indexes`) and one for the messages committed by the Prover (`committed_messages`) and the corresponding disclosed indexes (`disclosed_commitment_indexes`).
+This operation creates a BBS proof, which is a zero-knowledge, proof-of-knowledge, of a BBS signature, while optionally disclosing any subset of the signed messages (either chosen by the Issuer or committed by the Prover).
+
+The operation will accept a set of messages (`messages`), including first the messages chosen by the Issuer and then the ones chosen (and committed to) by the Prover.
 
 Furthermore, the operation also expects the `secret_prover_blind` (as returned from the `Commit` operation defined in (#commitment-computation)) value. If the BBS signature is generated using a commitment value, then the `secret_prover_blind` returned by the `Commit` operation used to generate the commitment should be provided to the `ProofGen` operation (otherwise the resulting proof will be invalid).
 
-This operation makes use of the `CoreProofGen` operation as defined in [Section 3.6.3](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-coreproofgen) of [@!I-D.irtf-cfrg-bbs-signatures].
+This operation makes use of the `CoreProofGen` operation as defined in (#core-proof-generation).
+
+The operation will also accept a map `message_disclosures` between each message (including both the ones known by the issuer and the ones known only by the prover) and one of the three values `DISCLOSE`, `HIDE` and `COMMIT`. A `{msg: DISCLOSE}` (key, value) pair indicates that the `msg` will be revealed to the Verifier. Correspondingly, a `{msg: HIDE}` (key, value) pair indicates that the `msg` will not be disclosed to the Verifier. Finally, a `{msg: COMMIT}` (key, value) pair indicates that only a commitment to the `msg` will be disclosed to the Verifier.
+
+An example of the `message_disclosures` input map is the following,
+
+```
+message_disclosures = {
+  issuer_known_msg_1: DISCLOSE,
+  issuer_known_msg_2: HIDE,
+  issuer_known_msg_3: HIDE,
+  issuer_known_msg_4: COMMIT,
+  issuer_known_msg_5: COMMIT,
+  issuer_known_msg_6: DISCLOSE,
+  prover_known_msg_1: DISCLOSE,
+  prover_known_msg_2: COMMIT,
+  prover_known_msg_3: DISCLOSE
+}
+```
+
 
 ```
 proof = BlindProofGen(PK,
@@ -405,9 +432,8 @@ proof = BlindProofGen(PK,
                       header,
                       ph,
                       messages,
-                      committed_messages,
-                      disclosed_indexes,
-                      disclosed_commitment_indexes,
+                      issuer_known_messages_no,
+                      message_disclosures,
                       secret_prover_blind)
 
 Inputs:
@@ -423,19 +449,12 @@ Inputs:
                  not supplied, it defaults to an empty string.
 - messages (OPTIONAL), a vector of octet strings. If not supplied, it
                        defaults to the empty array "()".
-- committed_messages (OPTIONAL), a vector of octet strings. If not
-                                 supplied, it defaults to the empty
-                                 array "()".
-- disclosed_indexes (OPTIONAL), vector of unsigned integers in ascending
-                                order. Indexes of disclosed messages. If
-                                not supplied, it defaults to the empty
-                                array "()".
-- disclosed_commitment_indexes (OPTIONAL), vector of unsigned integers
-                                           in ascending order. Indexes
-                                           of disclosed committed
-                                           messages. If not supplied, it
-                                           defaults to the empty array
-                                           "()".
+- issuer_known_messages_no (OPTIONAL), a non-negative integer. If not
+                                       supplied, it defaults to 0.
+- message_disclosures (OPTIONAL), a map between octet strings and one
+                                   of the DISCLOSE, HIDE or COMMIT
+                                   values. If not supplied, it defaults
+                                   to the empty map "{}".
 - secret_prover_blind (OPTIONAL), a scalar value. If not supplied it
                                   defaults to zero "0".
 
@@ -445,6 +464,7 @@ Parameters:
 - api_id, the octet string ciphersuite_id || "BLIND_H2G_HM2S_", where
           ciphersuite_id is defined by the ciphersuite and
           "BLIND_H2G_HM2S_"is an ASCII string composed of 15 bytes.
+- Q2, a point of G1, defined by the ciphersuite.
 
 Outputs:
 
@@ -453,55 +473,51 @@ Outputs:
 Deserialization:
 
 1. L = length(messages)
-2. M = length(committed_messages)
-3. if length(disclosed_indexes) > L, return INVALID
-4. for i in disclosed_indexes, if i < 0 or i >= L, return INVALID
-5. if length(disclosed_commitment_indexes) > M, return INVALID
-6. for j in disclosed_commitment_indexes,
-                               if i < 0 or i >= M, return INVALID
+2. if length(message_disclosures) != L, return INVALID
+3. if issuer_known_messages_no > L, return INVALID
+
+4. let disclosed_indexes be the integers i in 0..length(messages) so
+   that if msg = messages[i], messagesDisclosures[msg] = disclose, in
+   accenting order.
+5. let commit_indexes be the integers i in 0..length(messages) so
+   that if msg = messages[i], messagesDisclosures[msg] = commit, in
+   accenting order.
 
 Procedure:
 
-1. (message_scalars, generators) = prepare_parameters(
-                                         messages,
-                                         committed_messages,
-                                         length(messages) + 1,
-                                         length(committed_messages) + 1,
-                                         secret_prover_blind,
-                                         api_id)
+1. generators = BBS.create_generators(issuer_known_messages_no, api_id)
+2. blind_generators = BBS.create_generators(
+                       L - issuer_known_messages_no, "BLIND_" || api_id)
 
-2. indexes = ()
-3. indexes.append(disclosed_indexes)
-4. for j in disclosed_commitment_indexes: indexes.append(j + L + 1)
+3. message_scalars = BBS.messages_to_scalars(messages, api_id)
 
-5. proof = BBS.CoreProofGen(
-                     PK,
-                     signature,
-                     generators,
-                     header,
-                     ph,
-                     message_scalars,
-                     indexes,
-                     api_id)
-6. return proof
+4. proof = CoreProofGen(PK,
+                        signature,
+                        generators.append(blind_generators).append(Q_2),
+                        header,
+                        ph,
+                        message_scalars.append(secret_prover_blind),
+                        disclosed_indexes,
+                        commit_indexes,
+                        api_id)
+5. return proof
 ```
 
 ### Proof Verification
 
-The ProofVerify operation validates a BBS proof, given the Signer's public key (PK), a header and presentation header values, two arrays of disclosed messages (the ones provided by the Signer and the ones committed by the prover) and two corresponding arrays of indexes that those messages had in the original vectors of signed messages. In addition, the `BlindProofVerify` operation defined in this section accepts the integer `L`, representing the total number of signed messages provided by the Signer.
+The ProofVerify operation validates a BBS proof, given the Signer's public key (PK), a header and presentation header values, two arrays of disclosed messages (the ones provided by the Signer and the ones committed by the prover) and two corresponding arrays of indexes that those messages had in the original vectors of signed messages. In addition, the `BlindProofVerify` operation defined in this section accepts the integer `issuer_known_messages_no`, representing the total number of signed messages known by the Signer.
 
-This operation makes use of the `CoreProofVerify` operation as defined in [Section 3.6.4](https://identity.foundation/bbs-signature/draft-irtf-cfrg-bbs-signatures.html#name-coreproofverify) of [@!I-D.irtf-cfrg-bbs-signatures].
+This operation makes use of the `CoreProofVerify` operation as defined in (#core-proof-verification).
+
+
 
 ```
 result = BlindProofVerify(PK,
                           proof,
                           header,
                           ph,
-                          L,
-                          disclosed_messages,
-                          disclosed_committed_messages,
-                          disclosed_indexes,
-                          disclosed_committed_indexes)
+                          issuer_known_messages_no,
+                          disclosed_messages)
 
 Inputs:
 
@@ -515,15 +531,11 @@ Inputs:
 - ph (OPTIONAL), an octet string containing the presentation header. If
                  not supplied, it defaults to the empty octet
                  string ("").
-- L (OPTIONAL), an integer, representing the total number of Signer
-                known messages if not supplied it defaults to 0.
+- issuer_known_messages_no (OPTIONAL), a non-negative integer. If not
+                                       supplied, it defaults to 0.
 - disclosed_messages (OPTIONAL), a vector of octet strings. If not
                                  supplied, it defaults to the empty
                                  array ("()").
-- disclosed_indexes (OPTIONAL), vector of unsigned integers in ascending
-                                order. Indexes of disclosed messages. If
-                                not supplied, it defaults to the empty
-                                array ("()").
 
 Parameters:
 
@@ -531,6 +543,7 @@ Parameters:
           ciphersuite_id is defined by the ciphersuite and "H2G_HM2S_"is
           an ASCII string comprised of 9 bytes.
 - (octet_point_length, octet_scalar_length), defined by the ciphersuite.
+- Q2, a point of G1, defined by the ciphersuite.
 
 Outputs:
 
@@ -538,36 +551,31 @@ Outputs:
 
 Deserialization:
 
-1. proof_len_floor = 2 * octet_point_length + 3 * octet_scalar_length
-2. if length(proof) < proof_len_floor, return INVALID
-3. U = floor((length(proof) - proof_len_floor) / octet_scalar_length)
-4. total_no_messages = length(disclosed_indexes) +
-                                 length(disclosed_committed_indexes) + U
-5. M = total_no_messages - L
+1. bbs_proof_len = OS2IP(proof[0..7])
+2. undisclosed_msgs_no = bbs_proof_len
+                           - 3 * octet_point_length
+                           - 4 * octet_scalar_length
+3. total_msgs_no = undisclosed_msgs_no + length(disclosed_messages)
+
 
 Procedure:
 
-1. (message_scalars, generators) = prepare_parameters(
-                                          disclosed_messages,
-                                          disclosed_committed_messages,
-                                          L + 1,
-                                          M,
-                                          NONE,
-                                          api_id)
+1. generators = BBS.create_generators(issuer_known_messages_no, api_id)
+2. blind_generators = BBS.create_generators(
+                               total_msgs_no - issuer_known_messages_no,
+                               "BLIND_" || api_id)
 
-2. indexes = ()
-3. indexes.append(disclosed_indexes)
-4. for j in disclosed_commitment_indexes: indexes.append(j + L + 1)
+3. message_scalars = BBS.messages_to_scalars(disclosed_messages, api_id)
 
-5. result = BBS.CoreProofVerify(PK,
-                               proof,
-                               generators,
-                               header,
-                               ph,
-                               message_scalars,
-                               indexes,
-                               api_id)
-6. return result
+4. result = CoreProofVerify(
+                        PK,
+                        proof,
+                        generators.append(blind_generators).append(Q_2),
+                        header,
+                        ph,
+                        message_scalars,
+                        api_id)
+5. return result
 ```
 
 ## Core Operations
@@ -586,19 +594,23 @@ Inputs:
 - api_id (OPTIONAL), an octet string. If not supplied it defaults to the
                      empty octet string ("").
 
+Parameters:
+
+- Q2, a point of G1, defined by the ciphersuite.
+
 Deserialization:
 
 1. M = length(committed_messages)
-2. if length(blind_generators) != M + 1, return INVALID
-3. (Q_2, J_1, ..., J_M) = blind_generators
-4. (msg_1, ..., msg_M) = committed_scalars
+2. if length(blind_generators) != M, return INVALID
+3. (J_1, ..., J_M) = blind_generators
+4. (msg_1, ..., msg_M) = committed_scalars    dddd
 
 Procedure:
 
 1. (secret_prover_blind, s~, m~_1, ..., m~_M)
                                          = BBS.get_random_scalars(M + 2)
-2. C = Q_2 * secret_prover_blind + J_1 * msg_1 + ... + J_M * msg_M
-3. Cbar = Q_2 * s~ + J_1 * m~_1 + ... + J_M * m~_M
+2. C = J_1 * msg_1 + ... + J_M * msg_M + Q_2 * secret_prover_blind
+3. Cbar = J_1 * m~_1 + ... + J_M * m~_M + Q_2 * s~
 
 4. challenge = calculate_blind_challenge(C, Cbar, blind_generators,
                                                                  api_id)
@@ -627,6 +639,10 @@ Inputs:
 - api_id (OPTIONAL), octet string. If not supplied it defaults to the
                      empty octet string ("").
 
+Parameters:
+
+- Q2, a point of G1, defined by the ciphersuite.
+
 Outputs:
 
 - result: either VALID or INVALID
@@ -638,12 +654,12 @@ Deserialization:
 2. M = length(commitments)
 3. (m^_1, ..., m^_M) = commitments
 
-4. if length(blind_generators) != M + 1, return INVALID
-5. (Q_2, J_1, ..., J_M) = blind_generators
+4. if length(blind_generators) != M, return INVALID
+5. (J_1, ..., J_M) = blind_generators
 
 Procedure:
 
-1. Cbar = Q_2 * s^ + J_1 * m^_1 + ... + J_M * m^_M + commitment * (-cp)
+1. Cbar = J_1 * m^_1 + ... + J_M * m^_M + Q_2 * s^ + commitment * (-cp)
 2. cv = calculate_blind_challenge(commitment, Cbar, blind_generators,
                                                                  api_id)
 3. if cv != cp, return INVALID
@@ -710,55 +726,181 @@ Procedure:
 5. return BBS.signature_to_octets((A, e))
 ```
 
-# Utilities
-
-## Prepare Parameters
+### Core Proof Generation
 
 ```
-(message_scalars, generators) = prepare_parameters(
-                                                messages,
-                                                committed_messages,
-                                                generators_number,
-                                                blind_generators_number,
-                                                secret_prover_blind,
-                                                api_id)
+proof = CoreProofGen(PK, signature, generators, header, ph, messages,
+                             disclosed_indexes, commits_indexes, api_id)
 
 Inputs:
 
-- messages (OPTIONAL), a vector of octet strings. If not supplied, it
-                       defaults to the empty array "()".
-- committed_messages (OPTIONAL), a vector of octet strings. If not
-                                 supplied, it defaults to the empty
-                                 array "()".
-- secret_prover_blind (OPTIONAL), a scalar value or NONE. If not
-                                  supplied it defaults to zero "0".
+- PK (REQUIRED), an octet string of the form outputted by the SkToPk
+                 operation.
+- signature (REQUIRED), an octet string of the form outputted by the
+                        Sign operation.
+- generators (REQUIRED), vector of pseudo-random points in G1.
+- header (OPTIONAL), an octet string containing context and application
+                     specific information. If not supplied, it defaults
+                     to the empty octet string ("").
+- ph (OPTIONAL), an octet string containing the presentation_header. If
+                 not supplied, it defaults to the empty octet
+                 string ("").
+- messages (OPTIONAL), a vector of scalars representing the messages.
+                       If not supplied, it defaults to the empty
+                       array ("()").
+- disclosed_indexes (OPTIONAL), vector of non-negative integers in
+                                ascending order. Indexes of disclosed
+                                messages. If not supplied, it defaults
+                                to the empty array ("()").
+- commits_indexes (OPTIONAL), vector of non-negative integers in
+                              ascending order. Indexes of disclosed
+                              messages. If not supplied, it defaults
+                              to the empty array ("()").
 - api_id (OPTIONAL), an octet string. If not supplied it defaults to the
                      empty octet string ("").
 
 Outputs:
 
-- (message_scalars, generators), A vector message_scalars of scalar
-                                 values and a vector generators of
-                                 points from the G1 subgroup; or INVALID
+- proof, an octet string; or INVALID.
+
+Deserialization:
+
+1. signature_result = octets_to_signature(signature)
+2. if signature_result is INVALID, return INVALID
+
+3*. if commits_indexes is not a list of integers from 0 to L in
+    accenting order, return INVALID
+4*. if disclosed_indexes is not a list of integers from 0 to L in
+    accenting order, return INVALID
 
 Procedure:
 
-1. message_scalars = BBS.messages_to_scalars(messages, api_id)
+1.  init_res = BBS.ProofInit(PK,
+                             signature_result,
+                             generators,
+                             header,
+                             messages,
+                             disclosed_indexes,
+                             api_id)
+2.  if init_res is INVALID, return INVALID
 
-2. committed_message_scalars = ()
 
-3. if secret_prover_blind != NONE;
-                   committed_message_scalars.append(secret_prover_blind)
-4. committed_message_scalars.append(BBS.messages_to_scalars(
-                                            committed_messages, api_id))
+// Calculate the commitments and initiate the correctness proof
+3.  N = length(commits_indexes)
+4.  (s_1, ..., s_N, s~_1, ..., s~_N) = calculate_random_scalars(2*N)
+5.  init_random_scalars = init_res.random_scalars
 
-5. generators = BBS.create_generators(generators_number, api_id)
-6. blind_generators = BBS.create_generators(
-                            blind_generators_number, "BLIND_" || api_id)
+6.  for i in 1...N,
+7.      idx = commits_indexes[i]
+8.      C_i = Y_0 * s_i + Y_1 * messages[idx]
+9.      C~_i = Y_0 * s~_i + Y_1 * init_random_scalars[idx + 5]
 
-7. return (message_scalars.append(committed_message_scalars),
-                                    generators.append(blind_generators))
+10. commit_init_res = {commits: (C_1, ..., C_N),
+                       commits_proofs: (C~_1, ...,C~_N)
+                       indexes: commits_indexes}
+
+11. challenge = ProofChallengeCalculate(init_res, commit_init_res, ph, api_id)
+12. if challenge is INVALID, return INVALID
+
+13. bbs_proof = BBS.ProofFinalize(init_res, challenge)
+
+// Finalize the commitment correctness proof
+14. for i in 1...N, s^_i =  s~_i + challenge * s_i
+15. commits_proof = (C_1, ..., C_N, s^_1, ..., s^N)
+
+16. return proof_to_octets(length(bbs_proof), bbs_proof,
+                           length(disclosed_indexes), disclosed_indexes,
+                           length(commits_proof), commits_proof
+                           length(commits_indexes), commits_indexes)
 ```
+
+### Core Proof Verification
+
+```
+result = CoreProofVerify(PK, proof, generators, header, ph,
+                                             disclosed_messages, api_id)
+
+Inputs:
+
+- PK (REQUIRED), an octet string of the form outputted by the SkToPk
+                 operation.
+- bbs_proof (REQUIRED), an array with four octet strings of the form
+                    outputted by the ProofGen operation.
+- commits_proof (REQUIRED), an tuple consisting from an array of points
+                            in G1 and an array of scalars of the same
+                            length. Both arrays can be empty.
+- generators (REQUIRED), vector of pseudo-random points in G1.
+- header (OPTIONAL), an optional octet string containing context and
+                     application specific information. If not supplied,
+                     it defaults to the empty octet string ("").
+- ph (OPTIONAL), an octet string containing the presentation_header. If
+                 not supplied, it defaults to the empty octet
+                 string ("").
+- disclosed_messages (OPTIONAL), a vector of scalars representing the
+                                 messages. If not supplied, it defaults
+                                 to the empty array ("()").
+- api_id (OPTIONAL), an octet string. If not supplied it defaults to the
+                     empty octet string ("").
+
+Parameters:
+
+- P1, fixed point of G1, defined by the ciphersuite.
+
+Outputs:
+
+- result, either VALID or INVALID.
+
+Deserialization:
+
+1.  W = octets_to_pubkey(PK)
+2.  if W is INVALID, return INVALID
+
+3.  proof_res = octets_to_proof(proof)
+4.  if proof_res is INVALID, return INVALID
+5.  (bbs_proof_res, disclosed_indexes,
+                         commits_proof_res, commits_indexes) = proof_res
+
+6.  (Abar, Bbar, D, e^, r1^, r3^, hats, cp) = bbs_proof_res
+7.  (commits, commits_proof) = commits_proof_res
+
+8.  if length(commits) != length(commits_proof) or
+          if length(commits) != length(commits_indexes) return INVALID
+9.  L = length(generators)
+
+10. if commits_indexes is not a list of integers from 0 to L in
+    accenting order, return INVALID
+
+11. if disclosed_indexes is not a list of integers from 0 to L in
+    accenting order, return INVALID
+
+12. (C_1, ... C_N) = commits
+13. (s^_1, ..., s^_N) = commits_proof
+
+Procedure:
+
+1.  init_res = ProofVerifyInit(PK, proof_result, generators, header,
+                                                   disclosed_messages,
+                                                   disclosed_indexes,
+                                                   api_id)
+2.  if init_res is INVALID, return INVALID
+
+3.  for i in 1...length(commits),
+4.      idx = commit_indexes[i]
+5.      C^_i = Y_0 * s^_i + Y_1 * hats[idx] - C_i * cp
+
+6.  commit_init_res = {commits: (C_1, ..., C_N),
+                       commits_proofs: (C^_1, ...,C^_N)
+                       indexes: commit_indexes}
+
+7.  challenge = ProofChallengeCalculate(init_res, commit_init_res, ph, api_id)
+8.  if challenge is INVALID, return INVALID
+
+9.  if cp != challenge, return INVALID
+10. if h(Abar, W) * h(Bbar, -BP2) != Identity_GT, return INVALID
+11. return VALID
+```
+
+# Utilities
 
 ## Calculate B value
 
@@ -899,6 +1041,148 @@ Procedure:
 19. return (C, (s_0, msg_commitments, s_j))
 ```
 
+### Proof to Octets
+
+```
+proof_octets = proof_to_octets(bbs_proof_len, bbs_proof,
+                              disclosed_indexes_len, disclosed_indexes
+                              commits_proof_len, commits_proof,
+                              commits_indexes_len, commits_indexes)
+
+Inputs:
+
+- bbs_proof_len (REQUIRED), a non negative integer.
+- bbs_proof (REQUIRED), an array comprising from 3 points in G1,
+                        3 Scalars, an array of scalars and one
+                        additional Scalar at the end.
+- disclosed_indexes_len (REQUIRED), a non negative integer.
+- disclosed_indexes (REQUIRED), an array of non negative integers.
+- commits_proof_len (REQUIRED), a non negative integer.
+- commits_proof (REQUIRED), a tuple with two arrays, the first with
+                            points in G1 and the second with Scalars
+- commits_indexes_len (REQUIRED), a non negative integer.
+- commits_indexes  (REQUIRED), an array of non negative integers.
+
+Outputs:
+
+- proof_octets, an octet string.
+
+Procedure:
+
+1. oct = I2OSP(bbs_proof_len) || serialize(bbs_proof) ||
+         I2OSP(disclosed_indexes_len) || serialize(disclosed_indexes) ||
+         I2OSP(commits_proof_len) || serialize(commits_proof) ||
+         I2OSP(commits_indexes_len) || serialize(commits_indexes)
+2. return oct
+
+```
+
+### Octets to Proof
+
+The `octets_to_proof` procedure, on input an octet string will return a BBS with commits proof comprised from the following elements
+
+1. A BBS Proof
+2. The indexes that the disclosed messages have in the list of signed messages (both known to the issuer and known only to the prover)
+3. A tuple with two arrays. One array of points in G1, corresponding to the message commits and one array with scalars, corresponding to the proof of correctness of the previous commitments.
+4. The indexes that the committed messages have in the list of signed messages (both known to the issuer and known only to the prover)
+
+```
+proof = octets_to_proof(proof_octets)
+
+- proof_octets (REQUIRED), an octet string of the form outputted from
+                           the proof_to_octets operation.
+
+Parameters:
+
+- int_octet_length = 8. The number of octets of encoded integers.
+- r, non-negative integer. The prime order of the G1 and G2 groups,
+      defined by the ciphersuite.
+- octet_scalar_length, non-negative integer. The length of a scalar
+                       octet representation, defined by the ciphersuite.
+- octet_point_length, non-negative integer. The length of a point in G1
+                      octet representation, defined by the ciphersuite.
+- subgroup_check_G1, operation that on input a point P returns VALID if
+                     P is a valid point of the G1 subgroup, otherwise it
+                     returns INVALID (see (#notation)).
+
+Outputs:
+
+- proof, a proof value in the form described above or INVALID
+
+Procedure:
+
+1.  sidx = 0
+2.  eidx = int_octet_length - 1
+3.  if length(proof_octets) < eidx, return INVALID
+4.  bbs_proof_len = OS2IP(proof_octets[sidx..eidx])
+
+5.  sidx = eidx + 1
+6.  eidx = sidx + bbs_proof_len
+7.  if length(proof_octets) < eidx, return INVALID
+8.  bbs_proof_octs = proof_octets[sidx..eidx]
+9.  bbs_proof = BBS.octets_to_proof(bbs_proof_octs)
+10. if bbs_proof is INVALID, return INVALID
+
+// Desirialize disclosed_indexes
+11. sidx = eidx + 1
+12. eidx = sidx + int_octet_length
+13. if length(proof_octets) < eidx, return INVALID
+14. U = OS2IP(proof_octets[sidx..eidx]) // disclosed_indexes len
+15. if length(proof_octets) < eidx + U * int_octet_length,
+                                                          return INVALID
+
+16. for i in (1...U)
+17.     sidx = eidx + 1
+18.     eidx = sidx + int_octet_length
+19.     idx_i = OS2IP(proof_octets[sidx..eidx])
+
+20. disclosed_indexes = (idx_1, ..., idx_U)
+
+// Desirialize commits_proof
+21. sidx = eidx + 1
+22. eidx = sidx + int_octet_length
+23. if length(proof_octets) < eidx, return INVALID
+24. N = OS2IP(proof_octets[sidx..eidx]) // commits_proof len
+
+25. len_floor = eidx + N * (octet_point_length + octet_scalar_length)
+26. if length(proof_octets) < len_floor, return INVALID
+
+27. for i in (1..N)
+28.     sidx = eidx + 1
+29.     eidx = sidx + octet_point_length
+30.     C_i = BBS.octets_to_point_E1(proof_octets[sidx..eidx])
+31.     if C_i is INVALID or Identity_G1, return INVALID
+32.     if subgroup_check_G1(C_i) returns INVALID, return INVALID
+
+33. for i in (1..N)
+34.     sidx = eidx + 1
+35.     eidx + octet_scalar_length
+36.     s_i = OS2IP(proof_octetss[sidx..eidx])
+37.     if s_i = 0 or if s_i >= r, return INVALID
+
+38. commits_proof = ((C_1, ..., C_N), (s_1, ..., s_N))
+
+// Desirialize commits_indexes
+39. sidx = eidx + 1
+40. eidx = sidx + int_octet_length
+41. if length(proof_octets) < eidx, return INVALID
+42. N' = OS2IP(proof_octets[sidx..eidx]) // commits_indexes len
+
+43. if length(proof_octets) < eidx + N' * int_octet_length,
+                                                          return INVALID
+44. for i in (1...N')
+45.     sidx = eidx + 1
+46.     eidx = sidx + int_octet_length
+47.     cidx_i = OS2IP(proof_octets[sidx..eidx])
+
+48. commits_indexes = (cidx_1, ..., cidx_N')
+49. if N' not equal to N, return INVALID
+50. if length(proof) not equal to eidx, return INVALID
+51. return (bbs_proof, disclosed_indexes,
+            commits_proof, commits_indexes)
+```
+
+
 # Privacy Considerations
 
 The privacy considerations discussed in [Section 5](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-09.html#name-privacy-considerations) of [@!I-D.irtf-cfrg-bbs-signatures] apply to this draft as well.
@@ -908,6 +1192,12 @@ The privacy considerations discussed in [Section 5](https://www.ietf.org/archive
 When a Prover submits a commitment to the Signer, the Prover's committed messages are "perfectly" (statistically) hidden from the Signer. However, the proof of the committed messages, which is also sent from the Prover to the Signer, contains the number of committed messages.
 
 In the proof sent from the Prover to the Verifier the number of committed messages can be inferred. In addition, indexes of disclosed committed messages are revealed to the Verifier. In [Section 5.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-09.html#name-total-number-and-index-of-s) of [@!I-D.irtf-cfrg-bbs-signatures] the threats to unlinkability and mitigations for this information with respect to Signer messages is discussed. These threats and mitigations apply to the Prover total number of committed messages and the disclosed committed indexes as well.
+
+# Application Considerations
+
+## Input Validity Checks
+
+Applications using `CoreProofGen` (as defined in (#core-proof-generation)) only as a subroutine of `BlindProofGen` (as defined in (#proof-generation)), can skip the checks of the `commits_indexes` and `disclosed_indexes` inputs, performed at step `3*` and `4*` of the `Deserialization` section of that operation, since the inputs provided by the calling operation (i.e., `BlindProofGen`) will always have the correct form. However, if applications intend to use `CoreProofGen` in different contexts (and not necesearily only call it from `BlindProofGen`), those checks must be applied.
 
 # Security Considerations
 
