@@ -728,6 +728,19 @@ Procedure:
 
 ### Core Proof Generation
 
+The Proof Generation with extension, combines the BBS Proof Generation operations (i.e., `BBS.ProofInit` and `BBS.ProofFinalize`) with a proof of correctness of commitments over some of the signed messages. The commitments proof of correctness will similarly constitute of a initialization and finalization phase. The two proof protocols will use a common challenge, returned by the `ProofChallengeCalculate` operation described in (#blind-challenge-calculation). The result of the commitments proof of correctness initialization process will be an object of the following form
+
+```
+CommitInitRes = {
+  commits: (REQUIRED) Array of points in G1,
+  commits_proofs: (REQUIRED) Array of Scalars,
+  indexes: (REQUIRED) Array of numbers
+}
+```
+
+Following, we describe the Proof Generation Procedure.
+
+
 ```
 proof = CoreProofGen(PK, signature, generators, header, ph, messages,
                              disclosed_indexes, commits_indexes, api_id)
@@ -806,7 +819,7 @@ Procedure:
 
 // Finalize the commitment correctness proof
 14. for i in 1...N, s^_i =  s~_i + challenge * s_i
-15. commits_proof = (C_1, ..., C_N, s^_1, ..., s^N)
+15. commits_proof = ((C_1, ..., C_N), (s^_1, ..., s^N))
 
 16. return proof_to_octets(length(bbs_proof), bbs_proof,
                            length(disclosed_indexes), disclosed_indexes,
@@ -938,35 +951,67 @@ Procedure:
 ## Blind Challenge Calculation
 
 ```
-challenge = calculate_blind_challenge(C, Cbar, generators, api_id)
+challenge = calculate_blind_challenge(bbs_init_res, commit_init_res, ph, api_id)
 
 Inputs:
-
-- C (REQUIRED), a point of G1.
-- Cbar (REQUIRED), a point of G1.
-- generators (REQUIRED), an array of points from G1, of length at
-                         least 1.
-- api_id (OPTIONAL), octet string. If not supplied it defaults to the
+- init_res (REQUIRED), a ProofInitRes object representing the value
+                       returned after initializing the proof generation
+                       or verification operations.
+- commit_init_res (REQUIRED), a CommitInitRes representing the value
+                              returned after initializing the commits
+                              proof of correctness generation or
+                              verification.
+- ph (OPTIONAL), an octet string. If not supplied, it must default to
+                 the empty octet string ("").
+- api_id (OPTIONAL), an octet string. If not supplied it defaults to the
                      empty octet string ("").
 
-Definition:
+Outputs:
 
-- blind_challenge_dst, an octet string representing the domain
-                       separation tag: api_id || "H2S_" where
-                       ciphersuite_id is defined by the ciphersuite and
-                       "H2S_" is an ASCII string composed of 4 bytes.
+- challenge, a scalar.
+
+Definitions:
+
+1. hash_to_scalar_dst, an octet string representing the domain
+                       separation tag: api_id || "H2S_" where "H2S_" is
+                       an ASCII string comprised of 4 bytes.
 
 Deserialization:
 
-1. if length(generators) == 0, return INVALID
-2. M = length(generators) - 1
+1.  if validate_init_res(init_res) returns INVALID, return INVALID
+2.  (Abar, Bbar, D, T1, T2, domain) = (init_res.Abar,
+                                       init_res.Bbar,
+                                       init_res.D,
+                                       init_res.T1,
+                                       init_res.T2,
+                                       init_res.domain)
+
+3.  R = length(init_res.disclosed_indexes)
+4.  (i1, ..., iR) = init_res.disclosed_indexes
+5.  (msg_i1, ..., msg_iR) = init_res.disclosed_messages
+
+6.  N = length(commit_init_res.commits)
+7.  if length(commit_init_res.commits_proofs) != N, return INVALID
+8.  if length(commit_init_res.commits_indexes) != N, return INVALID
+9.  (C_1, ..., C_N) = commit_init_res.commits
+10. (C~_1, ...,C~_N) = commit_init_res.commits_proofs
+11. (i_1, ..., i_N) = commit_init_res.commits_indexes
+
+ABORT if:
+
+1. R > 2^64 - 1
+2. length(ph) > 2^64 - 1
 
 Procedure:
 
-1. c_arr = (M)
-2. c_arr.append(generators)
-3. c_octs = BBS.serialize(c_arr.append(C, Cbar))
-4. return BBS.hash_to_scalar(c_octs, blind_challenge_dst)
+1. c_arr = (R, i1, msg_i1, i2, msg_i2, ..., iR, msg_iR, Abar, Bbar,
+                                                      D, T1, T2, domain)
+2. c_octs = serialize(c_arr)
+
+3. c_octs = c_octs || serialize(N, i_1, C_1, C~_1, ..., i_N, C_N, C~_N)
+
+5. c_octs = c_octs || I2OSP(length(ph), 8) || ph
+6. return hash_to_scalar(c_octs, hash_to_scalar_dst)
 ```
 
 ## Serialize
