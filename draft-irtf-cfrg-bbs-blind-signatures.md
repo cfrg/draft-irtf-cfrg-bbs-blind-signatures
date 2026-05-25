@@ -1562,26 +1562,6 @@ m_tildes = {{ $commitmentFixtures.bls12-381-shake-256.commit001.trace.random_sca
 commitmentWithProof = {{ $commitmentFixtures.bls12-381-shake-256.commit002.commitmentWithProof }}
 ```
 
-### Blind Generators
-
-```
-api_id = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.api_id }}
-
-P1 = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.P1 }}
-Q1 = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.Q1 }}
-
-Blind Generators = {
-
-J_0 = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.MsgGenerators[0] }}
-J_1 = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.MsgGenerators[1] }}
-J_2 = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.MsgGenerators[2] }}
-J_3 = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.MsgGenerators[3] }}
-J_4 = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.MsgGenerators[4] }}
-
-}
-```
-
-
 ### Signature Test Vectors
 
 #### valid no prover committed messages, no signer messages signature
