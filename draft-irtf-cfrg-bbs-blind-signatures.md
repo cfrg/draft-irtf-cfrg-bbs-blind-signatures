@@ -604,7 +604,7 @@ Procedure:
                                                                  api_id)
 
 5. s^ = s~ + secret_prover_blind * challenge
-6. for m in (1, 2, ..., M): m^_i = m~_i + msg_i * challenge
+6. for i in (1, 2, ..., M): m^_i = m~_i + msg_i * challenge
 
 7. proof = (s^, (m^_1, ..., m^_M), challenge)
 8. commit_with_proof = commitment_with_proof_to_octets(C, proof)
