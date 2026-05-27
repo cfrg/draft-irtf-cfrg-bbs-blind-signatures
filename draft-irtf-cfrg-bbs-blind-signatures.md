@@ -790,7 +790,7 @@ Procedure:
 
 1. B = Q_1 + H_1 * msg_1 + ... + H_L * msg_L + commitment
 2. if B is Identity_G1, return INVALID
-3. return [B]
+3. return (B)
 ```
 
 ## Blind Challenge Calculation
@@ -846,7 +846,7 @@ Outputs:
 
 Procedure:
 
-1. commitment_octs = BBS.serialize([commitment])
+1. commitment_octs = BBS.serialize((commitment))
 2. if commitment_octs is INVALID, return INVALID
 3. proof_octs = BBS.serialize(proof)
 4. if proof_octs is INVALID, return INVALID
