@@ -1923,7 +1923,7 @@ Outputs:
 
 Deserialization:
 
-1. proof_len_floor = 2 * octet_point_length + 3 * octet_scalar_length
+1. proof_len_floor = 3 * octet_point_length + 4 * octet_scalar_length
 2. if length(proof) &lt; proof_len_floor, return INVALID
 3. U = floor((length(proof) - proof_len_floor) / octet_scalar_length)
 4. total_no_messages = length(disclosed_indexes) +
