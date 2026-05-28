@@ -5,8 +5,8 @@
 CFRG                                                            V. Kalos
 Internet-Draft                                                     MATTR
 Intended status: Informational                              G. Bernstein
-Expires: 28 February 2026                              Grotto Networking
-                                                          27 August 2025
+Expires: 29 November 2026                              Grotto Networking
+                                                             28 May 2026
 
 
                           Blind BBS Signatures
@@ -44,11 +44,11 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 28 February 2026.
+   This Internet-Draft will expire on 29 November 2026.
 
 Copyright Notice
 
-   Copyright (c) 2025 IETF Trust and the persons identified as the
+   Copyright (c) 2026 IETF Trust and the persons identified as the
    document authors.  All rights reserved.
 
    This document is subject to BCP 78 and the IETF Trust's Legal
@@ -1085,9 +1085,10 @@ Procedure:
 
  1. commitment_octs = BBS.serialize(commitment)
  2. if commitment_octs is INVALID, return INVALID
- 3. proof_octs = BBS.serialize(proof)
- 4. if proof_octs is INVALID, return INVALID
- 5. return commitment_octs || proof_octs
+ 3. (s^, (m^_1, ..., m^_M), challenge) = proof
+ 4. proof_octs = BBS.serialize((s^, m^_1, ..., m^_M, challenge))
+ 5. if proof_octs is INVALID, return INVALID
+ 6. return commitment_octs || proof_octs
 
 5.4.2.  Octet to Commitment with Proof
 
@@ -2281,9 +2282,9 @@ proof = {{ $proofFixtures.bls12-381-shake-256.proof008.proof }}
    [I-D.irtf-cfrg-bbs-signatures]
               Looker, T., Kalos, V., Whitehead, A., and M. Lodder, "The
               BBS Signature Scheme", Work in Progress, Internet-Draft,
-              draft-irtf-cfrg-bbs-signatures-09, 7 July 2025,
+              draft-irtf-cfrg-bbs-signatures-10, 8 January 2026,
               <https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-
-              bbs-signatures-09>.
+              bbs-signatures-10>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
