@@ -702,7 +702,7 @@ Deserialization:
 
 Procedure:
 
-1. domain = BBS.calculate_domain(PK, Q_1, (H_1, ..., H_L, J_1, ..., J_M),
+1. domain = BBS.calculate_domain(PK, Q_1, (H_1, ..., H_L, Q_2, J_1, ..., J_M),
                                                          header, api_id)
 2. e_octs = BBS.serialize((SK, B, domain))
 3. e = BBS.hash_to_scalar(e_octs, signature_dst)
@@ -788,7 +788,7 @@ Deserialization:
 
 Procedure:
 
-1. B = Q_1 + H_1 * msg_1 + ... + H_L * msg_L + commitment
+1. B = P1 + Q_1 * domain + H_1 * msg_1 + ... + H_L * msg_L + commitment
 2. if B is Identity_G1, return INVALID
 3. return B
 ```
