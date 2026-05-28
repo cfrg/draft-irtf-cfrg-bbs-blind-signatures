@@ -947,7 +947,7 @@ Deserialization:
 
 Procedure:
 
-1. domain = BBS.calculate_domain(PK, Q_1, (H_1, ..., H_L, J_1, ..., J_M),
+1. domain = BBS.calculate_domain(PK, Q_1, (H_1, ..., H_L, Q_2, J_1, ..., J_M),
                                                          header, api_id)
 2. e_octs = BBS.serialize((SK, B, domain))
 3. e = BBS.hash_to_scalar(e_octs, signature_dst)
@@ -1004,34 +1004,34 @@ Procedure:
 
 5.2.  Calculate B value
 
-  res  = B_calculate(generators, commitment, message_scalars)
+ res  = B_calculate(generators, commitment, message_scalars)
 
-  Inputs:
+ Inputs:
 
-  - generators (REQUIRED), an array of at least one point from the
-                           G1 group.
-  - commitment (OPTIONAL), a point from the G1 group. If not supplied it
-                           defaults to the Identity_G1 point.
-  - message_scalars (OPTIONAL), an array of scalar values. If not
-                                supplied, it defaults to the empty
-                                array ("()").
+ - generators (REQUIRED), an array of at least one point from the
+                          G1 group.
+ - commitment (OPTIONAL), a point from the G1 group. If not supplied it
+                          defaults to the Identity_G1 point.
+ - message_scalars (OPTIONAL), an array of scalar values. If not
+                               supplied, it defaults to the empty
+                               array ("()").
 
-  Outputs:
+ Outputs:
 
-  - res, an array of a single element from the G1 subgroup, or INVALID.
+ - res, an array of a single element from the G1 subgroup, or INVALID.
 
-  Deserialization:
+ Deserialization:
 
-  1. L = length(message_scalars)
-  2. if length(generators) != L + 1, return INVALID
-  3. (Q_1, H_1, ..., H_L) = generators
-  4. (msg_1, ..., msg_L) = message_scalars
+ 1. L = length(message_scalars)
+ 2. if length(generators) != L + 1, return INVALID
+ 3. (Q_1, H_1, ..., H_L) = generators
+ 4. (msg_1, ..., msg_L) = message_scalars
 
-  Procedure:
+ Procedure:
 
-  1. B = Q_1 + H_1 * msg_1 + ... + H_L * msg_L + commitment
-  2. if B is Identity_G1, return INVALID
-  3. return B
+ 1. B = P1 + Q_1 * domain + H_1 * msg_1 + ... + H_L * msg_L + commitment
+ 2. if B is Identity_G1, return INVALID
+ 3. return B
 
 5.3.  Blind Challenge Calculation
 
