@@ -308,7 +308,7 @@ Deserialization:
 // calculate the number of blind generators used by the commitment,
 // if any.
 2. M = length(commitment_with_proof)
-3. if M != 0, M = M - octet_point_length - octet_scalar_length
+3. if M != 0, M = M - octet_point_length - 2 * octet_scalar_length
 4. M = M / octet_scalar_length
 5. if M < 0, return INVALID
 
