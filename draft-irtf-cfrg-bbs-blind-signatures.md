@@ -848,9 +848,10 @@ Procedure:
 
 1. commitment_octs = BBS.serialize(commitment)
 2. if commitment_octs is INVALID, return INVALID
-3. proof_octs = BBS.serialize(proof)
-4. if proof_octs is INVALID, return INVALID
-5. return commitment_octs || proof_octs
+3. (s^, (m^_1, ..., m^_M), challenge) = proof
+4. proof_octs = BBS.serialize((s^, m^_1, ..., m^_M, challenge))
+5. if proof_octs is INVALID, return INVALID
+6. return commitment_octs || proof_octs
 ```
 
 ### Octet to Commitment with Proof
