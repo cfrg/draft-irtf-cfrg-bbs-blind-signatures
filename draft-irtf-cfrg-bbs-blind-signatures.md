@@ -370,7 +370,6 @@ Parameters:
 - api_id, the octet string ciphersuite_id || "BLIND_H2G_HM2S_", where
           ciphersuite_id is defined by the ciphersuite and
           "BLIND_H2G_HM2S_"is an ASCII string composed of 15 bytes.
-- Q2, a point of G1, defined by the ciphersuite.
 
 Outputs:
 
@@ -390,7 +389,7 @@ Procedure:
 
 4. res = BBS.CoreVerify(PK,
                         signature,
-                        generators.append(blind_generators).append(Q2),
+                        generators.append(blind_generators),
                         header,
                         message_scalars.append(secret_prover_blind),
                         api_id)
@@ -464,7 +463,6 @@ Parameters:
 - api_id, the octet string ciphersuite_id || "BLIND_H2G_HM2S_", where
           ciphersuite_id is defined by the ciphersuite and
           "BLIND_H2G_HM2S_"is an ASCII string composed of 15 bytes.
-- Q2, a point of G1, defined by the ciphersuite.
 
 Outputs:
 
@@ -493,7 +491,7 @@ Procedure:
 
 4. proof = CoreProofGen(PK,
                         signature,
-                        generators.append(blind_generators).append(Q_2),
+                        generators.append(blind_generators),
                         header,
                         ph,
                         message_scalars.append(secret_prover_blind),
@@ -543,7 +541,6 @@ Parameters:
           ciphersuite_id is defined by the ciphersuite and "H2G_HM2S_"is
           an ASCII string comprised of 9 bytes.
 - (octet_point_length, octet_scalar_length), defined by the ciphersuite.
-- Q2, a point of G1, defined by the ciphersuite.
 
 Outputs:
 
@@ -594,17 +591,13 @@ Inputs:
 - api_id (OPTIONAL), an octet string. If not supplied it defaults to the
                      empty octet string ("").
 
-Parameters:
-
-- Q2, a point of G1, defined by the ciphersuite.
 
 Deserialization:
 
 1. M = length(committed_messages)
-2. if length(blind_generators) != M, return INVALID
-3. (J_1, ..., J_M) = blind_generators
-4. (msg_1, ..., msg_M) = committed_scalars    dddd
-
+2. if length(blind_generators) != M + 1, return INVALID
+3. (Q_2, J_1, ..., J_M) = blind_generators
+4. (msg_1, ..., msg_M) = committed_scalars
 Procedure:
 
 1. (secret_prover_blind, s~, m~_1, ..., m~_M)
@@ -639,9 +632,6 @@ Inputs:
 - api_id (OPTIONAL), octet string. If not supplied it defaults to the
                      empty octet string ("").
 
-Parameters:
-
-- Q2, a point of G1, defined by the ciphersuite.
 
 Outputs:
 
@@ -655,7 +645,7 @@ Deserialization:
 3. (m^_1, ..., m^_M) = commitments
 
 4. if length(blind_generators) != M, return INVALID
-5. (J_1, ..., J_M) = blind_generators
+5. (Q_2, J_1, ..., J_M) = blind_generators
 
 Procedure:
 
@@ -771,6 +761,11 @@ Inputs:
                               to the empty array ("()").
 - api_id (OPTIONAL), an octet string. If not supplied it defaults to the
                      empty octet string ("").
+
+Parameters:
+
+- Y_0 and Y_1, fixed points of G1 computed as
+  (Y_0, Y_1) = BBS.create_generators("COM_DIS_" || api_id)
 
 Outputs:
 
@@ -1169,7 +1164,7 @@ Procedure:
 9.  bbs_proof = BBS.octets_to_proof(bbs_proof_octs)
 10. if bbs_proof is INVALID, return INVALID
 
-// Desirialize disclosed_indexes
+// Deserialize disclosed_indexes
 11. sidx = eidx + 1
 12. eidx = sidx + int_octet_length
 13. if length(proof_octets) < eidx, return INVALID
@@ -1184,7 +1179,7 @@ Procedure:
 
 20. disclosed_indexes = (idx_1, ..., idx_U)
 
-// Desirialize commits_proof
+// Deserialize commits_proof
 21. sidx = eidx + 1
 22. eidx = sidx + int_octet_length
 23. if length(proof_octets) < eidx, return INVALID
@@ -1227,7 +1222,6 @@ Procedure:
 51. return (bbs_proof, disclosed_indexes,
             commits_proof, commits_indexes)
 ```
-
 
 # Privacy Considerations
 
