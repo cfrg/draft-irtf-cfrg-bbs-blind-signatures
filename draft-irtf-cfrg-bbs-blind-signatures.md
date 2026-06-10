@@ -251,7 +251,7 @@ Procedure:
 6. validation_res = CoreCommitVerify(commit, commit_proof,
                                                blind_generators, api_id)
 7. if validation_res is INVALID, return INVALID
-8. commitment
+8. return commit
 ```
 
 ## Blind BBS Signatures Interface
@@ -308,7 +308,7 @@ Deserialization:
 // calculate the number of blind generators used by the commitment,
 // if any.
 2. M = length(commitment_with_proof)
-3. if M != 0, M = M - octet_point_length - octet_scalar_length
+3. if M != 0, M = M - octet_point_length - 2 * octet_scalar_length
 4. M = M / octet_scalar_length
 5. if M < 0, return INVALID
 
@@ -616,7 +616,7 @@ Procedure:
                                                                  api_id)
 
 5. s^ = s~ + secret_prover_blind * challenge
-6. for m in (1, 2, ..., M): m^_i = m~_1 + msg_i * challenge
+6. for i in (1, 2, ..., M): m^_i = m~_i + msg_i * challenge
 
 7. proof = (s^, (m^_1, ..., m^_M), challenge)
 8. commit_with_proof = commitment_with_proof_to_octets(C, proof)
@@ -718,7 +718,7 @@ Deserialization:
 
 Procedure:
 
-1. domain = BBS.calculate_domain(PK, Q_1, (H_1, ..., H_L, J_1, ..., J_M),
+1. domain = BBS.calculate_domain(PK, Q_1, (H_1, ..., H_L, Q_2, J_1, ..., J_M),
                                                          header, api_id)
 2. e_octs = BBS.serialize((SK, B, domain))
 3. e = BBS.hash_to_scalar(e_octs, signature_dst)
@@ -943,9 +943,9 @@ Deserialization:
 
 Procedure:
 
-1. B = Q_1 + H_1 * msg_1 + ... + H_L * msg_L + commitment
+1. B = P1 + Q_1 * domain + H_1 * msg_1 + ... + H_L * msg_L + commitment
 2. if B is Identity_G1, return INVALID
-3. return B
+3. return (B)
 ```
 
 ## Blind Challenge Calculation
@@ -1033,14 +1033,15 @@ Outputs:
 
 Procedure:
 
-1. commitment_octs = BBS.serialize(commitment)
+1. commitment_octs = BBS.serialize((commitment))
 2. if commitment_octs is INVALID, return INVALID
-3. proof_octs = BBS.serialize(proof)
-4. if proof_octs is INVALID, return INVALID
-5. return commitment_octs || proof_octs
+3. (s^, (m^_1, ..., m^_M), challenge) = proof
+4. proof_octs = BBS.serialize((s^, m^_1, ..., m^_M, challenge))
+5. if proof_octs is INVALID, return INVALID
+6. return commitment_octs || proof_octs
 ```
 
-### Octet to Commitment with Proof
+### Octets to Commitment with Proof
 
 ```
 commitment = octets_to_commitment_with_proof(commitment_octs)
@@ -1066,7 +1067,7 @@ Procedure:
 2.  if length(commitment_octs) < commit_len_floor, return INVALID
 
 3.  C_octets = commitment_octs[0..(octet_point_length - 1)]
-4.  C = octets_to_point_g1(C_octets)
+4.  C = octets_to_point_E1(C_octets)
 5.  if C is INVALID, return INVALID
 6.  if C == Identity_G1, return INVALID
 
@@ -1074,15 +1075,15 @@ Procedure:
 8.  index = octet_point_length
 9.  while index < length(commitment_octs):
 10.     end_index = index + octet_scalar_length - 1
-11.     s_j = OS2IP(commitment_octets[index..end_index])
+11.     s_j = OS2IP(commitment_octs[index..end_index])
 12.     if s_j = 0 or if s_j >= r, return INVALID
 13.     index += octet_scalar_length
 14.     j += 1
 
 15. if index != length(commitment_octs), return INVALID
 16. if j < 2, return INVALID
-17. msg_commitment = ()
-18. if j >= 3, set msg_commitment = (s_2, ..., s_(j-1))
+17. msg_commitments = ()
+18. if j >= 3, set msg_commitments = (s_1, ..., s_(j-1))
 19. return (C, (s_0, msg_commitments, s_j))
 ```
 
