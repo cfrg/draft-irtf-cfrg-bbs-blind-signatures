@@ -39,16 +39,20 @@ This document defines an extension to the BBS Signature scheme that supports bli
 
 # Introduction
 
-Blind signatures are cryptographic protocols that allow for a signer to create a signature over content without actually knowing the content. They form a useful cryptographic primitive particularly in situations that are privacy sensitive. The concept has existed for quite some time and is well explained in Chaum's 1985 popular article “Security without identification: transaction systems to make big brother obsolete” [@Chaum85]. In [@!RFC9474], "RSA Blind Signatures", the RSA signature scheme was extended to provide for blind signing. In this document the BBS digital signature scheme, as defined in [@!I-D.irtf-cfrg-bbs-signatures], is extended to provide blind BBS signatures.
+Blind signatures are cryptographic protocols that allow for a signer to create a signature over content without actually knowing the content. They form a useful cryptographic primitive particularly in situations that are privacy sensitive. The concept has existed for quite some time and is well explained in Chaum's 1985 popular article "Security without identification: transaction systems to make big brother obsolete" [@Chaum85]. In [@!RFC9474], "RSA Blind Signatures", the RSA signature scheme was extended to provide for blind signing. In this document the BBS digital signature scheme, as defined in [@!I-D.irtf-cfrg-bbs-signatures], is extended to provide blind BBS signatures.
 
 Like BBS signatures blind BBS signatures work with a three party model of *Signer*, *Prover*, and *Verifier*. The blind BBS protocol defined here has the following useful properties:
 
 1. Provides a signature over an ordered set of messages from the *Prover* that are kept secret from the *Signer* via a statistically hiding cryptographic commitment.
 2. The *Signer* will produce a signature for the *Prover*, only if the later can prove knowledge of the set of messages they choose. This will be done through a zero-knowledge proof-of-knowledge of the ordered set of secret *Prover* messages. The *Signer* will not issue a signature without this proof of knowledge.
 3. The Blind BBS signature produced is of the same size as current BBS signatures based on the same elliptic curve.
-4. In addition to the *Prover* provided secret messages, the *Signer* can optionally sign over an additional ordered set of messages of their choosing.
+4. In addition to the *Prover* provided secret messages, the *Signer* can optionally sign over an additional ordered set of messages of their choosing. This is sometimes know as a "partially blind" signature.
 5. Using the Blind BBS signature created by the *Signer* the *Prover* can disclose any subset of both the secret *Prover* messages or the *Signer*'s messages and prove that these were in the signed sets.
 6. Without knowledge of the ordered set of secret messages no selective disclosure proof can be generated even solely for a subset of the *Signer* messages. (within the security assumptions of the BBS signature scheme).
+
+While the core BBS protocol allows a prover to either disclose or withhold a message from a verifier. This specification allows for **committed disclosure** of a message [@Vision2025]. In this case, the prover provides a commitment (computationally binding and perfectly hiding) to the message along with proof that the commitment corresponds to a particular message in the signature.
+
+The idea behind this committed-disclosure extension for BBS is that it also accommodates further zero knowledge proof (ZKP) extensions -- e.g. range proofs or different pseudonyms -- in a modular, plug-and-play style. Such extensions are out of scope of this specification.
 
 ## Blind BBS Protocol Overview
 
@@ -62,8 +66,10 @@ The presented protocol, compared to the scheme defined in [@!I-D.irtf-cfrg-bbs-s
 2. The *Prover* will send the (commitment, proof) pair to the *Signer*, who, upon receiving the pair, will attempt to verify the commitment's proof of correctness.
 3. If successful, they will use it in generating a blind BBS signature over the messages committed by the *Prover*, including the *Signer*'s own messages if any.
 4. The *Signer* will send the blind signature along with its additional ordered messages (if any) to the *Prover*
-5. The *Prover* can choose to selectively disclose a any subset of either its own messages, kept secret from the *Signer* and messages provided by the *Signer* in the signature. They also furnish a zero knowledge proof that the these disclosed messages were included in the signature.
+5. The *Prover* can choose to selectively disclose or commit to any subset of either its own messages, kept secret from the *Signer* and messages provided by the *Signer* in the signature. They also furnish a zero knowledge proof that the these disclosed messages were included in the signature.
 6. The *Verifier* verifies the proof received from the *Prover* based on the *Signer*'s public key.
+
+Note: Cryptographic *commitments* are used for two distinct purposes in this specification. One, as a mechanism for the prover to get a blind signature from an signer, i.e., the prover is getting a signature over some data it is not revealing to the signer. And, two, as mechanism to furnish less information from the prover to the verifier by providing a commitment along with a ZKP about that commitment.  For example, instead of providing a date of birth, the prover provides a commitment to that date of birth along with ZKP that indicates that the provers age lies in a particular range.
 
 Below is a basic diagram describing the main entities involved in the scheme.
 !---
@@ -78,7 +84,7 @@ Below is a basic diagram describing the main entities involved in the scheme.
   |          |                                          |           |
   |          |<-(2)* Commitment + Proof of Correctness--|           |
   |  Signer  |                                          |   Prover  |
-  |          |-------(4)* Send signature + msgs-------->|           |
+  |          |--(4)* Send signature + msgs + coms------>|           |
   |          |                                          |           |
   |          |                                          |           |
   +----------+                                          +-----------+
@@ -115,11 +121,14 @@ This document, in addition to defining the operation for creating and verifying 
 
 ## Example Blind BBS Applications
 
-<!-- These are applications of BBS blind signatures, move them to the end of the introduction. -->
-
 By allowing the *Prover* to acquire a valid signature over messages not known to the Signer, blind signatures address some limitations of their plain digital signature counterparts. In the BBS Signature scheme, knowledge of a valid signature and set of signed messages allows generation of BBS proofs. As a result, a signature compromise (for example by a Signer database leakage, a phishing attack etc.,) can lead to impersonation of the *Prover* by malicious actors (especially in cases involving "long-lived" signatures, as in digital credentials applications etc.,). Using Blind BBS Signatures on the other hand, the *Prover* can commit to a secret message (for example, a private key) before issuance, guaranteeing that no one will be able to generate a valid BBS proof without knowledge of that secret message.
 
 Furthermore, applications like Privacy Pass ([@I-D.ietf-privacypass-protocol]) may require a signature to be "scoped" to a specific audience or session (as to require "fresh" signatures for different sessions etc.,). However, simply sending an audience or session identifier to the Signer (to be included in the signature), will compromise the privacy guarantees that these applications try to enforce. Using blind signing, the Prover will be able to require signatures bound to those values, without having to reveal them to the Signer.
+
+## Example Committed Disclosure Application
+<!-- Add example related to committed disclosure? -->
+
+To be furnished.
 
 ## Terminology
 
@@ -176,6 +185,9 @@ This document makes use of various operations defined by the BBS Signature Schem
 # Scheme Definition
 
 ## Commitment Operations
+
+<!-- Should we call these blind commitment operations since they are used for blind signing and not for
+committed disclosure?-->
 
 ### Commitment Computation
 
@@ -400,6 +412,10 @@ Procedure:
 
 This operation creates a BBS proof, which is a zero-knowledge, proof-of-knowledge, of a BBS signature, while optionally disclosing any subset of the signed messages (either chosen by the Issuer or committed by the Prover).
 
+<!-- If this operation is to also furnish commitment values, random scalars, and  possibly other information for use in externallly defined ZKPs we need to list that information here. For  example we could say that this operation returns a  pair (proof, ZKP_bundle) where  proof is the serialized proof and ZKP_bundle is  an  object containing the C_i, s_i, and any other values needed to produce additional ZKPs.
+Need to add a note that the ZKP_bundle should never be exposed, i.e., is NOT sent to the verifier.
+-->
+
 The operation will accept a set of messages (`messages`), including first the messages chosen by the Issuer and then the ones chosen (and committed to) by the Prover.
 
 Furthermore, the operation also expects the `secret_prover_blind` (as returned from the `Commit` operation defined in (#commitment-computation)) value. If the BBS signature is generated using a commitment value, then the `secret_prover_blind` returned by the `Commit` operation used to generate the commitment should be provided to the `ProofGen` operation (otherwise the resulting proof will be invalid).
@@ -579,6 +595,8 @@ Procedure:
 
 ### Core Commitment Computation
 
+<!-- Once again this is only used for blind signing commitment. Should we rename? -->
+
 ```
 (commit_with_proof, secret_prover_blind) = CoreCommit(blind_generators,
                                               committed_scalars, api_id)
@@ -727,6 +745,8 @@ CommitInitRes = {
   indexes: (REQUIRED) Array of numbers
 }
 ```
+
+<!--Need to enhance to return information use for externally defined ZKPs.-->
 
 Following, we describe the Proof Generation Procedure.
 
@@ -2429,4 +2449,13 @@ This document does not make any requests of IANA.
     <date year="2018"/>
   </front>
   <seriesInfo name="In" value="CRYPTO"/>
+</reference>
+<reference anchor="Vision2025" target="https://eprint.iacr.org/2025/1981">
+  <front>
+  <title>Vision: A Modular Framework for Anonymous Credential Systems</title>
+  <author surname="Lehmann" fullname="Anja Lehmann" />
+  <author surname="Sidorenko" fullname="Andrey Sidorenko" />
+  <author surname="Zacharakis" fullname="Alexandros Zacharakis" />
+  <date year="2025" />
+  </front>
 </reference>
