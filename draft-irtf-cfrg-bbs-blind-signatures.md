@@ -410,11 +410,9 @@ Procedure:
 
 ### Proof Generation
 
-This operation creates a BBS proof, which is a zero-knowledge, proof-of-knowledge, of a BBS signature, while optionally disclosing any subset of the signed messages (either chosen by the Issuer or committed by the Prover).
+This operation creates a BBS proof, which is a zero-knowledge, proof-of-knowledge, of a BBS signature, while optionally disclosing any subset of the signed messages (either chosen by the Issuer or committed by the Prover). In addition, this operation can generate commitments to un-revealed messages and include with the BBS proof that these commitments correspond to specific un-revealed messages. These commitments can be used in subsequent ZKPs outside the scope of this specification .
 
-<!-- If this operation is to also furnish commitment values, random scalars, and  possibly other information for use in externallly defined ZKPs we need to list that information here. For  example we could say that this operation returns a  pair (proof, ZKP_bundle) where  proof is the serialized proof and ZKP_bundle is  an  object containing the C_i, s_i, and any other values needed to produce additional ZKPs.
-Need to add a note that the ZKP_bundle should never be exposed, i.e., is NOT sent to the verifier.
--->
+When this operation furnishes disclosed commitment values it will also return an additional bundle of information for use in external ZKPs [@Vision2025].  This *add_zkp_info* includes the disclosed commitments and the random scalars used to produce those commitments. The  *add_zkp_info*  should never be exposed, i.e., it is NOT to be sent sent to the verifier.
 
 The operation will accept a set of messages (`messages`), including first the messages chosen by the Issuer and then the ones chosen (and committed to) by the Prover.
 
@@ -442,7 +440,7 @@ message_disclosures = {
 
 
 ```
-proof = BlindProofGen(PK,
+[proof, add_zkp_info] = BlindProofGen(PK,
                       signature,
                       header,
                       ph,
@@ -483,6 +481,9 @@ Parameters:
 Outputs:
 
 - proof, an octet string; or INVALID.
+- add_zkp_info, a structure containing an array of committed disclosure
+                commitments, and the array of random scalars used to create
+                those commitments.
 
 Deserialization:
 
@@ -785,7 +786,7 @@ Inputs:
 Parameters:
 
 - Y_0 and Y_1, fixed points of G1 computed as
-  (Y_0, Y_1) = BBS.create_generators("COM_DIS_" || api_id)
+  (Y_0, Y_1) = BBS.create_generators(2, "COM_DIS_" || api_id)
 
 Outputs:
 
@@ -836,10 +837,13 @@ Procedure:
 14. for i in 1...N, s^_i =  s~_i + challenge * s_i
 15. commits_proof = ((C_1, ..., C_N), (s^_1, ..., s^N))
 
-16. return proof_to_octets(length(bbs_proof), bbs_proof,
+16. proof = proof_to_octets(length(bbs_proof), bbs_proof,
                            length(disclosed_indexes), disclosed_indexes,
                            length(commits_proof), commits_proof
                            length(commits_indexes), commits_indexes)
+17. add_zkp_info = {commits: (C_1, ..., C_N),
+                    commit_rands: (s_1, ..., s_N)}
+18. return [proof, add_zkp_info]
 ```
 
 ### Core Proof Verification
