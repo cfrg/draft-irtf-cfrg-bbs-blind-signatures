@@ -5,8 +5,8 @@
 CFRG                                                            V. Kalos
 Internet-Draft                                                     MATTR
 Intended status: Informational                              G. Bernstein
-Expires: 12 December 2026                              Grotto Networking
-                                                            10 June 2026
+Expires: 24 December 2026                              Grotto Networking
+                                                            22 June 2026
 
 
                           Blind BBS Signatures
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 12 December 2026.
+   This Internet-Draft will expire on 24 December 2026.
 
 Copyright Notice
 
@@ -65,8 +65,9 @@ Table of Contents
    1.  Introduction
      1.1.  Blind BBS Protocol Overview
      1.2.  Example Blind BBS Applications
-     1.3.  Terminology
-     1.4.  Notation
+     1.3.  Example Committed Disclosure Application
+     1.4.  Terminology
+     1.5.  Notation
    2.  Conventions
    3.  BBS Signature Scheme Operations
    4.  Scheme Definition
@@ -128,8 +129,8 @@ Table of Contents
    content.  They form a useful cryptographic primitive particularly in
    situations that are privacy sensitive.  The concept has existed for
    quite some time and is well explained in Chaum's 1985 popular article
-   “Security without identification: transaction systems to make big
-   brother obsolete” [Chaum85].  In [RFC9474], "RSA Blind Signatures",
+   "Security without identification: transaction systems to make big
+   brother obsolete" [Chaum85].  In [RFC9474], "RSA Blind Signatures",
    the RSA signature scheme was extended to provide for blind signing.
    In this document the BBS digital signature scheme, as defined in
    [I-D.irtf-cfrg-bbs-signatures], is extended to provide blind BBS
@@ -151,7 +152,8 @@ Table of Contents
        BBS signatures based on the same elliptic curve.
    4.  In addition to the _Prover_ provided secret messages, the
        _Signer_ can optionally sign over an additional ordered set of
-       messages of their choosing.
+       messages of their choosing.  This is sometimes know as a
+       "partially blind" signature.
    5.  Using the Blind BBS signature created by the _Signer_ the
        _Prover_ can disclose any subset of both the secret _Prover_
        messages or the _Signer_'s messages and prove that these were in
@@ -160,6 +162,18 @@ Table of Contents
        selective disclosure proof can be generated even solely for a
        subset of the _Signer_ messages. (within the security assumptions
        of the BBS signature scheme).
+
+   While the core BBS protocol allows a prover to either disclose or
+   withhold a message from a verifier.  This specification allows for
+   *committed disclosure* of a message [Vision2025].  In this case, the
+   prover provides a commitment (computationally binding and perfectly
+   hiding) to the message along with proof that the commitment
+   corresponds to a particular message in the signature.
+
+   The idea behind this committed-disclosure extension for BBS is that
+   it also accommodates further zero knowledge proof (ZKP) extensions --
+   e.g. range proofs or different pseudonyms -- in a modular, plug-and-
+   play style.  Such extensions are out of scope of this specification.
 
 1.1.  Blind BBS Protocol Overview
 
@@ -181,13 +195,23 @@ Table of Contents
        the _Signer_'s own messages if any.
    4.  The _Signer_ will send the blind signature along with its
        additional ordered messages (if any) to the _Prover_
-   5.  The _Prover_ can choose to selectively disclose a any subset of
-       either its own messages, kept secret from the _Signer_ and
-       messages provided by the _Signer_ in the signature.  They also
-       furnish a zero knowledge proof that the these disclosed messages
-       were included in the signature.
+   5.  The _Prover_ can choose to selectively disclose or commit to any
+       subset of either its own messages, kept secret from the _Signer_
+       and messages provided by the _Signer_ in the signature.  They
+       also furnish a zero knowledge proof that the these disclosed
+       messages were included in the signature.
    6.  The _Verifier_ verifies the proof received from the _Prover_
        based on the _Signer_'s public key.
+
+   Note: Cryptographic _commitments_ are used for two distinct purposes
+   in this specification.  One, as a mechanism for the prover to get a
+   blind signature from an signer, i.e., the prover is getting a
+   signature over some data it is not revealing to the signer.  And,
+   two, as mechanism to furnish less information from the prover to the
+   verifier by providing a commitment along with a ZKP about that
+   commitment.  For example, instead of providing a date of birth, the
+   prover provides a commitment to that date of birth along with ZKP
+   that indicates that the provers age lies in a particular range.
 
    Below is a basic diagram describing the main entities involved in the
    scheme.
@@ -202,7 +226,7 @@ Table of Contents
      |          |                                          |           |
      |          |<-(2)* Commitment + Proof of Correctness--|           |
      |  Signer  |                                          |   Prover  |
-     |          |-------(4)* Send signature + msgs-------->|           |
+     |          |--(4)* Send signature + msgs + coms------>|           |
      |          |                                          |           |
      |          |                                          |           |
      +----------+                                          +-----------+
@@ -273,7 +297,11 @@ Table of Contents
    able to require signatures bound to those values, without having to
    reveal them to the Signer.
 
-1.3.  Terminology
+1.3.  Example Committed Disclosure Application
+
+   To be furnished.
+
+1.4.  Terminology
 
    Terminology defined by [I-D.irtf-cfrg-bbs-signatures] applies to this
    draft.
@@ -299,7 +327,7 @@ Table of Contents
       the OPTIONAL inputs of a procedure is not provided by the calling
       operation.
 
-1.4.  Notation
+1.5.  Notation
 
    Notation defined by [I-D.irtf-cfrg-bbs-signatures] applies to this
    draft.
@@ -346,10 +374,10 @@ Table of Contents
       (https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-
       05.html#name-messages-to-scalars) of
       [I-D.irtf-cfrg-bbs-signatures].
-   *  BBS.get_random_scalars: Refers to the get_random_scalars operation
-      defined in Section 4.2.1 (https://www.ietf.org/archive/id/draft-
-      irtf-cfrg-bbs-signatures-05.html#name-random-scalars) of
-      [I-D.irtf-cfrg-bbs-signatures].
+   *  BBS.calculate_random_scalars: Refers to the
+      calculate_random_scalars operation defined in Section 4.2.1
+      (https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-
+      05.html#name-random-scalars) of [I-D.irtf-cfrg-bbs-signatures].
    *  BBS.hash_to_scalar: Refers to the hash_to_scalar operation defined
       in Section 4.2.2 (https://www.ietf.org/archive/id/draft-irtf-cfrg-
       bbs-signatures-05.html#name-hash-to-scalar) of
@@ -476,7 +504,7 @@ Procedure:
 
    This operation returns a BBS blind signature from a secret key (SK),
    over a header, a set of messages and optionally a commitment value
-   (see Section 1.3).  If supplied, the commitment value must be
+   (see Section 1.4).  If supplied, the commitment value must be
    accompanied by its proof of correctness (commitment_with_proof, as
    outputted by the Commit operation defined in Section 4.1.1).
 
@@ -626,7 +654,18 @@ Procedure:
    This operation creates a BBS proof, which is a zero-knowledge, proof-
    of-knowledge, of a BBS signature, while optionally disclosing any
    subset of the signed messages (either chosen by the Issuer or
-   committed by the Prover).
+   committed by the Prover).  In addition, this operation can generate
+   commitments to un-revealed messages and include with the BBS proof
+   that these commitments correspond to specific un-revealed messages.
+   These commitments can be used in subsequent ZKPs outside the scope of
+   this specification .
+
+   When this operation furnishes disclosed commitment values it will
+   also return an additional bundle of information for use in external
+   ZKPs [Vision2025].  This _add_zkp_info_ includes the disclosed
+   commitments and the random scalars used to produce those commitments.
+   The _add_zkp_info_ should never be exposed, i.e., it is NOT to be
+   sent sent to the verifier.
 
    The operation will accept a set of messages (messages), including
    first the messages chosen by the Issuer and then the ones chosen (and
@@ -665,7 +704,7 @@ Procedure:
      prover_known_msg_3: DISCLOSE
    }
 
-proof = BlindProofGen(PK,
+[proof, add_zkp_info] = BlindProofGen(PK,
                       signature,
                       header,
                       ph,
@@ -706,6 +745,9 @@ Parameters:
 Outputs:
 
 - proof, an octet string; or INVALID.
+- add_zkp_info, a structure containing an array of committed disclosure
+                commitments, and the array of random scalars used to create
+                those commitments.
 
 Deserialization:
 
@@ -842,7 +884,7 @@ Deserialization:
 Procedure:
 
 1. (secret_prover_blind, s~, m~_1, ..., m~_M)
-                                         = BBS.get_random_scalars(M + 2)
+                                         = BBS.calculate_random_scalars(M + 2)
 2. C = J_1 * msg_1 + ... + J_M * msg_M + Q_2 * secret_prover_blind
 3. Cbar = J_1 * m~_1 + ... + J_M * m~_M + Q_2 * s~
 
@@ -1011,7 +1053,7 @@ Inputs:
 Parameters:
 
 - Y_0 and Y_1, fixed points of G1 computed as
-  (Y_0, Y_1) = BBS.create_generators("COM_DIS_" || api_id)
+  (Y_0, Y_1) = BBS.create_generators(2, "COM_DIS_" || api_id)
 
 Outputs:
 
@@ -1062,10 +1104,13 @@ Procedure:
 14. for i in 1...N, s^_i =  s~_i + challenge * s_i
 15. commits_proof = ((C_1, ..., C_N), (s^_1, ..., s^N))
 
-16. return proof_to_octets(length(bbs_proof), bbs_proof,
+16. proof = proof_to_octets(length(bbs_proof), bbs_proof,
                            length(disclosed_indexes), disclosed_indexes,
                            length(commits_proof), commits_proof
                            length(commits_indexes), commits_indexes)
+17. add_zkp_info = {commits: (C_1, ..., C_N),
+                    commit_rands: (s_1, ..., s_N)}
+18. return [proof, add_zkp_info]
 
 4.3.5.  Core Proof Verification
 
@@ -1521,8 +1566,8 @@ Procedure:
    generator.  See Section 6.7 (https://www.ietf.org/archive/id/draft-
    irtf-cfrg-bbs-signatures-09.html#name-randomness-requirements) of
    [I-D.irtf-cfrg-bbs-signatures] on recommendations and requirements
-   for implementing the BBS.get_random_scalars operation (which is used
-   to calculate the secret_prover_blind value).
+   for implementing the BBS.calculate_random_scalars operation (which is
+   used to calculate the secret_prover_blind value).
 
 8.2.  Key Binding
 
@@ -2662,6 +2707,11 @@ proof = {{ $proofFixtures.bls12-381-shake-256.proof008.proof }}
    [P91]      Pedersen, T., "Non-Interactive and Information-Theoretic
               Secure Verifiable Secret Sharing", In CRYPTO, 1991,
               <https://ia.cr/2023/275>.
+
+   [Vision2025]
+              Lehmann, A., Sidorenko, A., and A. Zacharakis, "Vision: A
+              Modular Framework for Anonymous Credential Systems", 2025,
+              <https://eprint.iacr.org/2025/1981>.
 
 Appendix A.  Document History
 
