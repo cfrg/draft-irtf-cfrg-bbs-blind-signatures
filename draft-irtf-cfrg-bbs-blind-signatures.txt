@@ -65,7 +65,7 @@ Table of Contents
    1.  Introduction
      1.1.  Blind BBS Protocol Overview
      1.2.  Example Blind BBS Applications
-     1.3.  Example Committed Disclosure Application
+     1.3.  Example Committed Disclosure Applications
      1.4.  Terminology
      1.5.  Notation
    2.  Conventions
@@ -199,8 +199,8 @@ Table of Contents
    5.  The _Prover_ can choose to selectively disclose or commit to any
        subset of either its own messages, kept secret from the _Signer_
        and messages provided by the _Signer_ in the signature.  They
-       also furnish a zero knowledge proof that the these disclosed
-       messages were included in the signature.
+       also furnish a ZKP that the these disclosed messages were
+       included in the signature.
    6.  The _Verifier_ verifies the proof received from the _Prover_
        based on the _Signer_'s public key.
 
@@ -298,9 +298,25 @@ Table of Contents
    able to require signatures bound to those values, without having to
    reveal them to the Signer.
 
-1.3.  Example Committed Disclosure Application
+1.3.  Example Committed Disclosure Applications
 
-   To be furnished.
+   Privacy is enhanced via the *committed disclosure* mechanism along
+   with an external ZKP proof of some predicate.  In this case rather
+   than selectively disclosing a signed message to the verifier the
+   prover provides a (computationally binding and perfectly hiding)
+   commitment along with a ZKP concerning some aspect (the predicate) of
+   the committed value.  This ZKP actually comes in two parts.  One part
+   is specified in this specification and proves that the given
+   commitment(s) corresponds to the corresponding messages signed by the
+   signer.  The second part is an additional ZKP, not specified here,
+   that proves some predicate about the committed values.
+
+   As discussed in [Vision2025] this allows for the modular addition for
+   proving (1) possession of a device key, (2) range proofs and (3)
+   pseudonyms.  While in [LegacyBinding2026] additional more efficient
+   proof of possession of a (hardware) device key are given.  These
+   would all be implemented as an additional ZKP along with the ZKP
+   specified here.
 
 1.4.  Terminology
 
@@ -2736,6 +2752,11 @@ proof = {{ $proofFixtures.bls12-381-shake-256.proof008.proof }}
               Internet-Draft, draft-ietf-privacypass-protocol-16, 3
               October 2023, <https://datatracker.ietf.org/doc/html/
               draft-ietf-privacypass-protocol-16>.
+
+   [LegacyBinding2026]
+              Celi, S., Lehmann, A., Levin, S., and A. Zacharakis,
+              "Device Binding for Anonymous Credentials on Legacy
+              Phones", 2026, <https://eprint.iacr.org/2026/965>.
 
    [P91]      Pedersen, T., "Non-Interactive and Information-Theoretic
               Secure Verifiable Secret Sharing", In CRYPTO, 1991,

@@ -1154,7 +1154,7 @@ svg {
                 <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="auto internal xref">1.2</a>.  <a href="#name-example-blind-bbs-applicati" class="internal xref">Example Blind BBS Applications</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.3">
-                <p id="section-toc.1-1.1.2.3.1" class="keepWithNext"><a href="#section-1.3" class="auto internal xref">1.3</a>.  <a href="#name-example-committed-disclosur" class="internal xref">Example Committed Disclosure Application</a></p>
+                <p id="section-toc.1-1.1.2.3.1" class="keepWithNext"><a href="#section-1.3" class="auto internal xref">1.3</a>.  <a href="#name-example-committed-disclosur" class="internal xref">Example Committed Disclosure Applications</a></p>
 </li>
               <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.4">
                 <p id="section-toc.1-1.1.2.4.1"><a href="#section-1.4" class="auto internal xref">1.4</a>.  <a href="#name-terminology" class="internal xref">Terminology</a></p>
@@ -1394,7 +1394,7 @@ svg {
 </li>
           <li id="section-1.1-2.4">The <em>Signer</em> will send the blind signature along with its additional ordered messages (if any) to the <em>Prover</em><a href="#section-1.1-2.4" class="pilcrow">¶</a>
 </li>
-          <li id="section-1.1-2.5">The <em>Prover</em> can choose to selectively disclose or commit to any subset of either its own messages, kept secret from the <em>Signer</em> and messages provided by the <em>Signer</em> in the signature. They also furnish a zero knowledge proof that the these disclosed messages were included in the signature.<a href="#section-1.1-2.5" class="pilcrow">¶</a>
+          <li id="section-1.1-2.5">The <em>Prover</em> can choose to selectively disclose or commit to any subset of either its own messages, kept secret from the <em>Signer</em> and messages provided by the <em>Signer</em> in the signature. They also furnish a ZKP that the these disclosed messages were included in the signature.<a href="#section-1.1-2.5" class="pilcrow">¶</a>
 </li>
           <li id="section-1.1-2.6">The <em>Verifier</em> verifies the proof received from the <em>Prover</em> based on the <em>Signer</em>'s public key.<a href="#section-1.1-2.6" class="pilcrow">¶</a>
 </li>
@@ -1459,12 +1459,13 @@ svg {
 <p id="section-1.2-2">Furthermore, applications like Privacy Pass (<span>[<a href="#I-D.ietf-privacypass-protocol" class="cite xref">I-D.ietf-privacypass-protocol</a>]</span>) may require a signature to be "scoped" to a specific audience or session (as to require "fresh" signatures for different sessions etc.,). However, simply sending an audience or session identifier to the Signer (to be included in the signature), will compromise the privacy guarantees that these applications try to enforce. Using blind signing, the Prover will be able to require signatures bound to those values, without having to reveal them to the Signer.<a href="#section-1.2-2" class="pilcrow">¶</a></p>
 </section>
 </div>
-<div id="example-committed-disclosure-application">
+<div id="example-committed-disclosure-applications">
 <section id="section-1.3">
         <h3 id="name-example-committed-disclosur">
-<a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-example-committed-disclosur" class="section-name selfRef">Example Committed Disclosure Application</a>
+<a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-example-committed-disclosur" class="section-name selfRef">Example Committed Disclosure Applications</a>
         </h3>
-<p id="section-1.3-1">To be furnished.<a href="#section-1.3-1" class="pilcrow">¶</a></p>
+<p id="section-1.3-1">Privacy is enhanced via the <strong>committed disclosure</strong> mechanism along with an external ZKP proof of some predicate. In this case rather than selectively disclosing a signed message to the verifier the prover provides a (computationally binding and perfectly hiding) commitment along with a ZKP concerning some aspect (the predicate) of the committed value.  This ZKP actually comes in two parts. One part is specified in this specification and proves that the given commitment(s) corresponds to the corresponding messages signed by the signer. The second part is an additional ZKP, not specified here, that proves some predicate about the committed values.<a href="#section-1.3-1" class="pilcrow">¶</a></p>
+<p id="section-1.3-2">As discussed in <span>[<a href="#Vision2025" class="cite xref">Vision2025</a>]</span> this allows for the modular addition for proving (1) possession of a device key, (2) range proofs and (3) pseudonyms. While in <span>[<a href="#LegacyBinding2026" class="cite xref">LegacyBinding2026</a>]</span> additional more efficient proof of possession of a (hardware) device key are given. These would all be implemented as an additional ZKP along with the ZKP specified here.<a href="#section-1.3-2" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="terminology">
@@ -4257,6 +4258,10 @@ proof = {{ $proofFixtures.bls12-381-shake-256.proof008.proof }}
 <dt id="I-D.ietf-privacypass-protocol">[I-D.ietf-privacypass-protocol]</dt>
         <dd>
 <span class="refAuthor">Celi, S.</span>, <span class="refAuthor">Davidson, A.</span>, <span class="refAuthor">Valdez, S.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Privacy Pass Issuance Protocol"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-privacypass-protocol-16</span>, <time datetime="2023-10-03" class="refDate">3 October 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-protocol-16">https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-protocol-16</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="LegacyBinding2026">[LegacyBinding2026]</dt>
+        <dd>
+<span class="refAuthor">Celi, S.</span>, <span class="refAuthor">Lehmann, A.</span>, <span class="refAuthor">Levin, S.</span>, and <span class="refAuthor">A. Zacharakis</span>, <span class="refTitle">"Device Binding for Anonymous Credentials on Legacy Phones"</span>, <time datetime="2026" class="refDate">2026</time>, <span>&lt;<a href="https://eprint.iacr.org/2026/965">https://eprint.iacr.org/2026/965</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="P91">[P91]</dt>
         <dd>
