@@ -1048,7 +1048,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Kalos &amp; Bernstein</td>
-<td class="center">Expires 24 December 2026</td>
+<td class="center">Expires 26 December 2026</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1061,12 +1061,12 @@ svg {
 <dd class="internet-draft">draft-irtf-cfrg-bbs-blind-signatures-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-06-22" class="published">22 June 2026</time>
+<time datetime="2026-06-24" class="published">24 June 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2026-12-24">24 December 2026</time></dd>
+<dd class="expires"><time datetime="2026-12-26">26 December 2026</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1115,7 +1115,7 @@ svg {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 24 December 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 26 December 2026.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -2008,12 +2008,12 @@ Procedure:
           </h4>
 <div class="alignLeft art-text artwork" id="section-4.3.1-1">
 <pre>(commit_with_proof, secret_prover_blind) = CoreCommit(blind_generators,
-                                              committed_scalars, api_id)
+                                              committed_message_scalars, api_id)
 
 Inputs:
 
 - blind_generators (REQUIRED), vector of pseudo-random points in G1.
-- committed_scalars (OPTIONAL), a vector of scalars. If not supplied,
+- committed_message_scalars (OPTIONAL), a vector of scalars. If not supplied,
                                  it defaults to the empty array ("()").
 - api_id (OPTIONAL), an octet string. If not supplied it defaults to the
                      empty octet string ("").
@@ -2024,7 +2024,7 @@ Deserialization:
 1. M = length(committed_messages)
 2. if length(blind_generators) != M + 1, return INVALID
 3. (Q_2, J_1, ..., J_M) = blind_generators
-4. (msg_1, ..., msg_M) = committed_scalars
+4. (msg_1, ..., msg_M) = committed_message_scalars
 Procedure:
 
 1. (secret_prover_blind, s~, m~_1, ..., m~_M)
@@ -4250,6 +4250,13 @@ proof = {{ $proofFixtures.bls12-381-shake-256.proof008.proof }}
 <li class="compact" id="appendix-A-6.1">Expanded privacy and security considerations<a href="#appendix-A-6.1" class="pilcrow">¶</a>
 </li>
         <li class="compact" id="appendix-A-6.2">Updated the introduction<a href="#appendix-A-6.2" class="pilcrow">¶</a>
+</li>
+      </ul>
+<p id="appendix-A-7">-03<a href="#appendix-A-7" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="appendix-A-8.1">Add committed disclosure functionality and explanatory text<a href="#appendix-A-8.1" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-A-8.2">Editorial fixes<a href="#appendix-A-8.2" class="pilcrow">¶</a>
 </li>
       </ul>
 </section>
