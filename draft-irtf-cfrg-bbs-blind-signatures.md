@@ -66,7 +66,7 @@ The presented protocol, compared to the scheme defined in [@!I-D.irtf-cfrg-bbs-s
 2. The *Prover* will send the (commitment, proof) pair to the *Signer*, who, upon receiving the pair, will attempt to verify the commitment's proof of correctness.
 3. If successful, they will use it in generating a blind BBS signature over the messages committed by the *Prover*, including the *Signer*'s own messages if any.
 4. The *Signer* will send the blind signature along with its additional ordered messages (if any) to the *Prover*
-5. The *Prover* can choose to selectively disclose or commit to any subset of either its own messages, kept secret from the *Signer* and messages provided by the *Signer* in the signature. They also furnish a zero knowledge proof that the these disclosed messages were included in the signature.
+5. The *Prover* can choose to selectively disclose or commit to any subset of either its own messages, kept secret from the *Signer* and messages provided by the *Signer* in the signature. They also furnish a ZKP that the these disclosed messages were included in the signature.
 6. The *Verifier* verifies the proof received from the *Prover* based on the *Signer*'s public key.
 
 Note: Cryptographic *commitments* are used for two distinct purposes in this specification. One, as a mechanism for the prover to get a blind signature from an signer, i.e., the prover is getting a signature over some data it is not revealing to the signer. And, two, as mechanism to furnish less information from the prover to the verifier by providing a commitment along with a ZKP about that commitment.  For example, instead of providing a date of birth, the prover provides a commitment to that date of birth along with ZKP that indicates that the provers age lies in a particular range.
@@ -125,10 +125,11 @@ By allowing the *Prover* to acquire a valid signature over messages not known to
 
 Furthermore, applications like Privacy Pass ([@I-D.ietf-privacypass-protocol]) may require a signature to be "scoped" to a specific audience or session (as to require "fresh" signatures for different sessions etc.,). However, simply sending an audience or session identifier to the Signer (to be included in the signature), will compromise the privacy guarantees that these applications try to enforce. Using blind signing, the Prover will be able to require signatures bound to those values, without having to reveal them to the Signer.
 
-## Example Committed Disclosure Application
-<!-- Add example related to committed disclosure? -->
+## Example Committed Disclosure Applications
 
-To be furnished.
+Privacy is enhanced via the **committed disclosure** mechanism along with an external ZKP proof of some predicate. In this case rather than selectively disclosing a signed message to the verifier the prover provides a (computationally binding and perfectly hiding) commitment along with a ZKP concerning some aspect (the predicate) of the committed value.  This ZKP actually comes in two parts. One part is specified in this specification and proves that the given commitment(s) corresponds to the corresponding messages signed by the signer. The second part is an additional ZKP, not specified here, that proves some predicate about the committed values.
+
+As discussed in [@Vision2025] this allows for the modular addition for proving (1) possession of a device key, (2) range proofs and (3) pseudonyms. While in [@LegacyBinding2026] additional more efficient proof of possession of a (hardware) device key are given. These would all be implemented as an additional ZKP along with the ZKP specified here.
 
 ## Terminology
 
@@ -2500,5 +2501,15 @@ This document does not make any requests of IANA.
   <author surname="Sidorenko" fullname="Andrey Sidorenko" />
   <author surname="Zacharakis" fullname="Alexandros Zacharakis" />
   <date year="2025" />
+  </front>
+</reference>
+<reference anchor="LegacyBinding2026" target="https://eprint.iacr.org/2026/965">
+  <front>
+  <title>Device Binding for Anonymous Credentials on Legacy Phones</title>
+  <author surname="Celi" fullname="Sof&#237;a Celi" />
+  <author surname="Lehmann" fullname="Anja Lehmann" />
+  <author surname="Levin" fullname="Shai Levin" />
+  <author surname="Zacharakis" fullname="Alexandros Zacharakis" />
+  <date year="2026" />
   </front>
 </reference>
