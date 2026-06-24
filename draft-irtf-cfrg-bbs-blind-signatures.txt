@@ -88,11 +88,12 @@ Table of Contents
    5.  Utilities
      5.1.  Calculate B value
      5.2.  Blind Challenge Calculation
-     5.3.  Serialize
-       5.3.1.  Commitment with Proof to Octets
-       5.3.2.  Octets to Commitment with Proof
-       5.3.3.  Proof to Octets
-       5.3.4.  Octets to Proof
+     5.3.  Proof Challenge Calculation
+     5.4.  Serialize
+       5.4.1.  Commitment with Proof to Octets
+       5.4.2.  Octets to Commitment with Proof
+       5.4.3.  Proof to Octets
+       5.4.4.  Octets to Proof
    6.  Privacy Considerations
      6.1.  Total Number and Index of Committed Messages
    7.  Application Considerations
@@ -1008,7 +1009,7 @@ Procedure:
    messages.  The commitments proof of correctness will similarly
    constitute of a initialization and finalization phase.  The two proof
    protocols will use a common challenge, returned by the
-   ProofChallengeCalculate operation described in Section 5.2.  The
+   ProofChallengeCalculate operation described in Section 5.3.  The
    result of the commitments proof of correctness initialization process
    will be an object of the following form
 
@@ -1231,7 +1232,39 @@ Procedure:
 
 5.2.  Blind Challenge Calculation
 
-challenge = calculate_blind_challenge(bbs_init_res, commit_init_res, ph, api_id)
+ challenge = calculate_blind_challenge(C, Cbar, generators, api_id)
+
+ Inputs:
+
+ - C (REQUIRED), a point of G1.
+ - Cbar (REQUIRED), a point of G1.
+ - generators (REQUIRED), an array of points from G1, of length at
+                          least 1.
+ - api_id (OPTIONAL), octet string. If not supplied it defaults to the
+                      empty octet string ("").
+
+ Definition:
+
+ - blind_challenge_dst, an octet string representing the domain
+                        separation tag: api_id || "H2S_" where
+                        ciphersuite_id is defined by the ciphersuite and
+                        "H2S_" is an ASCII string composed of 4 bytes.
+
+ Deserialization:
+
+ 1. if length(generators) == 0, return INVALID
+ 2. M = length(generators) - 1
+
+ Procedure:
+
+ 1. c_arr = (M)
+ 2. c_arr.append(generators)
+ 3. c_octs = BBS.serialize(c_arr.append(C, Cbar))
+ 4. return BBS.hash_to_scalar(c_octs, blind_challenge_dst)
+
+5.3.  Proof Challenge Calculation
+
+challenge = ProofChallengeCalculate(bbs_init_res, commit_init_res, ph, api_id)
 
 Inputs:
 - init_res (REQUIRED), a ProofInitRes object representing the value
@@ -1293,9 +1326,9 @@ Procedure:
 5. c_octs = c_octs || I2OSP(length(ph), 8) || ph
 6. return hash_to_scalar(c_octs, hash_to_scalar_dst)
 
-5.3.  Serialize
+5.4.  Serialize
 
-5.3.1.  Commitment with Proof to Octets
+5.4.1.  Commitment with Proof to Octets
 
  commitment_octets = commitment_with_proof_to_octets(commitment, proof)
 
@@ -1318,7 +1351,7 @@ Procedure:
  5. if proof_octs is INVALID, return INVALID
  6. return commitment_octs || proof_octs
 
-5.3.2.  Octets to Commitment with Proof
+5.4.2.  Octets to Commitment with Proof
 
 commitment = octets_to_commitment_with_proof(commitment_octs)
 
@@ -1362,7 +1395,7 @@ Procedure:
 18. if j >= 3, set msg_commitments = (s_1, ..., s_(j-1))
 19. return (C, (s_0, msg_commitments, s_j))
 
-5.3.3.  Proof to Octets
+5.4.3.  Proof to Octets
 
 proof_octets = proof_to_octets(bbs_proof_len, bbs_proof,
                               disclosed_indexes_len, disclosed_indexes
@@ -1395,7 +1428,7 @@ Procedure:
          I2OSP(commits_indexes_len) || serialize(commits_indexes)
 2. return oct
 
-5.3.4.  Octets to Proof
+5.4.4.  Octets to Proof
 
    The octets_to_proof procedure, on input an octet string will return a
    BBS with commits proof comprised from the following elements
