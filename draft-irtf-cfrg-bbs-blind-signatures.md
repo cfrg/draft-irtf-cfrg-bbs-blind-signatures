@@ -737,7 +737,7 @@ Procedure:
 
 ### Core Proof Generation
 
-The Proof Generation with extension, combines the BBS Proof Generation operations (i.e., `BBS.ProofInit` and `BBS.ProofFinalize`) with a proof of correctness of commitments over some of the signed messages. The commitments proof of correctness will similarly constitute of a initialization and finalization phase. The two proof protocols will use a common challenge, returned by the `ProofChallengeCalculate` operation described in (#blind-challenge-calculation). The result of the commitments proof of correctness initialization process will be an object of the following form
+The Proof Generation with extension, combines the BBS Proof Generation operations (i.e., `BBS.ProofInit` and `BBS.ProofFinalize`) with a proof of correctness of commitments over some of the signed messages. The commitments proof of correctness will similarly constitute of a initialization and finalization phase. The two proof protocols will use a common challenge, returned by the `ProofChallengeCalculate` operation described in (#proof-challenge-calculation). The result of the commitments proof of correctness initialization process will be an object of the following form
 
 ```
 CommitInitRes = {
@@ -970,7 +970,41 @@ Procedure:
 ## Blind Challenge Calculation
 
 ```
-challenge = calculate_blind_challenge(bbs_init_res, commit_init_res, ph, api_id)
+challenge = calculate_blind_challenge(C, Cbar, generators, api_id)
+
+Inputs:
+
+- C (REQUIRED), a point of G1.
+- Cbar (REQUIRED), a point of G1.
+- generators (REQUIRED), an array of points from G1, of length at
+                         least 1.
+- api_id (OPTIONAL), octet string. If not supplied it defaults to the
+                     empty octet string ("").
+
+Definition:
+
+- blind_challenge_dst, an octet string representing the domain
+                       separation tag: api_id || "H2S_" where
+                       ciphersuite_id is defined by the ciphersuite and
+                       "H2S_" is an ASCII string composed of 4 bytes.
+
+Deserialization:
+
+1. if length(generators) == 0, return INVALID
+2. M = length(generators) - 1
+
+Procedure:
+
+1. c_arr = (M)
+2. c_arr.append(generators)
+3. c_octs = BBS.serialize(c_arr.append(C, Cbar))
+4. return BBS.hash_to_scalar(c_octs, blind_challenge_dst)
+```
+
+## Proof Challenge Calculation
+
+```
+challenge = ProofChallengeCalculate(bbs_init_res, commit_init_res, ph, api_id)
 
 Inputs:
 - init_res (REQUIRED), a ProofInitRes object representing the value
