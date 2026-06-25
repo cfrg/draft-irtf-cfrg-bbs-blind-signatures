@@ -11,6 +11,7 @@ keyword = [""]
 name = "Internet-Draft"
 value = "draft-irtf-cfrg-bbs-blind-signatures-latest"
 status = "informational"
+stream = "IRTF"
 
 [[author]]
 initials = "V."
@@ -1316,6 +1317,8 @@ This document uses the `BBS_BLS12381G1_XOF:SHAKE-256_SSWU_RO_` and `BBS_BLS12381
 
 # Test Vectors
 
+<!--
+
 ## BLS12-381-SHA-256
 
 ### Generators
@@ -2429,6 +2432,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof008.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof008.proof }}
 ```
+-->
 
 # IANA Considerations
 
