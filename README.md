@@ -2,7 +2,7 @@
 
 This is the working area for the individual Internet-Draft, "Blind BBS Signatures".
 
-* [Editor's Copy](https://cfrg.github.io/draft-irtf-cfrg-bbs-blind-signatures/#go.draft-irtf-cfrg-bbs-blind-signatures.html)
+* [Editor's Copy](https://cfrg.github.io/draft-irtf-cfrg-bbs-blind-signatures/draft-irtf-cfrg-bbs-blind-signatures.html)
 * [Datatracker Page](https://datatracker.ietf.org/doc/draft-irtf-cfrg-bbs-blind-signatures)
 * [Individual Draft](https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-bbs-blind-signatures)
 * [Compare Editor's Copy to Individual Draft](https://cfrg.github.io/draft-irtf-cfrg-bbs-blind-signatures/#go.draft-irtf-cfrg-bbs-blind-signatures.diff)
