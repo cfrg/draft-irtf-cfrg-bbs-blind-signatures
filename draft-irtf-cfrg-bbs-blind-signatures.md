@@ -11,7 +11,7 @@ keyword = [""]
 name = "Internet-Draft"
 value = "draft-irtf-cfrg-bbs-blind-signatures-latest"
 status = "informational"
-stream = "IRTF"
+stream = "IETF"
 
 [[author]]
 initials = "V."
@@ -56,10 +56,6 @@ While the core BBS protocol allows a prover to either disclose or withhold a mes
 The idea behind this committed-disclosure extension for BBS is that it also accommodates further zero knowledge proof (ZKP) extensions -- e.g. range proofs or different pseudonyms -- in a modular, plug-and-play style. Such extensions are out of scope of this specification.
 
 ## Blind BBS Protocol Overview
-
-<!-- Blind BBS Protocol Overview.
-Add more info on commitments and ZKP of commitment, including
-knowledge of all secret messages and their order. -->
 
 The presented protocol, compared to the scheme defined in [@!I-D.irtf-cfrg-bbs-signatures], introduces an additional communication step between the *Prover* and the *Signer*. An overview of the protocol is given below.
 
@@ -1316,6 +1312,8 @@ One natural use case for the blind signatures extension of the BBS scheme is key
 This document uses the `BBS_BLS12381G1_XOF:SHAKE-256_SSWU_RO_` and `BBS_BLS12381G1_XMD:SHA-256_SSWU_RO_` defined in [Section 7.2.1](https://identity.foundation/bbs-signature/draft-irtf-cfrg-bbs-signatures.html#name-bls12-381-shake-256) and [Section 7.2.2](https://identity.foundation/bbs-signature/draft-irtf-cfrg-bbs-signatures.html#name-bls12-381-sha-256) correspondingly, of [@!I-D.irtf-cfrg-bbs-signatures].
 
 # Test Vectors
+
+Test vectors are being revised to include new committed disclosure functionality.
 
 <!--
 
