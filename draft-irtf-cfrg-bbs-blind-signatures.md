@@ -220,8 +220,8 @@ Procedure:
                                   length(committed_message_scalars) + 1,
                                   "BLIND_" || api_id)
 
-3. return CoreCommit(committed_message_scalars,
-                             blind_generators, api_id)
+3. return CoreCommit(blind_generators,
+                             committed_message_scalars, api_id)
 ```
 
 ### Commitment Validation and Deserialization
@@ -391,19 +391,26 @@ Deserialization:
 
 Procedure:
 
-1. generators = BBS.create_generators(issuer_known_messages_no, api_id)
+1. generators = BBS.create_generators(issuer_known_messages_no + 1, api_id)
 2. blind_generators = BBS.create_generators(
-                       L - issuer_known_messages_no, "BLIND_" || api_id)
+                   L - issuer_known_messages_no + 1, "BLIND_" || api_id)
 
 3. message_scalars = BBS.messages_to_scalars(messages, api_id)
 
-4. res = BBS.CoreVerify(PK,
+4. signer_scalars = (message_scalars[0], ...,
+                          message_scalars[issuer_known_messages_no - 1])
+5. committed_scalars = (message_scalars[issuer_known_messages_no], ...,
+                                            message_scalars[L - 1])
+6. proof_scalars = signer_scalars.append(secret_prover_blind)
+                                          .append(committed_scalars)
+
+7. res = BBS.CoreVerify(PK,
                         signature,
                         generators.append(blind_generators),
                         header,
-                        message_scalars.append(secret_prover_blind),
+                        proof_scalars,
                         api_id)
-5. return res
+8. return res
 ```
 
 ### Proof Generation
@@ -489,18 +496,19 @@ Deserialization:
 2. if length(message_disclosures) != L, return INVALID
 3. if issuer_known_messages_no > L, return INVALID
 
-4. let disclosed_indexes be the integers i in 0..length(messages) so
-   that if msg = messages[i], messagesDisclosures[msg] = disclose, in
-   accenting order.
-5. let commit_indexes be the integers i in 0..length(messages) so
-   that if msg = messages[i], messagesDisclosures[msg] = commit, in
-   accenting order.
+4. let disclosed_indexes be the integers i in 0..length(messages) - 1
+   so that if msg = messages[i], message_disclosures[msg] = DISCLOSE,
+   in ascending order.
+5. let commit_indexes be the integers i in 0..length(messages) - 1
+   so that if msg = messages[i], message_disclosures[msg] = COMMIT,
+   in ascending order.
 
 Procedure:
 
-1. generators = BBS.create_generators(issuer_known_messages_no, api_id)
+1. generators = BBS.create_generators(
+                                  issuer_known_messages_no + 1, api_id)
 2. blind_generators = BBS.create_generators(
-                       L - issuer_known_messages_no, "BLIND_" || api_id)
+                   L - issuer_known_messages_no + 1, "BLIND_" || api_id)
 
 3. message_scalars = BBS.messages_to_scalars(messages, api_id)
 
@@ -552,9 +560,9 @@ Inputs:
 
 Parameters:
 
-- api_id, the octet string ciphersuite_id || "H2G_HM2S_", where
-          ciphersuite_id is defined by the ciphersuite and "H2G_HM2S_"is
-          an ASCII string comprised of 9 bytes.
+- api_id, the octet string ciphersuite_id || "BLIND_H2G_HM2S_", where
+          ciphersuite_id is defined by the ciphersuite and
+          "BLIND_H2G_HM2S_" is an ASCII string comprised of 15 bytes.
 - (octet_point_length, octet_scalar_length), defined by the ciphersuite.
 
 Outputs:
@@ -564,15 +572,16 @@ Outputs:
 Deserialization:
 
 1. bbs_proof_len = OS2IP(proof[0..7])
-2. undisclosed_msgs_no = bbs_proof_len
+2. undisclosed_msgs_no = (bbs_proof_len
                            - 3 * octet_point_length
-                           - 4 * octet_scalar_length
+                           - 4 * octet_scalar_length)
+                           / octet_scalar_length
 3. total_msgs_no = undisclosed_msgs_no + length(disclosed_messages)
-
 
 Procedure:
 
-1. generators = BBS.create_generators(issuer_known_messages_no, api_id)
+1. generators = BBS.create_generators(
+                                  issuer_known_messages_no + 1, api_id)
 2. blind_generators = BBS.create_generators(
                                total_msgs_no - issuer_known_messages_no,
                                "BLIND_" || api_id)
@@ -582,7 +591,7 @@ Procedure:
 4. result = CoreProofVerify(
                         PK,
                         proof,
-                        generators.append(blind_generators).append(Q_2),
+                        generators.append(blind_generators),
                         header,
                         ph,
                         message_scalars,
@@ -611,7 +620,7 @@ Inputs:
 
 Deserialization:
 
-1. M = length(committed_messages)
+1. M = length(committed_message_scalars)
 2. if length(blind_generators) != M + 1, return INVALID
 3. (Q_2, J_1, ..., J_M) = blind_generators
 4. (msg_1, ..., msg_M) = committed_message_scalars
@@ -661,7 +670,7 @@ Deserialization:
 2. M = length(commitments)
 3. (m^_1, ..., m^_M) = commitments
 
-4. if length(blind_generators) != M, return INVALID
+4. if length(blind_generators) != M + 1, return INVALID
 5. (Q_2, J_1, ..., J_M) = blind_generators
 
 Procedure:
@@ -719,7 +728,7 @@ Deserialization:
 1. L = length(generators) - 1
 2. M = length(blind_generators) - 1
 
-3. if L <= 0 or M <=0, return INVALID
+3. if L < 0 or M < 0, return INVALID
 4. (Q_1, H_1, ..., H_L) = generators
 5. (Q_2, J_1, ..., J_M) = blind_generators
 
@@ -775,7 +784,7 @@ Inputs:
                                 messages. If not supplied, it defaults
                                 to the empty array ("()").
 - commits_indexes (OPTIONAL), vector of non-negative integers in
-                              ascending order. Indexes of disclosed
+                              ascending order. Indexes of committed
                               messages. If not supplied, it defaults
                               to the empty array ("()").
 - api_id (OPTIONAL), an octet string. If not supplied it defaults to the
@@ -789,16 +798,19 @@ Parameters:
 Outputs:
 
 - proof, an octet string; or INVALID.
+- add_zkp_info, a structure containing an array of committed disclosure
+                commitments, and the array of random scalars used to
+                create those commitments.
 
 Deserialization:
 
 1. signature_result = octets_to_signature(signature)
 2. if signature_result is INVALID, return INVALID
 
-3*. if commits_indexes is not a list of integers from 0 to L in
-    accenting order, return INVALID
-4*. if disclosed_indexes is not a list of integers from 0 to L in
-    accenting order, return INVALID
+3*. if commits_indexes is not a list of integers from 0 to
+    length(messages) - 1 in ascending order, return INVALID
+4*. if disclosed_indexes is not a list of integers from 0 to
+    length(messages) - 1 in ascending order, return INVALID
 
 Procedure:
 
@@ -819,29 +831,30 @@ Procedure:
 
 6.  for i in 1...N,
 7.      idx = commits_indexes[i]
-8.      C_i = Y_0 * s_i + Y_1 * messages[idx]
-9.      C~_i = Y_0 * s~_i + Y_1 * init_random_scalars[idx + 5]
+8.      j = position (0-indexed) of idx within the undisclosed messages
+9.      C_i = Y_0 * s_i + Y_1 * messages[idx]
+10.     C~_i = Y_0 * s~_i + Y_1 * init_random_scalars[j + 5]
 
-10. commit_init_res = {commits: (C_1, ..., C_N),
-                       commits_proofs: (C~_1, ...,C~_N)
+11. commit_init_res = {commits: (C_1, ..., C_N),
+                       commits_proofs: (C~_1, ...,C~_N),
                        indexes: commits_indexes}
 
-11. challenge = ProofChallengeCalculate(init_res, commit_init_res, ph, api_id)
-12. if challenge is INVALID, return INVALID
+12. challenge = ProofChallengeCalculate(init_res, commit_init_res, ph, api_id)
+13. if challenge is INVALID, return INVALID
 
-13. bbs_proof = BBS.ProofFinalize(init_res, challenge)
+14. bbs_proof = BBS.ProofFinalize(init_res, challenge)
 
 // Finalize the commitment correctness proof
-14. for i in 1...N, s^_i =  s~_i + challenge * s_i
-15. commits_proof = ((C_1, ..., C_N), (s^_1, ..., s^N))
+15. for i in 1...N, s^_i =  s~_i + challenge * s_i
+16. commits_proof = ((C_1, ..., C_N), (s^_1, ..., s^_N))
 
-16. proof = proof_to_octets(length(bbs_proof), bbs_proof,
+17. proof = proof_to_octets(length(bbs_proof), bbs_proof,
                            length(disclosed_indexes), disclosed_indexes,
-                           length(commits_proof), commits_proof
+                           length(commits_proof), commits_proof,
                            length(commits_indexes), commits_indexes)
-17. add_zkp_info = {commits: (C_1, ..., C_N),
+18. add_zkp_info = {commits: (C_1, ..., C_N),
                     commit_rands: (s_1, ..., s_N)}
-18. return [proof, add_zkp_info]
+19. return [proof, add_zkp_info]
 ```
 
 ### Core Proof Verification
@@ -854,11 +867,8 @@ Inputs:
 
 - PK (REQUIRED), an octet string of the form outputted by the SkToPk
                  operation.
-- bbs_proof (REQUIRED), an array with four octet strings of the form
-                    outputted by the ProofGen operation.
-- commits_proof (REQUIRED), an tuple consisting from an array of points
-                            in G1 and an array of scalars of the same
-                            length. Both arrays can be empty.
+- proof (REQUIRED), an octet string of the form outputted by the
+                    BlindProofGen operation.
 - generators (REQUIRED), vector of pseudo-random points in G1.
 - header (OPTIONAL), an optional octet string containing context and
                      application specific information. If not supplied,
@@ -898,10 +908,10 @@ Deserialization:
 9.  L = length(generators)
 
 10. if commits_indexes is not a list of integers from 0 to L in
-    accenting order, return INVALID
+    ascending order, return INVALID
 
 11. if disclosed_indexes is not a list of integers from 0 to L in
-    accenting order, return INVALID
+    ascending order, return INVALID
 
 12. (C_1, ... C_N) = commits
 13. (s^_1, ..., s^_N) = commits_proof
@@ -915,19 +925,20 @@ Procedure:
 2.  if init_res is INVALID, return INVALID
 
 3.  for i in 1...length(commits),
-4.      idx = commit_indexes[i]
-5.      C^_i = Y_0 * s^_i + Y_1 * hats[idx] - C_i * cp
+4.      idx = commits_indexes[i]
+5.      j = position (0-indexed) of idx within the undisclosed messages
+6.      C^_i = Y_0 * s^_i + Y_1 * hats[j] - C_i * cp
 
-6.  commit_init_res = {commits: (C_1, ..., C_N),
-                       commits_proofs: (C^_1, ...,C^_N)
-                       indexes: commit_indexes}
+7.  commit_init_res = {commits: (C_1, ..., C_N),
+                       commits_proofs: (C^_1, ...,C^_N),
+                       indexes: commits_indexes}
 
-7.  challenge = ProofChallengeCalculate(init_res, commit_init_res, ph, api_id)
-8.  if challenge is INVALID, return INVALID
+8.  challenge = ProofChallengeCalculate(init_res, commit_init_res, ph, api_id)
+9.  if challenge is INVALID, return INVALID
 
-9.  if cp != challenge, return INVALID
-10. if h(Abar, W) * h(Bbar, -BP2) != Identity_GT, return INVALID
-11. return VALID
+10.  if cp != challenge, return INVALID
+11. if h(Abar, W) * h(Bbar, -BP2) != Identity_GT, return INVALID
+12. return VALID
 ```
 
 # Utilities
@@ -982,9 +993,8 @@ Inputs:
 Definition:
 
 - blind_challenge_dst, an octet string representing the domain
-                       separation tag: api_id || "H2S_" where
-                       ciphersuite_id is defined by the ciphersuite and
-                       "H2S_" is an ASCII string composed of 4 bytes.
+                       separation tag: api_id || "H2S_" where "H2S_" is
+                       an ASCII string composed of 4 bytes.
 
 Deserialization:
 
@@ -1061,8 +1071,8 @@ Procedure:
 
 3. c_octs = c_octs || serialize(N, i_1, C_1, C~_1, ..., i_N, C_N, C~_N)
 
-5. c_octs = c_octs || I2OSP(length(ph), 8) || ph
-6. return hash_to_scalar(c_octs, hash_to_scalar_dst)
+4. c_octs = c_octs || I2OSP(length(ph), 8) || ph
+5. return hash_to_scalar(c_octs, hash_to_scalar_dst)
 ```
 
 ## Serialize
@@ -1134,8 +1144,8 @@ Procedure:
 15. if index != length(commitment_octs), return INVALID
 16. if j < 2, return INVALID
 17. msg_commitments = ()
-18. if j >= 3, set msg_commitments = (s_1, ..., s_(j-1))
-19. return (C, (s_0, msg_commitments, s_j))
+18. if j >= 3, set msg_commitments = (s_1, ..., s_(j-2))
+19. return (C, (s_0, msg_commitments, s_(j-1)))
 ```
 
 ### Proof to Octets
@@ -1166,10 +1176,10 @@ Outputs:
 
 Procedure:
 
-1. oct = I2OSP(bbs_proof_len) || serialize(bbs_proof) ||
-         I2OSP(disclosed_indexes_len) || serialize(disclosed_indexes) ||
-         I2OSP(commits_proof_len) || serialize(commits_proof) ||
-         I2OSP(commits_indexes_len) || serialize(commits_indexes)
+1. oct = I2OSP(bbs_proof_len, 8) || serialize(bbs_proof) ||
+         I2OSP(disclosed_indexes_len, 8) || serialize(disclosed_indexes) ||
+         I2OSP(commits_proof_len, 8) || serialize(commits_proof) ||
+         I2OSP(commits_indexes_len, 8) || serialize(commits_indexes)
 2. return oct
 
 ```
@@ -1253,8 +1263,8 @@ Procedure:
 
 33. for i in (1..N)
 34.     sidx = eidx + 1
-35.     eidx + octet_scalar_length
-36.     s_i = OS2IP(proof_octetss[sidx..eidx])
+35.     eidx = sidx + octet_scalar_length
+36.     s_i = OS2IP(proof_octets[sidx..eidx])
 37.     if s_i = 0 or if s_i >= r, return INVALID
 
 38. commits_proof = ((C_1, ..., C_N), (s_1, ..., s_N))
@@ -1274,7 +1284,7 @@ Procedure:
 
 48. commits_indexes = (cidx_1, ..., cidx_N')
 49. if N' not equal to N, return INVALID
-50. if length(proof) not equal to eidx, return INVALID
+50. if length(proof_octets) not equal to eidx, return INVALID
 51. return (bbs_proof, disclosed_indexes,
             commits_proof, commits_indexes)
 ```
