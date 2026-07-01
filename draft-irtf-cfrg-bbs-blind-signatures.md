@@ -807,9 +807,9 @@ Deserialization:
 1. signature_result = octets_to_signature(signature)
 2. if signature_result is INVALID, return INVALID
 
-3*. if commits_indexes is not a list of integers from 0 to
+3. if commits_indexes is not a list of integers from 0 to
     length(messages) - 1 in ascending order, return INVALID
-4*. if disclosed_indexes is not a list of integers from 0 to
+4. if disclosed_indexes is not a list of integers from 0 to
     length(messages) - 1 in ascending order, return INVALID
 
 Procedure:
