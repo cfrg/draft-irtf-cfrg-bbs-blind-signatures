@@ -1332,8 +1332,8 @@ svg {
         <li id="section-1-3.6">Without knowledge of the ordered set of secret messages no selective disclosure proof can be generated even solely for a subset of the <em>Signer</em> messages. (within the security assumptions of the BBS signature scheme).<a href="#section-1-3.6" class="pilcrow">¶</a>
 </li>
       </ol>
-<p id="section-1-4">While the core BBS protocol allows a prover to either disclose or withhold a message from a verifier. This specification allows for <strong>committed disclosure</strong> of a message <span>[<a href="#Vision2025" class="cite xref">Vision2025</a>]</span>. In this case, the prover provides a commitment (computationally binding and perfectly hiding) to the message along with proof that the commitment corresponds to a particular message in the signature.<a href="#section-1-4" class="pilcrow">¶</a></p>
-<p id="section-1-5">The idea behind this committed-disclosure extension for BBS is that it also accommodates further zero knowledge proof (ZKP) extensions -- e.g. range proofs or different pseudonyms -- in a modular, plug-and-play style. Such extensions are out of scope of this specification.<a href="#section-1-5" class="pilcrow">¶</a></p>
+<p id="section-1-4">While the core BBS protocol allows a prover to either disclose or withhold a message from a verifier, this specification allows for <strong>committed disclosure</strong> of a message <span>[<a href="#Vision2025" class="cite xref">Vision2025</a>]</span>. In this case, the prover provides a commitment (computationally binding and perfectly hiding) to the message along with proof that the commitment corresponds to a particular message in the signature. This enables a prover to demonstrate properties of credential attributes without revealing the underlying attribute values.<a href="#section-1-4" class="pilcrow">¶</a></p>
+<p id="section-1-5">The idea behind this committed-disclosure extension for BBS is that it also accommodates further zero-knowledge proof (ZKP) extensions for predicate proofs -- e.g. range proofs or different pseudonyms -- in a modular, plug-and-play style. Such extensions are out of scope of this specification.<a href="#section-1-5" class="pilcrow">¶</a></p>
 <div id="blind-bbs-protocol-overview">
 <section id="section-1.1">
         <h3 id="name-blind-bbs-protocol-overview">
@@ -1419,8 +1419,27 @@ svg {
         <h3 id="name-example-committed-disclosur">
 <a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-example-committed-disclosur" class="section-name selfRef">Example Committed Disclosure Applications</a>
         </h3>
-<p id="section-1.3-1">Privacy is enhanced via the <strong>committed disclosure</strong> mechanism along with an external ZKP proof of some predicate. In this case rather than selectively disclosing a signed message to the verifier the prover provides a (computationally binding and perfectly hiding) commitment along with a ZKP concerning some aspect (the predicate) of the committed value.  This ZKP actually comes in two parts. One part is specified in this specification and proves that the given commitment(s) corresponds to the corresponding messages signed by the signer. The second part is an additional ZKP, not specified here, that proves some predicate about the committed values.<a href="#section-1.3-1" class="pilcrow">¶</a></p>
-<p id="section-1.3-2">As discussed in <span>[<a href="#Vision2025" class="cite xref">Vision2025</a>]</span> this allows for the modular addition for proving (1) possession of a device key, (2) range proofs and (3) pseudonyms. While in <span>[<a href="#LegacyBinding2026" class="cite xref">LegacyBinding2026</a>]</span> additional more efficient proof of possession of a (hardware) device key are given. These would all be implemented as an additional ZKP along with the ZKP specified here.<a href="#section-1.3-2" class="pilcrow">¶</a></p>
+<p id="section-1.3-1">Privacy is enhanced via the <strong>committed disclosure</strong> mechanism along with an external ZKP proof of some predicate. In this case rather than selectively disclosing a signed message to the verifier the prover provides a (computationally binding and perfectly hiding) commitment along with a ZKP concerning some aspect (the predicate) of the committed value.<a href="#section-1.3-1" class="pilcrow">¶</a></p>
+<p id="section-1.3-2">For an example, consider a prover who must demonstrate that they are over 18 years old. Rather than revealing the credential attribute containing their date of birth, the prover generates a proof consisting of:<a href="#section-1.3-2" class="pilcrow">¶</a></p>
+<ol start="1" type="1" class="compact type-1" id="section-1.3-3">
+<li id="section-1.3-3.1">A BBS presentation proof according to step 5 of <a href="#blind-bbs-protocol-overview" class="auto internal xref">Section 1.1</a>, in which the corresponding attribute remains hidden,<a href="#section-1.3-3.1" class="pilcrow">¶</a>
+</li>
+          <li id="section-1.3-3.2">The commitment <code>C</code> as part of the above proof,<a href="#section-1.3-3.2" class="pilcrow">¶</a>
+</li>
+          <li id="section-1.3-3.3">A proof of knowledge of the opening of <code>C</code>, together with a proof that the committed value is equal to the hidden message contained in the BBS signature,<a href="#section-1.3-3.3" class="pilcrow">¶</a>
+</li>
+          <li id="section-1.3-3.4">An additional range proof <code>P</code> showing that the committed birth date in <code>C</code> corresponds to an age greater than or equal to 18.<a href="#section-1.3-3.4" class="pilcrow">¶</a>
+</li>
+        </ol>
+<p id="section-1.3-4">The generation of predicate proofs (item 4) is outside the scope of this specification. However, this specification defines:<a href="#section-1.3-4" class="pilcrow">¶</a></p>
+<ul class="compact">
+<li class="compact" id="section-1.3-5.1">How Pedersen commitments are generated for attributes subject to predicates (item 2),<a href="#section-1.3-5.1" class="pilcrow">¶</a>
+</li>
+          <li class="compact" id="section-1.3-5.2">How equality proofs between committed values and credential attributes are constructed (item 3).<a href="#section-1.3-5.2" class="pilcrow">¶</a>
+</li>
+        </ul>
+<p id="section-1.3-6">For this reason, the <code>BlindProofGen</code> procedure outputs, in addition to the proof <code>proof</code> sent to the verifier, the tuple <code>add_zkp_info</code>, containing the committed messages and the opening information required to reconstruct Pedersen commitments. This information is never sent to the verifier. Instead, it is retained by the prover and later used to generate predicate proofs.<a href="#section-1.3-6" class="pilcrow">¶</a></p>
+<p id="section-1.3-7">Committed disclosure allows for the modular addition of proving possession of a device key, range proofs, and pseudonyms as discussed in <span>[<a href="#Vision2025" class="cite xref">Vision2025</a>]</span>. These would all be implemented as an additional predicate ZKP along with the committed disclosure ZKP specified here.<a href="#section-1.3-7" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="terminology">
@@ -2862,10 +2881,6 @@ Procedure:
 <dt id="I-D.ietf-privacypass-protocol">[I-D.ietf-privacypass-protocol]</dt>
         <dd>
 <span class="refAuthor">Celi, S.</span>, <span class="refAuthor">Davidson, A.</span>, <span class="refAuthor">Valdez, S.</span>, and <span class="refAuthor">C. A. Wood</span>, <span class="refTitle">"Privacy Pass Issuance Protocol"</span>, <span class="refContent">Work in Progress</span>, <span class="seriesInfo">Internet-Draft, draft-ietf-privacypass-protocol-16</span>, <time datetime="2023-10-03" class="refDate">3 October 2023</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-protocol-16">https://datatracker.ietf.org/doc/html/draft-ietf-privacypass-protocol-16</a>&gt;</span>. </dd>
-<dd class="break"></dd>
-<dt id="LegacyBinding2026">[LegacyBinding2026]</dt>
-        <dd>
-<span class="refAuthor">Celi, S.</span>, <span class="refAuthor">Lehmann, A.</span>, <span class="refAuthor">Levin, S.</span>, and <span class="refAuthor">A. Zacharakis</span>, <span class="refTitle">"Device Binding for Anonymous Credentials on Legacy Phones"</span>, <time datetime="2026" class="refDate">2026</time>, <span>&lt;<a href="https://eprint.iacr.org/2026/965">https://eprint.iacr.org/2026/965</a>&gt;</span>. </dd>
 <dd class="break"></dd>
 <dt id="P91">[P91]</dt>
         <dd>
