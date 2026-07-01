@@ -51,9 +51,9 @@ Like BBS signatures blind BBS signatures work with a three party model of *Signe
 5. Using the Blind BBS signature created by the *Signer* the *Prover* can disclose any subset of both the secret *Prover* messages or the *Signer*'s messages and prove that these were in the signed sets.
 6. Without knowledge of the ordered set of secret messages no selective disclosure proof can be generated even solely for a subset of the *Signer* messages. (within the security assumptions of the BBS signature scheme).
 
-While the core BBS protocol allows a prover to either disclose or withhold a message from a verifier. This specification allows for **committed disclosure** of a message [@Vision2025]. In this case, the prover provides a commitment (computationally binding and perfectly hiding) to the message along with proof that the commitment corresponds to a particular message in the signature.
+While the core BBS protocol allows a prover to either disclose or withhold a message from a verifier, this specification allows for **committed disclosure** of a message [@Vision2025]. In this case, the prover provides a commitment (computationally binding and perfectly hiding) to the message along with proof that the commitment corresponds to a particular message in the signature. This enables a prover to demonstrate properties of credential attributes without revealing the underlying attribute values.
 
-The idea behind this committed-disclosure extension for BBS is that it also accommodates further zero knowledge proof (ZKP) extensions -- e.g. range proofs or different pseudonyms -- in a modular, plug-and-play style. Such extensions are out of scope of this specification.
+The idea behind this committed-disclosure extension for BBS is that it also accommodates further zero-knowledge proof (ZKP) extensions for predicate proofs -- e.g. range proofs or different pseudonyms -- in a modular, plug-and-play style. Such extensions are out of scope of this specification.
 
 ## Blind BBS Protocol Overview
 
@@ -124,9 +124,23 @@ Furthermore, applications like Privacy Pass ([@I-D.ietf-privacypass-protocol]) m
 
 ## Example Committed Disclosure Applications
 
-Privacy is enhanced via the **committed disclosure** mechanism along with an external ZKP proof of some predicate. In this case rather than selectively disclosing a signed message to the verifier the prover provides a (computationally binding and perfectly hiding) commitment along with a ZKP concerning some aspect (the predicate) of the committed value.  This ZKP actually comes in two parts. One part is specified in this specification and proves that the given commitment(s) corresponds to the corresponding messages signed by the signer. The second part is an additional ZKP, not specified here, that proves some predicate about the committed values.
+Privacy is enhanced via the **committed disclosure** mechanism along with an external ZKP proof of some predicate. In this case rather than selectively disclosing a signed message to the verifier the prover provides a (computationally binding and perfectly hiding) commitment along with a ZKP concerning some aspect (the predicate) of the committed value.
 
-As discussed in [@Vision2025] this allows for the modular addition for proving (1) possession of a device key, (2) range proofs and (3) pseudonyms. While in [@LegacyBinding2026] additional more efficient proof of possession of a (hardware) device key are given. These would all be implemented as an additional ZKP along with the ZKP specified here.
+For an example, consider a prover who must demonstrate that they are over 18 years old. Rather than revealing the credential attribute containing their date of birth, the prover generates a proof consisting of:
+
+1. A BBS presentation proof according to step 5 of (#blind-bbs-protocol-overview), in which the corresponding attribute remains hidden,
+2. The commitment `C` as part of the above proof,
+3. A proof of knowledge of the opening of `C`, together with a proof that the committed value is equal to the hidden message contained in the BBS signature,
+4. An additional range proof `P` showing that the committed birth date in `C` corresponds to an age greater than or equal to 18.
+
+The generation of predicate proofs (item 4) is outside the scope of this specification. However, this specification defines:
+
+* How Pedersen commitments are generated for attributes subject to predicates (item 2),
+* How equality proofs between committed values and credential attributes are constructed (item 3).
+
+For this reason, the `BlindProofGen` procedure outputs, in addition to the proof `proof` sent to the verifier, the tuple `add_zkp_info`, containing the committed messages and the opening information required to reconstruct Pedersen commitments. This information is never sent to the verifier. Instead, it is retained by the prover and later used to generate predicate proofs.
+
+Committed disclosure allows for the modular addition of proving possession of a device key, range proofs, and pseudonyms as discussed in [@Vision2025]. These would all be implemented as an additional predicate ZKP along with the committed disclosure ZKP specified here.
 
 ## Terminology
 
