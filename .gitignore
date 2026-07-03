@@ -2,13 +2,14 @@
 /*-[0-9][0-9].xml
 archive.json
 draft-irtf-cfrg-bbs-blind-signatures.xml
+/fixtures/node_modules/
 Gemfile.lock
 /.gems/
 *.html
+/.idea/
 /lib
 /.*.mk
 /node_modules/
-/fixtures/node_modules/
 package-lock.json
 *.pdf
 *.redxml
