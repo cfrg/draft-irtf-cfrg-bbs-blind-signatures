@@ -2550,6 +2550,12 @@ This document does not make any requests of IANA.
 * Add committed disclosure functionality and explanatory text
 * Editorial fixes
 
+-04
+
+* Fixed generator counts, scalar ordering, and disclosure indexing in blind signature and proof operations
+* Corrected inputs, outputs, and undefined variables in core operations
+* Unified commitment terminology and simplified proof serialization
+
 <reference anchor="Chaum85" target="https://dl.acm.org/doi/pdf/10.1145/4372.4373">
  <front>
    <title>Security without identification: transaction systems to make big brother obsolete</title>
