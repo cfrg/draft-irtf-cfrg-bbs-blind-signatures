@@ -186,8 +186,6 @@ The key words "MUST", "MUST NOT", "REQUIRED", "SHALL", "SHALL NOT", "SHOULD", "S
 
 This document makes use of various operations defined by the BBS Signature Scheme document [@!I-D.irtf-cfrg-bbs-signatures]. For clarity, whenever an operation will be used defined in [@!I-D.irtf-cfrg-bbs-signatures], it will be prefixed by "BBS." (e.g., "BBS.CoreVerify" etc.). More specifically, the operations used are the following:
 
-<!-- The links below probably need to be updated to v10 -->
-
 - `BBS.octets_to_point_E1`: Refers to the `octets_to_point_E1` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 1.2].
 - `BBS.CoreVerify`: Refers to the `CoreVerify` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 3.6.2].
 - `BBS.ProofInit`: Refers to the `ProofInit` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 3.7.1].
