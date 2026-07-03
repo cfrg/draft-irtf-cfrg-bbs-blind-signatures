@@ -188,19 +188,19 @@ This document makes use of various operations defined by the BBS Signature Schem
 
 <!-- The links below probably need to be updated to v10 -->
 
-- `BBS.octets_to_point_E1`: Refers to the `octets_to_point_E1` operation defined in [Section 1.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-10.html#name-notation) of [@!I-D.irtf-cfrg-bbs-signatures].
-- `BBS.CoreVerify`: Refers to the `CoreVerify` operation defined in [Section 3.6.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-coreverify) of [@!I-D.irtf-cfrg-bbs-signatures].
-- `BBS.ProofInit`: Refers to the `ProofInit` operation defined in [Section 3.7.1](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-10.html#name-proof-initialization) of [@!I-D.irtf-cfrg-bbs-signatures].
-- `BBS.ProofFinalize`: Refers to the `ProofFinalize` operation defined in [Section 3.7.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-10.html#name-proof-finalization) of [@!I-D.irtf-cfrg-bbs-signatures].
-- `BBS.ProofVerifyInit`: Refers to the `ProofVerifyInit` operation defined in [Section 3.7.3](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-10.html#section-3.7.3) of [@!I-D.irtf-cfrg-bbs-signatures].
-- `BBS.create_generators`: Refers to the `create_generators` operation defined in [Section 4.1.1](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-generators-calculation) of [@!I-D.irtf-cfrg-bbs-signatures].
-- `BBS.messages_to_scalars`: Refers to the `messages_to_scalars` operation defined in [Section 4.1.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-messages-to-scalars) of [@!I-D.irtf-cfrg-bbs-signatures].
-- `BBS.calculate_random_scalars`: Refers to the `calculate_random_scalars` operation defined in [Section 4.2.1](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-random-scalars) of [@!I-D.irtf-cfrg-bbs-signatures].
-- `BBS.hash_to_scalar`: Refers to the `hash_to_scalar` operation defined in [Section 4.2.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-hash-to-scalar) of [@!I-D.irtf-cfrg-bbs-signatures].
-- `BBS.calculate_domain`: Refers to the `calculate_domain` operation defined in [Section 4.2.3](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-07.html#domain-calculation) of [@!I-D.irtf-cfrg-bbs-signatures].
-- `BBS.serialize`: Refers to the `serialize` operation defined in [Section 4.2.4.1](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-10.html#name-serialize) of [@!I-D.irtf-cfrg-bbs-signatures].
-- `BBS.signature_to_octets`: Refers to the `signature_to_octets` operation defined in [Section 4.2.4.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-10.html#name-signature-to-octets) of [@!I-D.irtf-cfrg-bbs-signatures].
-- `BBS.octets_to_proof`: Refers to the `octets_to_proof` operation defined in [Section 4.2.4.5](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-10.html#name-octets-to-proof) of [@!I-D.irtf-cfrg-bbs-signatures].
+- `BBS.octets_to_point_E1`: Refers to the `octets_to_point_E1` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 1.2].
+- `BBS.CoreVerify`: Refers to the `CoreVerify` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 3.6.2].
+- `BBS.ProofInit`: Refers to the `ProofInit` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 3.7.1].
+- `BBS.ProofFinalize`: Refers to the `ProofFinalize` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 3.7.2].
+- `BBS.ProofVerifyInit`: Refers to the `ProofVerifyInit` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 3.7.3].
+- `BBS.create_generators`: Refers to the `create_generators` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.1.1].
+- `BBS.messages_to_scalars`: Refers to the `messages_to_scalars` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.1.2].
+- `BBS.calculate_random_scalars`: Refers to the `calculate_random_scalars` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.1].
+- `BBS.hash_to_scalar`: Refers to the `hash_to_scalar` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.2].
+- `BBS.calculate_domain`: Refers to the `calculate_domain` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.3].
+- `BBS.serialize`: Refers to the `serialize` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.4.1].
+- `BBS.signature_to_octets`: Refers to the `signature_to_octets` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.4.2].
+- `BBS.octets_to_proof`: Refers to the `octets_to_proof` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.4.5].
 
 
 
@@ -290,9 +290,9 @@ Procedure:
 
 ## Blind BBS Signatures Interface
 
-The following section defines a BBS Interface for blind BBS signatures. The identifier of the Interface is defined as `ciphersuite_id || BLIND_H2G_HM2S_`, where `ciphersuite_id` the unique identifier of the BBS ciphersuite used, as is defined in [Section 6](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-03.html#name-ciphersuites) of [@!I-D.irtf-cfrg-bbs-signatures]). Each BBS Interface MUST define operations to map the input messages to scalar values and to create the generator set, required by the core operations. The input messages to the defined Interface will be mapped to scalars using the `messages_to_scalars` operation defined in [Section 4.1.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-messages-to-scalars) of [@!I-D.irtf-cfrg-bbs-signatures]. The generators will be created using the `create_generators` operation defined in [Section 4.1.1](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-generators-calculation) of [@!I-D.irtf-cfrg-bbs-signatures].
+The following section defines a BBS Interface for blind BBS signatures. The identifier of the Interface is defined as `ciphersuite_id || BLIND_H2G_HM2S_`, where `ciphersuite_id` the unique identifier of the BBS ciphersuite used, as is defined in [@!I-D.irtf-cfrg-bbs-signatures, section 6]. Each BBS Interface MUST define operations to map the input messages to scalar values and to create the generator set, required by the core operations. The input messages to the defined Interface will be mapped to scalars using the `messages_to_scalars` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.1.2]. The generators will be created using the `create_generators` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.1.1].
 
-Other than the `BlindSign` operation defined in (#blind-signature-generation), which uses the `FinalizeBlindSign` procedure, defined in (#finalize-blind-sign), all other interface operations defined in this section use the core operations defined in [Section 3.6](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-core-operations) of [@!I-D.irtf-cfrg-bbs-signatures].
+Other than the `BlindSign` operation defined in (#blind-signature-generation), which uses the `FinalizeBlindSign` procedure, defined in (#finalize-blind-sign), all other interface operations defined in this section use the core operations defined in [@!I-D.irtf-cfrg-bbs-signatures, section 3.6].
 
 ### Blind Signature Generation
 
@@ -370,7 +370,7 @@ Procedure:
 
 This operation validates a blind BBS signature (`signature`), given the Signer's public key (`PK`), a header (`header`), a set of messages (`messages`), including first the messages chosen by the Issuer and then the ones chosen (and committed to) by the Prover and if used, the `secret_prover_blind` as returned by the `Commit` operation ((#commitment-computation)).
 
-This operation makes use of the `CoreVerify` operation as defined in [Section 3.6.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-05.html#name-coreverify) of [@!I-D.irtf-cfrg-bbs-signatures].
+This operation makes use of the `CoreVerify` operation as defined in [@!I-D.irtf-cfrg-bbs-signatures, section 3.6.2].
 
 ```
 result = VerifyBlindSign(PK, signature, header, messages,
@@ -1371,13 +1371,13 @@ Procedure:
 
 # Privacy Considerations
 
-The privacy considerations discussed in [Section 5](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-09.html#name-privacy-considerations) of [@!I-D.irtf-cfrg-bbs-signatures] apply to this draft as well.
+The privacy considerations discussed in [@!I-D.irtf-cfrg-bbs-signatures, section 5] apply to this draft as well.
 
 ## Total Number and Index of Committed Messages
 
 When a Prover submits a commitment to the Signer, the Prover's committed messages are "perfectly" (statistically) hidden from the Signer. However, the proof of the committed messages, which is also sent from the Prover to the Signer, contains the number of committed messages.
 
-In the proof sent from the Prover to the Verifier the number of committed messages can be inferred. In addition, indexes of disclosed and committed messages are revealed to the Verifier. In [Section 5.2](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-09.html#name-total-number-and-index-of-s) of [@!I-D.irtf-cfrg-bbs-signatures] the threats to unlinkability and mitigations for this information with respect to Signer messages is discussed. These threats and mitigations apply to the Prover total number of committed messages and the disclosed and committed indexes as well.
+In the proof sent from the Prover to the Verifier the number of committed messages can be inferred. In addition, indexes of disclosed and committed messages are revealed to the Verifier. In [@!I-D.irtf-cfrg-bbs-signatures, section 5.2] the threats to unlinkability and mitigations for this information with respect to Signer messages is discussed. These threats and mitigations apply to the Prover total number of committed messages and the disclosed and committed indexes as well.
 
 # Application Considerations
 
@@ -1387,11 +1387,11 @@ Applications using `CoreProofGen` (as defined in (#core-proof-generation)) only 
 
 # Security Considerations
 
-Security considerations detailed in [Section 6](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-09.html#name-security-considerations) of [@!I-D.irtf-cfrg-bbs-signatures] apply to this draft as well.
+Security considerations detailed in [@!I-D.irtf-cfrg-bbs-signatures, section 6] apply to this draft as well.
 
 ## Prover Blind Factor
 
-The random scalar value `secret_prover_blind` calculated and returned by the `Commit` operation is responsible for "hiding" the committed messages (otherwise, in many practical applications, the Signer may be able to retrieve them). Furthermore, it guarantees that the entity generating the BBS proof (see `BlindProofGen` defined in (#proof-generation)) has knowledge of that factor. As a result, the `secret_prover_blind` MUST remain private by the Prover and it MUST be generated using a cryptographically secure pseudo-random number generator. See [Section 6.7](https://www.ietf.org/archive/id/draft-irtf-cfrg-bbs-signatures-09.html#name-randomness-requirements) of [@!I-D.irtf-cfrg-bbs-signatures] on recommendations and requirements for implementing the `BBS.calculate_random_scalars` operation (which is used to calculate the `secret_prover_blind` value).
+The random scalar value `secret_prover_blind` calculated and returned by the `Commit` operation is responsible for "hiding" the committed messages (otherwise, in many practical applications, the Signer may be able to retrieve them). Furthermore, it guarantees that the entity generating the BBS proof (see `BlindProofGen` defined in (#proof-generation)) has knowledge of that factor. As a result, the `secret_prover_blind` MUST remain private by the Prover and it MUST be generated using a cryptographically secure pseudo-random number generator. See [@!I-D.irtf-cfrg-bbs-signatures, section 6.7] on recommendations and requirements for implementing the `BBS.calculate_random_scalars` operation (which is used to calculate the `secret_prover_blind` value).
 
 ## Key Binding
 
@@ -1399,7 +1399,7 @@ One natural use case for the blind signatures extension of the BBS scheme is key
 
 # Ciphersuites
 
-This document uses the `BBS_BLS12381G1_XOF:SHAKE-256_SSWU_RO_` and `BBS_BLS12381G1_XMD:SHA-256_SSWU_RO_` defined in [Section 7.2.1](https://identity.foundation/bbs-signature/draft-irtf-cfrg-bbs-signatures.html#name-bls12-381-shake-256) and [Section 7.2.2](https://identity.foundation/bbs-signature/draft-irtf-cfrg-bbs-signatures.html#name-bls12-381-sha-256) correspondingly, of [@!I-D.irtf-cfrg-bbs-signatures].
+This document uses the `BBS_BLS12381G1_XOF:SHAKE-256_SSWU_RO_` and `BBS_BLS12381G1_XMD:SHA-256_SSWU_RO_` defined in [@!I-D.irtf-cfrg-bbs-signatures, section 7.2.1] and [@!I-D.irtf-cfrg-bbs-signatures, section 7.2.2] correspondingly.
 
 # Test Vectors
 
