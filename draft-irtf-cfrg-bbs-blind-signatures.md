@@ -40,7 +40,7 @@ This document defines an extension to the BBS Signature scheme that supports bli
 
 # Introduction
 
-Blind signatures are cryptographic protocols that allow for a signer to create a signature over content without actually knowing the content. They form a useful cryptographic primitive particularly in situations that are privacy sensitive. The concept has existed for quite some time and is well explained in Chaum's 1985 popular article "Security without identification: transaction systems to make big brother obsolete" [@Chaum85]. In [@!RFC9474], "RSA Blind Signatures", the RSA signature scheme was extended to provide for blind signing. In this document the BBS digital signature scheme, as defined in [@!I-D.irtf-cfrg-bbs-signatures], is extended to provide blind BBS signatures.
+Blind signatures are cryptographic protocols that allow for a signer to create a signature over content without actually knowing the content. They form a useful cryptographic primitive particularly in situations that are privacy sensitive. The concept has existed for quite some time and is well explained in Chaum's 1985 popular article "Security without identification: transaction systems to make big brother obsolete" [@Chaum85]. In [@RFC9474], "RSA Blind Signatures", the RSA signature scheme was extended to provide for blind signing. In this document the BBS digital signature scheme, as defined in [@!I-D.irtf-cfrg-bbs-signatures], is extended to provide blind BBS signatures.
 
 Like BBS signatures blind BBS signatures work with a three party model of *Signer*, *Prover*, and *Verifier*. The blind BBS protocol defined here has the following useful properties:
 
@@ -290,7 +290,7 @@ Procedure:
 
 ## Blind BBS Signatures Interface
 
-The following section defines a BBS Interface for blind BBS signatures. The identifier of the Interface is defined as `ciphersuite_id || BLIND_H2G_HM2S_`, where `ciphersuite_id` the unique identifier of the BBS ciphersuite used, as is defined in [@!I-D.irtf-cfrg-bbs-signatures, section 6]. Each BBS Interface MUST define operations to map the input messages to scalar values and to create the generator set, required by the core operations. The input messages to the defined Interface will be mapped to scalars using the `messages_to_scalars` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.1.2]. The generators will be created using the `create_generators` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.1.1].
+The following section defines a BBS Interface for blind BBS signatures. The identifier of the Interface is defined as `ciphersuite_id || BLIND_H2G_HM2S_`, where `ciphersuite_id` is the unique identifier of the BBS ciphersuite used, as defined in [@!I-D.irtf-cfrg-bbs-signatures, section 6]. Each BBS Interface MUST define operations to map the input messages to scalar values and to create the generator set, required by the core operations. The input messages to the defined Interface will be mapped to scalars using the `messages_to_scalars` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.1.2]. The generators will be created using the `create_generators` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.1.1].
 
 Other than the `BlindSign` operation defined in (#blind-signature-generation), which uses the `FinalizeBlindSign` procedure, defined in (#finalize-blind-sign), all other interface operations defined in this section use the core operations defined in [@!I-D.irtf-cfrg-bbs-signatures, section 3.6].
 
@@ -436,7 +436,7 @@ Procedure:
 
 This operation creates a BBS proof, which is a zero-knowledge, proof-of-knowledge, of a BBS signature, while optionally disclosing any subset of the signed messages (either chosen by the Issuer or committed by the Prover). In addition, this operation can generate commitments to un-revealed messages and include with the BBS proof that these commitments correspond to specific un-revealed messages. These commitments can be used in subsequent ZKPs outside the scope of this specification .
 
-When this operation furnishes disclosed commitment values it will also return an additional bundle of information for use in external ZKPs [@Vision2025].  This *add_zkp_info* includes the committed message scalars and the random scalars, from these the disclosed commitments may be recomputed. The  *add_zkp_info*  should never be exposed, i.e., it is NOT to be sent sent to the verifier. The *add_zkp_info* structure has the following form:
+When this operation furnishes disclosed commitment values it will also return an additional bundle of information for use in external ZKPs [@Vision2025].  This *add_zkp_info* includes the committed message scalars and the random scalars, from these the disclosed commitments may be recomputed. The  *add_zkp_info*  should never be exposed, i.e., it is NOT to be sent to the verifier. The *add_zkp_info* structure has the following form:
 
 ```
 add_zkp_info = {
