@@ -1330,12 +1330,12 @@ Procedure:
 1.  sidx = 0
 2.  eidx = int_octet_length - 1
 3.  if length(proof_octets) < eidx, return INVALID
-4.  bbs_proof_len = OS2IP(proof_octets[sidx..eidx])
+4.  bbs_proof_len = OS2IP(proof_octets[sidx, ..., eidx])
 
 5.  sidx = eidx + 1
 6.  eidx = sidx + bbs_proof_len
 7.  if length(proof_octets) < eidx, return INVALID
-8.  bbs_proof_octs = proof_octets[sidx..eidx]
+8.  bbs_proof_octs = proof_octets[sidx, ..., eidx]
 9.  bbs_proof = BBS.octets_to_proof(bbs_proof_octs)
 10. if bbs_proof is INVALID, return INVALID
 
@@ -1343,7 +1343,7 @@ Procedure:
 11. sidx = eidx + 1
 12. eidx = sidx + int_octet_length
 13. if length(proof_octets) < eidx, return INVALID
-14. N = OS2IP(proof_octets[sidx..eidx]) // commitments count
+14. N = OS2IP(proof_octets[sidx, ..., eidx]) // commitments count
 
 15. len_floor = eidx + N * (octet_point_length + octet_scalar_length)
 16. if length(proof_octets) < len_floor, return INVALID
@@ -1351,14 +1351,14 @@ Procedure:
 17. for i in (1..N)
 18.     sidx = eidx + 1
 19.     eidx = sidx + octet_point_length
-20.     C_i = BBS.octets_to_point_E1(proof_octets[sidx..eidx])
+20.     C_i = BBS.octets_to_point_E1(proof_octets[sidx, ..., eidx])
 21.     if C_i is INVALID or Identity_G1, return INVALID
 22.     if subgroup_check_G1(C_i) returns INVALID, return INVALID
 
 23. for i in (1..N)
 24.     sidx = eidx + 1
 25.     eidx = sidx + octet_scalar_length
-26.     s_i = OS2IP(proof_octets[sidx..eidx])
+26.     s_i = OS2IP(proof_octets[sidx, ..., eidx])
 27.     if s_i = 0 or if s_i >= r, return INVALID
 
 28. commitments_proof = ((C_1, ..., C_N), (s_1, ..., s_N))
