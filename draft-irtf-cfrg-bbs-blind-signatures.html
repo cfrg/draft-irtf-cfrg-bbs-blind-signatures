@@ -1048,7 +1048,7 @@ svg {
 </tr></thead>
 <tfoot><tr>
 <td class="left">Kalos &amp; Bernstein</td>
-<td class="center">Expires 4 January 2027</td>
+<td class="center">Expires 10 January 2027</td>
 <td class="right">[Page]</td>
 </tr></tfoot>
 </table>
@@ -1061,12 +1061,12 @@ svg {
 <dd class="internet-draft">draft-irtf-cfrg-bbs-blind-signatures-latest</dd>
 <dt class="label-published">Published:</dt>
 <dd class="published">
-<time datetime="2026-07-03" class="published">3 July 2026</time>
+<time datetime="2026-07-09" class="published">9 July 2026</time>
     </dd>
 <dt class="label-intended-status">Intended Status:</dt>
 <dd class="intended-status">Informational</dd>
 <dt class="label-expires">Expires:</dt>
-<dd class="expires"><time datetime="2027-01-04">4 January 2027</time></dd>
+<dd class="expires"><time datetime="2027-01-10">10 January 2027</time></dd>
 <dt class="label-authors">Authors:</dt>
 <dd class="authors">
 <div class="author">
@@ -1115,7 +1115,7 @@ svg {
         time. It is inappropriate to use Internet-Drafts as reference
         material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
 <p id="section-boilerplate.1-4">
-        This Internet-Draft will expire on 4 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+        This Internet-Draft will expire on 10 January 2027.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
 </section>
 </div>
 <div id="copyright">
@@ -2787,12 +2787,12 @@ Procedure:
 1.  sidx = 0
 2.  eidx = int_octet_length - 1
 3.  if length(proof_octets) &lt; eidx, return INVALID
-4.  bbs_proof_len = OS2IP(proof_octets[sidx..eidx])
+4.  bbs_proof_len = OS2IP(proof_octets[sidx, ..., eidx])
 
 5.  sidx = eidx + 1
 6.  eidx = sidx + bbs_proof_len
 7.  if length(proof_octets) &lt; eidx, return INVALID
-8.  bbs_proof_octs = proof_octets[sidx..eidx]
+8.  bbs_proof_octs = proof_octets[sidx, ..., eidx]
 9.  bbs_proof = BBS.octets_to_proof(bbs_proof_octs)
 10. if bbs_proof is INVALID, return INVALID
 
@@ -2800,7 +2800,7 @@ Procedure:
 11. sidx = eidx + 1
 12. eidx = sidx + int_octet_length
 13. if length(proof_octets) &lt; eidx, return INVALID
-14. N = OS2IP(proof_octets[sidx..eidx]) // commitments count
+14. N = OS2IP(proof_octets[sidx, ..., eidx]) // commitments count
 
 15. len_floor = eidx + N * (octet_point_length + octet_scalar_length)
 16. if length(proof_octets) &lt; len_floor, return INVALID
@@ -2808,14 +2808,14 @@ Procedure:
 17. for i in (1..N)
 18.     sidx = eidx + 1
 19.     eidx = sidx + octet_point_length
-20.     C_i = BBS.octets_to_point_E1(proof_octets[sidx..eidx])
+20.     C_i = BBS.octets_to_point_E1(proof_octets[sidx, ..., eidx])
 21.     if C_i is INVALID or Identity_G1, return INVALID
 22.     if subgroup_check_G1(C_i) returns INVALID, return INVALID
 
 23. for i in (1..N)
 24.     sidx = eidx + 1
 25.     eidx = sidx + octet_scalar_length
-26.     s_i = OS2IP(proof_octets[sidx..eidx])
+26.     s_i = OS2IP(proof_octets[sidx, ..., eidx])
 27.     if s_i = 0 or if s_i &gt;= r, return INVALID
 
 28. commitments_proof = ((C_1, ..., C_N), (s_1, ..., s_N))
