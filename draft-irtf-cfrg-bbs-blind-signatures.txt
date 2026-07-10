@@ -5,8 +5,8 @@
 CFRG                                                            V. Kalos
 Internet-Draft                                                     MATTR
 Intended status: Informational                              G. Bernstein
-Expires: 10 January 2027                               Grotto Networking
-                                                             9 July 2026
+Expires: 11 January 2027                               Grotto Networking
+                                                            10 July 2026
 
 
                           Blind BBS Signatures
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 10 January 2027.
+   This Internet-Draft will expire on 11 January 2027.
 
 Copyright Notice
 
@@ -1178,7 +1178,7 @@ Procedure:
 15. for i in (1, 2, ..., N): s^_i =  s~_i + challenge * s_i
 16. commitments_proof = ((C_1, ..., C_N), (s^_1, ..., s^_N))
 
-17. proof = proof_to_octets(length(BBS.serialize(bbs_proof)), bbs_proof,
+17. proof = proof_to_octets(length(bbs_proof), bbs_proof,
                            N, commitments_proof)
 18. add_zkp_info = {committed_message_scalars:
                        (messages[commitment_indexes[1]], ...,
@@ -1518,15 +1518,13 @@ Procedure:
 
 5.4.3.  Proof to Octets
 
-proof_octets = proof_to_octets(bbs_proof_len, bbs_proof,
+proof_octets = proof_to_octets(bbs_proof_len, bbs_proof_octs,
                                commitments_count, commitments_proof)
 
 Inputs:
 
 - bbs_proof_len (REQUIRED), a non negative integer.
-- bbs_proof (REQUIRED), an array comprising from 3 points in G1,
-                        3 Scalars, an array of scalars and one
-                        additional Scalar at the end.
+- bbs_proof_octs (REQUIRED), an octet string.
 - commitments_count (REQUIRED), a non negative integer.
 - commitments_proof (REQUIRED), a tuple with two arrays, the first with
                                 points in G1 and the second with Scalars
@@ -1537,7 +1535,7 @@ Outputs:
 
 Procedure:
 
-1. oct = I2OSP(bbs_proof_len, 8) || BBS.serialize(bbs_proof) ||
+1. oct = I2OSP(bbs_proof_len, 8) || bbs_proof_octs ||
          I2OSP(commitments_count, 8) || BBS.serialize(commitments_proof)
 2. return oct
 
