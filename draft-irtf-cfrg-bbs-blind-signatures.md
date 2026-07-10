@@ -866,11 +866,10 @@ Deserialization:
 8.  N = length(commitment_indexes)
 9.  R = length(disclosed_indexes)
 10. U = L - R
-11. (i1, ..., iR) = disclosed_indexes
-12. disclosed_messages = (messages[i1], ..., messages[iR])
-13. undisclosed_indexes = (0, 1, ..., L - 1) \ disclosed_indexes
-14. (j1, ..., jU) = undisclosed_indexes
-15. undisclosed_messages = (messages[j1], ..., messages[jU])
+11. disclosed_messages = (messages[i1], ..., messages[iR])
+12. undisclosed_indexes = (0, 1, ..., L - 1) \ disclosed_indexes
+13. (j1, ..., jU) = undisclosed_indexes
+14. undisclosed_messages = (messages[j1], ..., messages[jU])
 
 Procedure:
 
