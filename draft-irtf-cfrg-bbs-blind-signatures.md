@@ -895,7 +895,7 @@ Procedure:
 7.      idx = commitment_indexes[i]
 8.      C_i = Y_0 * s_i + Y_1 * messages[idx]
 9.      let k be the integer such that j_k == idx
-10.     C~_i = Y_0 * s~_i + Y_1 * m~_j_k
+10.     C~_i = Y_0 * s~_i + Y_1 * m~_k
 
 11. commitment_init_res = {commitments: (C_1, ..., C_N),
                            commitments_proofs: (C~_1, ...,C~_N),
@@ -1014,7 +1014,7 @@ Procedure:
 3.  for i in (1, 2, ..., N):
 4.      idx = commitment_indexes[i]
 5.      let k be the integer such that j_k == idx
-6.      C^_i = Y_0 * s^_i + Y_1 * m^_j_k - C_i * cp
+6.      C^_i = Y_0 * s^_i + Y_1 * m^_k - C_i * cp
 
 7.  commitment_init_res = {commitments: (C_1, ..., C_N),
                            commitments_proofs: (C^_1, ...,C^_N),
