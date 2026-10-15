@@ -795,7 +795,7 @@ The Proof Generation with extension, combines the BBS Proof Generation operation
 ```
 CommitmentInitRes = {
   commitments: (REQUIRED) Array of points in G1,
-  commitments_proofs: (REQUIRED) Array of Scalars,
+  commitments_proofs: (REQUIRED) Array of points in G1,
   commitment_indexes: (REQUIRED) Array of numbers
 }
 ```
@@ -1174,7 +1174,7 @@ Deserialization:
 8.  if length(commitment_init_res.commitment_indexes) != N, return INVALID
 9.  (C_1, ..., C_N) = commitment_init_res.commitments
 10. (C~_1, ...,C~_N) = commitment_init_res.commitments_proofs
-11. (i_1, ..., i_N) = commitment_init_res.commitment_indexes
+11. (ci_1, ..., ci_N) = commitment_init_res.commitment_indexes
 
 ABORT if:
 
@@ -1187,7 +1187,7 @@ Procedure:
                                                       D, T1, T2, domain)
 2. c_octs = BBS.serialize(c_arr)
 
-3. commitment_arr = (N, i_1, C_1, C~_1, ..., i_N, C_N, C~_N)
+3. commitment_arr = (N, ci_1, C_1, C~_1, ..., ci_N, C_N, C~_N)
 4. c_octs = c_octs || BBS.serialize(commitment_arr)
 
 5. c_octs = c_octs || I2OSP(length(ph), 8) || ph
@@ -1234,6 +1234,11 @@ Inputs:
 Parameters:
 
 - (octet_point_length, octet_scalar_length), defined by the ciphersuite.
+- r, non-negative integer. The prime order of the G1 and G2 groups,
+      defined by the ciphersuite.
+- subgroup_check_G1, operation that on input a point P returns VALID if
+                     P is a valid point of the G1 subgroup, otherwise it
+                     returns INVALID (see (#notation)).
 
 Outputs:
 
@@ -1250,21 +1255,22 @@ Procedure:
 4.  C = octets_to_point_E1(C_octets)
 5.  if C is INVALID, return INVALID
 6.  if C == Identity_G1, return INVALID
+7.  if subgroup_check_G1(C) returns INVALID, return INVALID
 
-7.  j = 0
-8.  index = octet_point_length
-9.  while index < length(commitment_octs):
-10.     end_index = index + octet_scalar_length - 1
-11.     s_j = OS2IP(commitment_octs[index..end_index])
-12.     if s_j = 0 or if s_j >= r, return INVALID
-13.     index += octet_scalar_length
-14.     j += 1
+8.  j = 0
+9.  index = octet_point_length
+10. while index < length(commitment_octs):
+11.     end_index = index + octet_scalar_length - 1
+12.     s_j = OS2IP(commitment_octs[index, ..., end_index])
+13.     if s_j = 0 or if s_j >= r, return INVALID
+14.     index += octet_scalar_length
+15.     j += 1
 
-15. if index != length(commitment_octs), return INVALID
-16. if j < 2, return INVALID
-17. msg_commitments = ()
-18. if j >= 3, set msg_commitments = (s_1, ..., s_(j-2))
-19. return (C, (s_0, msg_commitments, s_(j-1)))
+16. if index != length(commitment_octs), return INVALID
+17. if j < 2, return INVALID
+18. msg_commitments = ()
+19. if j >= 3, set msg_commitments = (s_1, ..., s_(j-2))
+20. return (C, (s_0, msg_commitments, s_(j-1)))
 ```
 
 ### Proof to Octets
@@ -1327,41 +1333,41 @@ Procedure:
 
 1.  sidx = 0
 2.  eidx = int_octet_length - 1
-3.  if length(proof_octets) < eidx, return INVALID
+3.  if length(proof_octets) < eidx + 1, return INVALID
 4.  bbs_proof_len = OS2IP(proof_octets[sidx, ..., eidx])
 
 5.  sidx = eidx + 1
-6.  eidx = sidx + bbs_proof_len
-7.  if length(proof_octets) < eidx, return INVALID
+6.  eidx = sidx + bbs_proof_len - 1
+7.  if length(proof_octets) < eidx + 1, return INVALID
 8.  bbs_proof_octs = proof_octets[sidx, ..., eidx]
 9.  bbs_proof = BBS.octets_to_proof(bbs_proof_octs)
 10. if bbs_proof is INVALID, return INVALID
 
 // Deserialize commitments_proof
 11. sidx = eidx + 1
-12. eidx = sidx + int_octet_length
-13. if length(proof_octets) < eidx, return INVALID
+12. eidx = sidx + int_octet_length - 1
+13. if length(proof_octets) < eidx + 1, return INVALID
 14. N = OS2IP(proof_octets[sidx, ..., eidx]) // commitments count
 
-15. len_floor = eidx + N * (octet_point_length + octet_scalar_length)
+15. len_floor = eidx + 1 + N * (octet_point_length + octet_scalar_length)
 16. if length(proof_octets) < len_floor, return INVALID
 
 17. for i in (1..N)
 18.     sidx = eidx + 1
-19.     eidx = sidx + octet_point_length
+19.     eidx = sidx + octet_point_length - 1
 20.     C_i = BBS.octets_to_point_E1(proof_octets[sidx, ..., eidx])
 21.     if C_i is INVALID or Identity_G1, return INVALID
 22.     if subgroup_check_G1(C_i) returns INVALID, return INVALID
 
 23. for i in (1..N)
 24.     sidx = eidx + 1
-25.     eidx = sidx + octet_scalar_length
+25.     eidx = sidx + octet_scalar_length - 1
 26.     s_i = OS2IP(proof_octets[sidx, ..., eidx])
 27.     if s_i = 0 or if s_i >= r, return INVALID
 
 28. commitments_proof = ((C_1, ..., C_N), (s_1, ..., s_N))
 
-29. if length(proof_octets) not equal to eidx, return INVALID
+29. if length(proof_octets) not equal to eidx + 1, return INVALID
 30. return (bbs_proof, commitments_proof)
 ```
 
