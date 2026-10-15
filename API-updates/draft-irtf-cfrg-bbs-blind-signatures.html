@@ -1829,23 +1829,15 @@ Procedure:
 
 </pre><a href="#section-4.2.3-3" class="pilcrow">¶</a>
 </div>
-<p id="section-4.2.3-4">The operation will accept a set of messages (<code>messages</code>), including first the messages chosen by the Issuer and then the ones chosen (and committed to) by the Prover.<a href="#section-4.2.3-4" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-4">The operation will accept two set of messages one from the issuer and one the blind signed messages from the prover (<code>issuer_messages</code>, <code>blind_messages</code>) respectively.<a href="#section-4.2.3-4" class="pilcrow">¶</a></p>
 <p id="section-4.2.3-5">Furthermore, the operation also expects the <code>secret_prover_blind</code> (as returned from the <code>Commit</code> operation defined in <a href="#commitment-computation" class="auto internal xref">Section 4.1.1</a>) value. If the BBS signature is generated using a commitment value, then the <code>secret_prover_blind</code> returned by the <code>Commit</code> operation used to generate the commitment should be provided to the <code>ProofGen</code> operation (otherwise the resulting proof will be invalid).<a href="#section-4.2.3-5" class="pilcrow">¶</a></p>
 <p id="section-4.2.3-6">This operation makes use of the <code>CoreProofGen</code> operation as defined in <a href="#core-proof-generation" class="auto internal xref">Section 4.3.4</a>.<a href="#section-4.2.3-6" class="pilcrow">¶</a></p>
-<p id="section-4.2.3-7">The operation will also accept a map <code>message_disclosures</code> between each message index and one of the three values <code>DISCLOSE</code>, <code>HIDE</code> and <code>COMMIT</code>. A <code>{i: DISCLOSE}</code> (key, value) pair indicates that <code>messages[i]</code> will be revealed to the Verifier. Correspondingly, a <code>{i: HIDE}</code> (key, value) pair indicates that <code>messages[i]</code> will not be disclosed to the Verifier. Finally, a <code>{i: COMMIT}</code> (key, value) pair indicates that only a commitment to <code>messages[i]</code> will be disclosed to the Verifier.<a href="#section-4.2.3-7" class="pilcrow">¶</a></p>
-<p id="section-4.2.3-8">An example of the <code>message_disclosures</code> input map is the following,<a href="#section-4.2.3-8" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-7">The operation will also accept two arrays that indicate the intended handling of each message, <code>issuer_message_disclosures</code> and  <code>blind_message_disclosures</code> respectively. Each entry corresponds to an issuer or blind message and can take one of the three values <code>DISCLOSE</code>, <code>HIDE</code> and <code>COMMIT</code>. A <code>DISCLOSE</code> value indicates that <code>messages[i]</code> will be revealed to the Verifier. Correspondingly, a <code>HIDE</code> value indicates that <code>messages[i]</code> will not be disclosed to the Verifier. Finally, a <code>COMMIT</code> value indicates that only a commitment to <code>messages[i]</code> will be disclosed to the Verifier, where  <code>messages[i]</code> is either <code>issuer_messages</code> or <code>blind_messages</code>.<a href="#section-4.2.3-7" class="pilcrow">¶</a></p>
+<p id="section-4.2.3-8">An example of the <code>issuer_message_disclosures</code> input array is the following,<a href="#section-4.2.3-8" class="pilcrow">¶</a></p>
 <div class="alignLeft art-text artwork" id="section-4.2.3-9">
-<pre>message_disclosures = {
-  0: DISCLOSE,
-  1: HIDE,
-  2: HIDE,
-  3: COMMIT,
-  4: COMMIT,
-  5: DISCLOSE,
-  6: DISCLOSE,
-  7: COMMIT,
-  8: DISCLOSE
-}
+<pre>issuer_message_disclosures = [DISCLOSE, HIDE, HIDE, COMMIT, COMMIT,
+    DISCLOSE,DISCLOSE, COMMIT, DISCLOSE
+]
 
 </pre><a href="#section-4.2.3-9" class="pilcrow">¶</a>
 </div>
@@ -1881,14 +1873,12 @@ Inputs:
                     the set ["HASH", "RAW"], and value the raw
                     individual message octets. If not supplied, it
                     defaults to the empty array "()".
-- issuer_message_disclosures (OPTIONAL), a map between message indexes
-                            and one of the DISCLOSE, HIDE or COMMIT
-                            values. If not supplied, it defaults
-                            to the empty map "{}".
-- blind_message_disclosures (OPTIONAL), a map between message indexes
-                            and one of the DISCLOSE, HIDE or COMMIT
-                            values. If not supplied, it defaults
-                            to the empty map "{}".
+- issuer_message_disclosures (OPTIONAL), a vector containing values of
+                            DISCLOSE, HIDE or COMMIT.If not supplied, it
+                            defaults to the empty map "{}".
+- blind_message_disclosures (OPTIONAL), a vector containing values of
+                            DISCLOSE, HIDE or COMMIT.If not supplied, it
+                            defaults to the empty map "{}".
 - secret_prover_blind (OPTIONAL), a scalar value. If not supplied it
                                   defaults to zero "0".
 
@@ -1907,43 +1897,49 @@ Outputs:
                 used to create the respective commitments.
 
 Deserialization:
-**TODO**: UPDATE FOR NEW API
-1. L = length(messages)
-2. if length(message_disclosures) != L, return INVALID
-3. if issuer_known_messages_no &gt; L, return INVALID
-4. if the keys of message_disclosures are not exactly the integers
-   0..L - 1, return INVALID
-5. if any value in message_disclosures is not one of DISCLOSE, HIDE,
-   or COMMIT, return INVALID
 
-6. let disclosed_indexes be the integers i in 0..L - 1 so
-   that message_disclosures[i] = DISCLOSE, in
+1. L = length(issuer_messages)
+2. if length(issuer_message_disclosures) != L, return INVALID
+3. M = length(blind_messages)
+4. if length(blind_message_disclosures) != M, return INVALID
+5. if any value in issuer_message_disclosures is not one of DISCLOSE,
+   HIDE, or COMMIT, return INVALID
+6. if any value in blind_message_disclosures is not one of DISCLOSE,
+   HIDE, or COMMIT, return INVALID
+
+7. let issuer_disclosed_indexes be the integers i in 0..L - 1 so
+   that issuer_message_disclosures[i] = DISCLOSE, in
    ascending order.
-7. let commitment_indexes be the integers i in 0..L - 1 so
-   that message_disclosures[i] = COMMIT, in
+8. let issuer_commitment_indexes be the integers i in 0..L - 1 so
+   that issuer_message_disclosures[i] = COMMIT, in
+   ascending order.
+9. let blind_disclosed_indexes be the integers i in 0..L - 1 so
+   that blind_message_disclosures[i] = DISCLOSE, in
+   ascending order.
+10. let blind_commitment_indexes be the integers i in 0..L - 1 so
+   that blind_message_disclosures[i] = COMMIT, in
    ascending order.
 
 Procedure:
 
-1. generators = BBS.create_generators(
-                                  issuer_known_messages_no + 1, api_id)
-2. blind_generators = BBS.create_generators(
-                   L - issuer_known_messages_no + 1, "BLIND_" || api_id)
+1. generators = BBS.create_generators(L + 1, api_id)
+2. blind_generators = BBS.create_generators(M + 1, "BLIND_" || api_id)
+3. issuer_scalars = messages_to_scalars(issuer_messages, api_id)
+4. blind_scalars = messages_to_scalars(blind_messages, api_id)
+6. proof_scalars = issuer_scalars.append(secret_prover_blind)
+                                          .append(blind_scalars)
 
-3. message_scalars = messages_to_scalars(messages, api_id)
-
-4. signer_scalars = (message_scalars[0], ...,
-                          message_scalars[issuer_known_messages_no - 1])
-5. committed_message_scalars = (message_scalars[issuer_known_messages_no], ...,
-                                            message_scalars[L - 1])
-6. proof_scalars = signer_scalars.append(secret_prover_blind)
-                                          .append(committed_message_scalars)
-7. let proof_index(i) be i if i &lt; issuer_known_messages_no,
-   and i + 1 otherwise.
-8. proof_disclosed_indexes = (proof_index(i) for i in disclosed_indexes)
-9. proof_commitment_indexes = (proof_index(i) for i in commitment_indexes)
-
-10. proof_with_add_zkp_info = CoreProofGen(PK,
+7. proof_disclosed_indexes = [] // empty array
+8. proof_commitment_indexes = [] // empty array
+9.  for (i = 0, i &lt; length(issuer_disclosed_indexes) i++)
+      proof_disclosed_indexes.append(issuer_disclosed_indexes[i])
+10. for (i = 0, i &lt; length(blind_disclosed_indexes) i++)
+      proof_disclosed_indexes.append(blind_disclosed_indexes[i] + L + 1)
+11.  for (i = 0, i &lt; length(issuer_commitment_indexes) i++)
+      proof_commitment_indexes.append(issuer_commitment_indexes[i])
+12. for (i = 0, i &lt; length(blind_commitment_indexes) i++)
+      proof_commitment_indexes.append(blind_commitment_indexes[i] + L + 1)
+13. proof_with_add_zkp_info = CoreProofGen(PK,
                         signature,
                         generators.append(blind_generators),
                         header,
@@ -1952,7 +1948,7 @@ Procedure:
                         proof_disclosed_indexes,
                         proof_commitment_indexes,
                         api_id)
-11. return proof_with_add_zkp_info
+14. return proof_with_add_zkp_info
 
 </pre><a href="#section-4.2.3-10" class="pilcrow">¶</a>
 </div>
@@ -3084,6 +3080,10 @@ Procedure:
         <li class="compact" id="appendix-A-10.2">Corrected inputs, outputs, and undefined variables in core operations<a href="#appendix-A-10.2" class="pilcrow">¶</a>
 </li>
         <li class="compact" id="appendix-A-10.3">Unified commitment terminology and simplified proof serialization<a href="#appendix-A-10.3" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-A-10.4">Add message_to_scalar function that supports "raw" scalar pass through<a href="#appendix-A-10.4" class="pilcrow">¶</a>
+</li>
+        <li class="compact" id="appendix-A-10.5">API updates for BlindVerify, ProofGen for separate issuer and blind messages<a href="#appendix-A-10.5" class="pilcrow">¶</a>
 </li>
       </ul>
 </section>
