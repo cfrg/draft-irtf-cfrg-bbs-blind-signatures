@@ -192,7 +192,6 @@ This document makes use of various operations defined by the BBS Signature Schem
 - `BBS.ProofFinalize`: Refers to the `ProofFinalize` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 3.7.2].
 - `BBS.ProofVerifyInit`: Refers to the `ProofVerifyInit` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 3.7.3].
 - `BBS.create_generators`: Refers to the `create_generators` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.1.1].
-- `BBS.messages_to_scalars`: Refers to the `messages_to_scalars` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.1.2].
 - `BBS.calculate_random_scalars`: Refers to the `calculate_random_scalars` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.1].
 - `BBS.hash_to_scalar`: Refers to the `hash_to_scalar` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.2].
 - `BBS.calculate_domain`: Refers to the `calculate_domain` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.3].
@@ -220,9 +219,11 @@ This operation is used by the Prover to create a `commitment` to a set of messag
 
 Inputs:
 
-- committed_messages (OPTIONAL), a vector of octet strings. If not
-                                 supplied it defaults to the empty
-                                 array ("()").
+- committed_messages (OPTIONAL), a vector of objects of the form
+                    {flag: string, value: octets}, with flag values in
+                    the set ["HASH", "RAW"], and value the raw
+                    individual message octets. If not supplied
+                    it defaults to the empty array ("()").
 - api_id (OPTIONAL), octet string. If not supplied it defaults to the
                      empty octet string ("").
 
@@ -235,7 +236,7 @@ Outputs:
 
 Procedure:
 
-1. committed_message_scalars = BBS.messages_to_scalars(
+1. committed_message_scalars = messages_to_scalars(
                                              committed_messages, api_id)
 
 2. blind_generators = BBS.create_generators(
@@ -317,8 +318,11 @@ Inputs:
 - header (OPTIONAL), an octet string containing context and application
                      specific information. If not supplied, it defaults
                      to an empty string ("").
-- messages (OPTIONAL), a vector of octet strings. If not supplied, it
-                       defaults to the empty array ("()").
+- messages (OPTIONAL), a vector of objects of the form
+                    {flag: string, value: octets}, with flag values in
+                    the set ["HASH", "RAW"], and value the raw
+                    individual message octets. If not supplied, it
+                    defaults to the empty array ("()").
 
 Parameters:
 
@@ -353,7 +357,7 @@ Procedure:
                                                blind_generators, api_id)
 4.  if commitment is INVALID, return INVALID
 
-5.  message_scalars = BBS.messages_to_scalars(messages, api_id)
+5.  message_scalars = messages_to_scalars(messages, api_id)
 
 6.  res = B_calculate(PK, generators, blind_generators, commitment, message_scalars, header, api_id)
 7.  if res is INVALID, return INVALID
@@ -372,7 +376,7 @@ This operation makes use of the `CoreVerify` operation as defined in [@!I-D.irtf
 
 ```
 result = VerifyBlindSign(PK, signature, header, messages,
-                          issuer_known_messages_no, secret_prover_blind)
+                          blind_messages, secret_prover_blind)
 
 Inputs:
 
@@ -383,10 +387,16 @@ Inputs:
 - header (OPTIONAL), an octet string containing context and application
                      specific information. If not supplied, it defaults
                      to an empty string.
-- messages (OPTIONAL), a vector of octet strings. If not supplied, it
-                       defaults to the empty array "()".
-- issuer_known_messages_no (OPTIONAL), a non-negative integer. If not
-                                       supplied, it defaults to 0.
+- messages (OPTIONAL), a vector of objects of the form
+                    {flag: string, value: octets}, with flag values in
+                    the set ["HASH", "RAW"], and value the raw
+                    individual message octets. If not supplied, it
+                    defaults to the empty array "()".
+- blind_messages (OPTIONAL), a vector of objects of the form
+                    {flag: string, value: octets}, with flag values in
+                    the set ["HASH", "RAW"], and value the raw
+                    individual message octets. If not supplied, it
+                    defaults to the empty array "()".
 - secret_prover_blind (OPTIONAL), a scalar value. If not supplied it
                                   defaults to zero "0".
 
@@ -410,24 +420,28 @@ Procedure:
 
 1. generators = BBS.create_generators(issuer_known_messages_no + 1, api_id)
 2. blind_generators = BBS.create_generators(
-                   L - issuer_known_messages_no + 1, "BLIND_" || api_id)
+2. M = length(blind_messages)
 
-3. message_scalars = BBS.messages_to_scalars(messages, api_id)
+Procedure:
 
-4. signer_scalars = (message_scalars[0], ...,
-                          message_scalars[issuer_known_messages_no - 1])
-5. committed_message_scalars = (message_scalars[issuer_known_messages_no], ...,
-                                            message_scalars[L - 1])
-6. proof_scalars = signer_scalars.append(secret_prover_blind)
+1. generators = BBS.create_generators(L + 1, api_id)
+2. blind_generators = BBS.create_generators(M + 1, "BLIND_" || api_id)
+
+3. signer_scalars = messages_to_scalars(messages, api_id)
+
+4. committed_message_scalars = messages_to_scalars(blind_messages,
+                    api_id)
+
+5. proof_scalars = signer_scalars.append(secret_prover_blind)
                                           .append(committed_message_scalars)
 
-7. res = BBS.CoreVerify(PK,
+6. res = BBS.CoreVerify(PK,
                         signature,
                         generators.append(blind_generators),
                         header,
                         proof_scalars,
                         api_id)
-8. return res
+7. return res
 ```
 
 ### Proof Generation
@@ -443,39 +457,31 @@ add_zkp_info = {
 }
 ```
 
-The operation will accept a set of messages (`messages`), including first the messages chosen by the Issuer and then the ones chosen (and committed to) by the Prover.
+The operation will accept two sets of messages: `issuer_messages` from the issuer and the blind signed messages `blind_messages` from the prover.
 
 Furthermore, the operation also expects the `secret_prover_blind` (as returned from the `Commit` operation defined in (#commitment-computation)) value. If the BBS signature is generated using a commitment value, then the `secret_prover_blind` returned by the `Commit` operation used to generate the commitment should be provided to the `ProofGen` operation (otherwise the resulting proof will be invalid).
 
 This operation makes use of the `CoreProofGen` operation as defined in (#core-proof-generation).
 
-The operation will also accept a map `message_disclosures` between each message index and one of the three values `DISCLOSE`, `HIDE` and `COMMIT`. A `{i: DISCLOSE}` (key, value) pair indicates that `messages[i]` will be revealed to the Verifier. Correspondingly, a `{i: HIDE}` (key, value) pair indicates that `messages[i]` will not be disclosed to the Verifier. Finally, a `{i: COMMIT}` (key, value) pair indicates that only a commitment to `messages[i]` will be disclosed to the Verifier.
+The operation will also accept two arrays that indicate the intended handling of each message, `issuer_message_disclosures` and  `blind_message_disclosures` respectively. Each entry corresponds to an issuer or blind message and can take one of the three values `DISCLOSE`, `HIDE` and `COMMIT`. A `DISCLOSE` value indicates that `messages[i]` will be revealed to the Verifier. Correspondingly, a `HIDE` value indicates that `messages[i]` will not be disclosed to the Verifier. Finally, a `COMMIT` value indicates that only a commitment to `messages[i]` will be disclosed to the Verifier, where  `messages[i]` is either `issuer_messages` or `blind_messages`.
 
-An example of the `message_disclosures` input map is the following,
+An example of the `issuer_message_disclosures` input array is the following,
 
 ```
-message_disclosures = {
-  0: DISCLOSE,
-  1: HIDE,
-  2: HIDE,
-  3: COMMIT,
-  4: COMMIT,
-  5: DISCLOSE,
-  6: DISCLOSE,
-  7: COMMIT,
-  8: DISCLOSE
-}
+issuer_message_disclosures = [DISCLOSE, HIDE, HIDE, COMMIT, COMMIT,
+    DISCLOSE,DISCLOSE, COMMIT, DISCLOSE
+]
 ```
-
 
 ```
 [proof, add_zkp_info] = BlindProofGen(PK,
                       signature,
                       header,
                       ph,
-                      messages,
-                      issuer_known_messages_no,
-                      message_disclosures,
+                      issuer_messages,
+                      blind_messages,
+                      issuer_message_disclosures,
+                      blind_message_disclosures,
                       secret_prover_blind)
 
 Inputs:
@@ -489,14 +495,22 @@ Inputs:
                      to an empty string.
 - ph (OPTIONAL), an octet string containing the presentation header. If
                  not supplied, it defaults to an empty string.
-- messages (OPTIONAL), a vector of octet strings. If not supplied, it
-                       defaults to the empty array "()".
-- issuer_known_messages_no (OPTIONAL), a non-negative integer. If not
-                                       supplied, it defaults to 0.
-- message_disclosures (OPTIONAL), a map between message indexes and one
-                                   of the DISCLOSE, HIDE or COMMIT
-                                   values. If not supplied, it defaults
-                                   to the empty map "{}".
+- issuer_messages (OPTIONAL), a vector of objects of the form
+                    {flag: string, value: octets}, with flag values in
+                    the set ["HASH", "RAW"], and value the raw
+                    individual message octets. If not supplied, it
+                    defaults to the empty array "()".
+- blind_messages (OPTIONAL), a vector of objects of the form
+                    {flag: string, value: octets}, with flag values in
+                    the set ["HASH", "RAW"], and value the raw
+                    individual message octets. If not supplied, it
+                    defaults to the empty array "()".
+- issuer_message_disclosures (OPTIONAL), a vector containing values of
+                            DISCLOSE, HIDE or COMMIT.If not supplied, it
+                            defaults to the empty map "{}".
+- blind_message_disclosures (OPTIONAL), a vector containing values of
+                            DISCLOSE, HIDE or COMMIT.If not supplied, it
+                            defaults to the empty map "{}".
 - secret_prover_blind (OPTIONAL), a scalar value. If not supplied it
                                   defaults to zero "0".
 
@@ -516,42 +530,53 @@ Outputs:
 
 Deserialization:
 
-1. L = length(messages)
-2. if length(message_disclosures) != L, return INVALID
-3. if issuer_known_messages_no > L, return INVALID
-4. if the keys of message_disclosures are not exactly the integers
-   0..L - 1, return INVALID
-5. if any value in message_disclosures is not one of DISCLOSE, HIDE,
-   or COMMIT, return INVALID
+1. L = length(issuer_messages)
+2. if length(issuer_message_disclosures) != L, return INVALID
+3. M = length(blind_messages)
+4. if length(blind_message_disclosures) != M, return INVALID
+5. if any value in issuer_message_disclosures is not one of DISCLOSE,
+   HIDE, or COMMIT, return INVALID
+6. if any value in blind_message_disclosures is not one of DISCLOSE,
+   HIDE, or COMMIT, return INVALID
 
-6. let disclosed_indexes be the integers i in 0..L - 1 so
-   that message_disclosures[i] = DISCLOSE, in
+7. let issuer_disclosed_indexes be the integers i in 0..L - 1 so
+   that issuer_message_disclosures[i] = DISCLOSE, in
    ascending order.
-7. let commitment_indexes be the integers i in 0..L - 1 so
-   that message_disclosures[i] = COMMIT, in
+8. let issuer_commitment_indexes be the integers i in 0..L - 1 so
+   that issuer_message_disclosures[i] = COMMIT, in
+   ascending order.
+9. let blind_disclosed_indexes be the integers i in 0..L - 1 so
+   that blind_message_disclosures[i] = DISCLOSE, in
+   ascending order.
+10. let blind_commitment_indexes be the integers i in 0..L - 1 so
+   that blind_message_disclosures[i] = COMMIT, in
    ascending order.
 
 Procedure:
 
-1. generators = BBS.create_generators(
-                                  issuer_known_messages_no + 1, api_id)
-2. blind_generators = BBS.create_generators(
-                   L - issuer_known_messages_no + 1, "BLIND_" || api_id)
+1. generators = BBS.create_generators(L + 1, api_id)
+2. blind_generators = BBS.create_generators(M + 1, "BLIND_" || api_id)
+3. issuer_scalars = messages_to_scalars(issuer_messages, api_id)
+4. blind_scalars = messages_to_scalars(blind_messages, api_id)
+6. proof_scalars = issuer_scalars.append(secret_prover_blind)
+                                          .append(blind_scalars)
 
-3. message_scalars = BBS.messages_to_scalars(messages, api_id)
+7. proof_disclosed_indexes = [] // empty array
+8. proof_commitment_indexes = [] // empty array
 
-4. signer_scalars = (message_scalars[0], ...,
-                          message_scalars[issuer_known_messages_no - 1])
-5. committed_message_scalars = (message_scalars[issuer_known_messages_no], ...,
-                                            message_scalars[L - 1])
-6. proof_scalars = signer_scalars.append(secret_prover_blind)
-                                          .append(committed_message_scalars)
-7. let proof_index(i) be i if i < issuer_known_messages_no,
-   and i + 1 otherwise.
-8. proof_disclosed_indexes = (proof_index(i) for i in disclosed_indexes)
-9. proof_commitment_indexes = (proof_index(i) for i in commitment_indexes)
+9.  for (i = 0, i < length(issuer_disclosed_indexes), i++)
+      proof_disclosed_indexes.append(issuer_disclosed_indexes[i])
 
-10. proof_with_add_zkp_info = CoreProofGen(PK,
+10. for (i = 0, i < length(blind_disclosed_indexes), i++)
+      proof_disclosed_indexes.append(blind_disclosed_indexes[i] + L + 1)
+
+11.  for (i = 0, i < length(issuer_commitment_indexes), i++)
+      proof_commitment_indexes.append(issuer_commitment_indexes[i])
+
+12. for (i = 0, i < length(blind_commitment_indexes), i++)
+      proof_commitment_indexes.append(blind_commitment_indexes[i] + L + 1)
+
+13. proof_with_add_zkp_info = CoreProofGen(PK,
                         signature,
                         generators.append(blind_generators),
                         header,
@@ -560,7 +585,7 @@ Procedure:
                         proof_disclosed_indexes,
                         proof_commitment_indexes,
                         api_id)
-11. return proof_with_add_zkp_info
+14. return proof_with_add_zkp_info
 ```
 
 ### Proof Verification
@@ -568,8 +593,6 @@ Procedure:
 The ProofVerify operation validates a BBS proof, given the Signer's public key (PK), a header and presentation header values, an array of disclosed messages (the ones provided by the Signer and the ones committed by the prover) and a map `message_disclosures` describing how each signed message index is presented to the Verifier. In addition, the `BlindProofVerify` operation defined in this section accepts the integer `issuer_known_messages_no`, representing the total number of signed messages known by the Signer.
 
 This operation makes use of the `CoreProofVerify` operation as defined in (#core-proof-verification).
-
-
 
 ```
 result = BlindProofVerify(PK,
@@ -594,9 +617,11 @@ Inputs:
                  string ("").
 - issuer_known_messages_no (OPTIONAL), a non-negative integer. If not
                                        supplied, it defaults to 0.
-- disclosed_messages (OPTIONAL), a vector of octet strings. If not
-                                 supplied, it defaults to the empty
-                                 array ("()").
+- disclosed_messages (OPTIONAL), a vector of objects of the form
+                    {flag: string, value: octets}, with flag values in
+                    the set ["HASH", "RAW"], and value the raw
+                    individual message octets. If not
+                    supplied, it defaults to the empty array ("()").
 - message_disclosures (OPTIONAL), a map between message indexes and one
                                    of the DISCLOSE, HIDE or COMMIT
                                    values. If not supplied, it defaults
@@ -652,7 +677,7 @@ Procedure:
                                total_msgs_no - issuer_known_messages_no + 1,
                                "BLIND_" || api_id)
 
-3. message_scalars = BBS.messages_to_scalars(disclosed_messages, api_id)
+3. message_scalars = messages_to_scalars(disclosed_messages, api_id)
 
 4. result = CoreProofVerify(
                         PK,
@@ -1031,6 +1056,57 @@ Procedure:
 ```
 
 # Utilities
+
+## Messages to Scalars
+
+The `messages_to_scalars` operation is used to map a list of messages to their respective scalar values, which are required by the Blind BBS Signatures Interface in (#blind-bbs-signatures-interface). To accommodate additional ZKPs via the committed disclosure mechanism some messages may be treated as "raw" scalar values and others may be  "hashed". Each raw message value has a corresponding flag to indicate how it should be processed by this operation.
+
+```
+msg_scalar = messages_to_scalars(messages, api_id)
+
+Inputs:
+
+- messages (REQUIRED), a vector of objects of the form
+                    {flag: string, value: octets}, with flag values in
+                    the set ["HASH", "RAW"], and value the raw
+                    individual message octets.
+- api_id (OPTIONAL), octet string. If not supplied it defaults to the
+                     empty octet string ("").
+
+Outputs:
+
+- msg_scalars, a list of scalars.
+
+Definitions:
+
+1. map_dst, an octet string representing the domain separation tag:
+            api_id || "MAP_MSG_TO_SCALAR_AS_HASH_" where
+            "MAP_MSG_TO_SCALAR_AS_HASH_" is an ASCII string comprised of
+            26 bytes.
+
+ABORT if:
+
+1. length(messages) > 2^64 - 1
+
+Procedure:
+
+1. L =  length(messages)
+2. for i in (1, ..., L):
+3.     if (messages[i].flag == "RAW")
+4.        msg_scalar_i = OS2IP(messages[i].value)
+5.      if (messages[i].flag == "HASH")
+6.        msg_scalar_i = hash_to_scalar(messages[i].value, map_dst)
+7. return (msg_scalar_1, ..., msg_scalar_L)
+```
+
+The `MAP_TO_SCALAR_ID` of the above operation is defines as,
+
+```
+MAP_TO_SCALAR_ID = "RHM2S_"
+```
+
+to  indicate that it can pass through "Raw" values as scalars, as well as "Hash" messages to scalars.
+
 
 ## Calculate B value
 
@@ -2557,6 +2633,8 @@ This document does not make any requests of IANA.
 * Fixed generator counts, scalar ordering, and disclosure indexing in blind signature and proof operations
 * Corrected inputs, outputs, and undefined variables in core operations
 * Unified commitment terminology and simplified proof serialization
+* Add message_to_scalar function that supports "raw" scalar pass through
+* API updates for BlindVerify, ProofGen for separate issuer and blind messages
 
 <reference anchor="Chaum85" target="https://dl.acm.org/doi/pdf/10.1145/4372.4373">
  <front>
