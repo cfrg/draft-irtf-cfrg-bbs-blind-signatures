@@ -2509,7 +2509,7 @@ Procedure:
 1. L =  length(messages)
 2. for i in (1, ..., L):
 3.     if (messages[i].flag == "RAW")
-4.        msg_scalar_i = messages[i].value
+4.        msg_scalar_i = OS2IP(messages[i].value)
 5.      if (messages[i].flag == "HASH")
 6.        msg_scalar_i = hash_to_scalar(messages[i].value, map_dst)
 7. return (msg_scalar_1, ..., msg_scalar_L)
