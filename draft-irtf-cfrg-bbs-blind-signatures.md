@@ -420,7 +420,12 @@ Procedure:
 
 1. generators = BBS.create_generators(issuer_known_messages_no + 1, api_id)
 2. blind_generators = BBS.create_generators(
-                   L - issuer_known_messages_no + 1, "BLIND_" || api_id)
+2. M = length(blind_messages)
+
+Procedure:
+
+1. generators = BBS.create_generators(L + 1, api_id)
+2. blind_generators = BBS.create_generators(M + 1, "BLIND_" || api_id)
 
 3. signer_scalars = messages_to_scalars(messages, api_id)
 
@@ -452,7 +457,7 @@ add_zkp_info = {
 }
 ```
 
-The operation will accept two set of messages one from the issuer and one the blind signed messages from the prover (`issuer_messages`, `blind_messages`) respectively.
+The operation will accept two sets of messages: `issuer_messages` from the issuer and the blind signed messages `blind_messages` from the prover.
 
 Furthermore, the operation also expects the `secret_prover_blind` (as returned from the `Commit` operation defined in (#commitment-computation)) value. If the BBS signature is generated using a commitment value, then the `secret_prover_blind` returned by the `Commit` operation used to generate the commitment should be provided to the `ProofGen` operation (otherwise the resulting proof will be invalid).
 
@@ -558,14 +563,19 @@ Procedure:
 
 7. proof_disclosed_indexes = [] // empty array
 8. proof_commitment_indexes = [] // empty array
-9.  for (i = 0, i < length(issuer_disclosed_indexes) i++)
+
+9.  for (i = 0, i < length(issuer_disclosed_indexes), i++)
       proof_disclosed_indexes.append(issuer_disclosed_indexes[i])
-10. for (i = 0, i < length(blind_disclosed_indexes) i++)
+
+10. for (i = 0, i < length(blind_disclosed_indexes), i++)
       proof_disclosed_indexes.append(blind_disclosed_indexes[i] + L + 1)
-11.  for (i = 0, i < length(issuer_commitment_indexes) i++)
+
+11.  for (i = 0, i < length(issuer_commitment_indexes), i++)
       proof_commitment_indexes.append(issuer_commitment_indexes[i])
-12. for (i = 0, i < length(blind_commitment_indexes) i++)
+
+12. for (i = 0, i < length(blind_commitment_indexes), i++)
       proof_commitment_indexes.append(blind_commitment_indexes[i] + L + 1)
+
 13. proof_with_add_zkp_info = CoreProofGen(PK,
                         signature,
                         generators.append(blind_generators),
