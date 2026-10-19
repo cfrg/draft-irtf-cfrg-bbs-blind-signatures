@@ -1205,7 +1205,7 @@ Procedure:
 16. commitments_proof = ((C_1, ..., C_N), (s^_1, ..., s^_N))
 
 17. proof = proof_to_octets(length(bbs_proof), bbs_proof,
-                           N, commitments_proof)
+                           commitments_proof)
 18. add_zkp_info = {committed_message_scalars:
                        (messages[commitment_indexes[1]], ...,
                         messages[commitment_indexes[N]]),
