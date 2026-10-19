@@ -105,9 +105,8 @@ Table of Contents
    9.  Ciphersuites
    10. Test Vectors
    11. IANA Considerations
-   12. References
-     12.1.  Normative References
-     12.2.  Informative References
+   12. Normative References
+   13. Informative References
    Appendix A.  Document History
    Authors' Addresses
 
@@ -1791,9 +1790,7 @@ Procedure:
 
    This document does not make any requests of IANA.
 
-12.  References
-
-12.1.  Normative References
+12.  Normative References
 
    [I-D.irtf-cfrg-bbs-signatures]
               Looker, T., Kalos, V., Whitehead, A., Lodder, M., and G.
@@ -1812,7 +1809,7 @@ Procedure:
               2119 Key Words", BCP 14, RFC 8174, DOI 10.17487/RFC8174,
               May 2017, <https://www.rfc-editor.org/info/rfc8174>.
 
-12.2.  Informative References
+13.  Informative References
 
    [BG18]     Bootle, J. and J. Groth, "Efficient Batch Zero-Knowledge
               Arguments for Low Degree Polynomials", In CRYPTO, 2018,
