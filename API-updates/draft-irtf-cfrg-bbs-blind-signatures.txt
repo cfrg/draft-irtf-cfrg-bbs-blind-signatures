@@ -5,8 +5,8 @@
 CFRG                                                            V. Kalos
 Internet-Draft                                                     MATTR
 Intended status: Informational                              G. Bernstein
-Expires: 19 April 2027                                 Grotto Networking
-                                                         16 October 2026
+Expires: 22 April 2027                                 Grotto Networking
+                                                         19 October 2026
 
 
                           Blind BBS Signatures
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 19 April 2027.
+   This Internet-Draft will expire on 22 April 2027.
 
 Copyright Notice
 
@@ -657,12 +657,7 @@ Deserialization:
 
 1. L = length(messages)
 2. if issuer_known_messages_no > L, return INVALID
-
-Procedure:
-
-1. generators = BBS.create_generators(issuer_known_messages_no + 1, api_id)
-2. blind_generators = BBS.create_generators(
-2. M = length(blind_messages)
+3. M = length(blind_messages)
 
 Procedure:
 
@@ -1365,7 +1360,7 @@ Procedure:
 3.     if (messages[i].flag == "RAW")
 4.        msg_scalar_i = OS2IP(messages[i].value)
 5.      if (messages[i].flag == "HASH")
-6.        msg_scalar_i = hash_to_scalar(messages[i].value, map_dst)
+6.        msg_scalar_i = BBS.hash_to_scalar(messages[i].value, map_dst)
 7. return (msg_scalar_1, ..., msg_scalar_L)
 
    The MAP_TO_SCALAR_ID of the above operation is defines as,
