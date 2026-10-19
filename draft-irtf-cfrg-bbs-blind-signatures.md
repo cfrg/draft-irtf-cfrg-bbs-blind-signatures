@@ -415,12 +415,7 @@ Deserialization:
 
 1. L = length(messages)
 2. if issuer_known_messages_no > L, return INVALID
-
-Procedure:
-
-1. generators = BBS.create_generators(issuer_known_messages_no + 1, api_id)
-2. blind_generators = BBS.create_generators(
-2. M = length(blind_messages)
+3. M = length(blind_messages)
 
 Procedure:
 
@@ -1095,7 +1090,7 @@ Procedure:
 3.     if (messages[i].flag == "RAW")
 4.        msg_scalar_i = OS2IP(messages[i].value)
 5.      if (messages[i].flag == "HASH")
-6.        msg_scalar_i = hash_to_scalar(messages[i].value, map_dst)
+6.        msg_scalar_i = BBS.hash_to_scalar(messages[i].value, map_dst)
 7. return (msg_scalar_1, ..., msg_scalar_L)
 ```
 
