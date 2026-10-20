@@ -937,7 +937,7 @@ Procedure:
 16. commitments_proof = ((C_1, ..., C_N), (s^_1, ..., s^_N))
 
 17. proof = proof_to_octets(length(bbs_proof), bbs_proof,
-                           N, commitments_proof)
+                           commitments_proof)
 18. add_zkp_info = {committed_message_scalars:
                        (messages[commitment_indexes[1]], ...,
                         messages[commitment_indexes[N]]),
@@ -993,7 +993,7 @@ Deserialization:
 1.  W = octets_to_pubkey(PK)
 2.  if W is INVALID, return INVALID
 
-3.  proof_res = octets_to_proof(proof)
+3.  proof_res = octets_to_proof(proof, length(commitment_indexes))
 4.  if proof_res is INVALID, return INVALID
 5.  (bbs_proof_res, commitments_proof_res) = proof_res
 
@@ -1348,13 +1348,12 @@ Procedure:
 
 ```
 proof_octets = proof_to_octets(bbs_proof_len, bbs_proof_octs,
-                               commitments_count, commitments_proof)
+                               commitments_proof)
 
 Inputs:
 
 - bbs_proof_len (REQUIRED), a non negative integer.
 - bbs_proof_octs (REQUIRED), an octet string.
-- commitments_count (REQUIRED), a non negative integer.
 - commitments_proof (REQUIRED), a tuple with two arrays, the first with
                                 points in G1 and the second with Scalars
 
@@ -1365,7 +1364,7 @@ Outputs:
 Procedure:
 
 1. oct = I2OSP(bbs_proof_len, 8) || bbs_proof_octs ||
-         I2OSP(commitments_count, 8) || BBS.serialize(commitments_proof)
+            BBS.serialize(commitments_proof)
 2. return oct
 
 ```
@@ -1378,10 +1377,12 @@ The `octets_to_proof` procedure, on input an octet string will return a BBS proo
 2. A tuple with two arrays. One array of points in G1, corresponding to the message commitments and one array with scalars, corresponding to the proof of correctness of the previous commitments.
 
 ```
-proof = octets_to_proof(proof_octets)
+proof = octets_to_proof(proof_octets, commitments_count)
 
 - proof_octets (REQUIRED), an octet string of the form outputted from
                            the proof_to_octets operation.
+- commitments_count (REQUIRED), the number of committed disclosures in
+                            the proof.
 
 Parameters:
 
@@ -1415,31 +1416,27 @@ Procedure:
 10. if bbs_proof is INVALID, return INVALID
 
 // Deserialize commitments_proof
-11. sidx = eidx + 1
-12. eidx = sidx + int_octet_length - 1
-13. if length(proof_octets) < eidx + 1, return INVALID
-14. N = OS2IP(proof_octets[sidx, ..., eidx]) // commitments count
+11. N  = commitments_count
+12. len_floor = eidx + 1 + N * (octet_point_length + octet_scalar_length)
+13. if length(proof_octets) < len_floor, return INVALID
 
-15. len_floor = eidx + 1 + N * (octet_point_length + octet_scalar_length)
-16. if length(proof_octets) < len_floor, return INVALID
+14. for i in (1..N)
+15.     sidx = eidx + 1
+16.     eidx = sidx + octet_point_length - 1
+17.     C_i = BBS.octets_to_point_E1(proof_octets[sidx, ..., eidx])
+18.     if C_i is INVALID or Identity_G1, return INVALID
+19.     if subgroup_check_G1(C_i) returns INVALID, return INVALID
 
-17. for i in (1..N)
-18.     sidx = eidx + 1
-19.     eidx = sidx + octet_point_length - 1
-20.     C_i = BBS.octets_to_point_E1(proof_octets[sidx, ..., eidx])
-21.     if C_i is INVALID or Identity_G1, return INVALID
-22.     if subgroup_check_G1(C_i) returns INVALID, return INVALID
+20. for i in (1..N)
+21.     sidx = eidx + 1
+22.     eidx = sidx + octet_scalar_length - 1
+23.     s_i = OS2IP(proof_octets[sidx, ..., eidx])
+24.     if s_i = 0 or if s_i >= r, return INVALID
 
-23. for i in (1..N)
-24.     sidx = eidx + 1
-25.     eidx = sidx + octet_scalar_length - 1
-26.     s_i = OS2IP(proof_octets[sidx, ..., eidx])
-27.     if s_i = 0 or if s_i >= r, return INVALID
+25. commitments_proof = ((C_1, ..., C_N), (s_1, ..., s_N))
 
-28. commitments_proof = ((C_1, ..., C_N), (s_1, ..., s_N))
-
-29. if length(proof_octets) not equal to eidx + 1, return INVALID
-30. return (bbs_proof, commitments_proof)
+26. if length(proof_octets) not equal to eidx + 1, return INVALID
+37. return (bbs_proof, commitments_proof)
 ```
 
 # Privacy Considerations
