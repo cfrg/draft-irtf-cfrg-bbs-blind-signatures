@@ -894,10 +894,13 @@ Deserialization:
 
 Procedure:
 
-1.  init_random_scalars = BBS.calculate_random_scalars(5+U)
-2.  (r1, r2, e~, r1~, r3~, m~_j1, ..., m~_jU) =
-                                         init_random_scalars
-3.  init_res = BBS.ProofInit(PK,
+//  Get all needed random scalars at once
+1.  all_random_scalars = BBS.calculate_random_scalars(5 + U + 2*N)
+2.  (r1, r2, e~, r1~, r3~, m~_j1, ..., m~_jU, s_1, ..., s_N,
+                            s~_1, ..., s~_N) = all_random_scalars
+3.  init_random_scalars = (r1, r2, e~, r1~, r3~, m~_j1, ..., m~_jU)
+
+4.  init_res = BBS.ProofInit(PK,
                              signature_result,
                              generators,
                              init_random_scalars,
@@ -905,11 +908,10 @@ Procedure:
                              messages,
                              undisclosed_indexes,
                              api_id)
-4.  if init_res is INVALID, return INVALID
+5.  if init_res is INVALID, return INVALID
 
 
 // Calculate the commitments and initiate the correctness proof
-5.  (s_1, ..., s_N, s~_1, ..., s~_N) = BBS.calculate_random_scalars(2*N)
 
 6.  for i in (1, 2, ..., N):
 7.      idx = commitment_indexes[i]
