@@ -5,8 +5,8 @@
 CFRG                                                            V. Kalos
 Internet-Draft                                                     MATTR
 Intended status: Informational                              G. Bernstein
-Expires: 24 April 2027                                 Grotto Networking
-                                                         21 October 2026
+Expires: 25 April 2027                                 Grotto Networking
+                                                         22 October 2026
 
 
                           Blind BBS Signatures
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 24 April 2027.
+   This Internet-Draft will expire on 25 April 2027.
 
 Copyright Notice
 
@@ -1205,8 +1205,7 @@ Procedure:
 15. for i in (1, 2, ..., N): s^_i =  s~_i + challenge * s_i
 16. commitments_proof = ((C_1, ..., C_N), (s^_1, ..., s^_N))
 
-17. proof = proof_to_octets(length(bbs_proof), bbs_proof,
-                           commitments_proof)
+17. proof = proof_to_octets(bbs_proof, commitments_proof)
 18. add_zkp_info = {committed_message_scalars:
                        (messages[commitment_indexes[1]], ...,
                         messages[commitment_indexes[N]]),
@@ -1604,8 +1603,7 @@ Procedure:
 
 5.5.3.  Proof to Octets
 
-proof_octets = proof_to_octets(bbs_proof_len, bbs_proof_octs,
-                               commitments_proof)
+proof_octets = proof_to_octets(bbs_proof_octs, commitments_proof)
 
 Inputs:
 
@@ -1620,7 +1618,7 @@ Outputs:
 
 Procedure:
 
-1. oct = I2OSP(bbs_proof_len, 8) || bbs_proof_octs ||
+1. oct = I2OSP(length(bbs_proof), 8) || bbs_proof_octs ||
             BBS.serialize(commitments_proof)
 2. return oct
 
