@@ -938,8 +938,7 @@ Procedure:
 15. for i in (1, 2, ..., N): s^_i =  s~_i + challenge * s_i
 16. commitments_proof = ((C_1, ..., C_N), (s^_1, ..., s^_N))
 
-17. proof = proof_to_octets(length(bbs_proof), bbs_proof,
-                           commitments_proof)
+17. proof = proof_to_octets(bbs_proof, commitments_proof)
 18. add_zkp_info = {committed_message_scalars:
                        (messages[commitment_indexes[1]], ...,
                         messages[commitment_indexes[N]]),
@@ -1349,8 +1348,7 @@ Procedure:
 ### Proof to Octets
 
 ```
-proof_octets = proof_to_octets(bbs_proof_len, bbs_proof_octs,
-                               commitments_proof)
+proof_octets = proof_to_octets(bbs_proof_octs, commitments_proof)
 
 Inputs:
 
@@ -1365,7 +1363,7 @@ Outputs:
 
 Procedure:
 
-1. oct = I2OSP(bbs_proof_len, 8) || bbs_proof_octs ||
+1. oct = I2OSP(length(bbs_proof), 8) || bbs_proof_octs ||
             BBS.serialize(commitments_proof)
 2. return oct
 
