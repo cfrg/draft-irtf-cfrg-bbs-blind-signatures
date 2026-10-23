@@ -66,7 +66,7 @@ const main = async () => {
 
   // Write an updated copy of the file
   // If you don't want to over write the current markdown draft use outPath instead of path.
-  await promises.writeFile(path, fileContents);
+  await promises.writeFile(filePath, fileContents);
 };
 
 main();
