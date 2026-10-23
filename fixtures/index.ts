@@ -12,6 +12,7 @@ const DRAFT_NAME = "../draft-irtf-cfrg-bbs-blind-signatures.md";
 const main = async () => {
   // Read the text of the draft out
   const filePath = path.join(process.env.PWD as string, DRAFT_NAME);
+  const outPath = path.join(process.env.PWD as string,  "../temp/output.md");
   let fileContents = (await promises.readFile(filePath)).toString();
 
   const results = Array.from(fileContents.matchAll(VARIABLE_REGEX)).map(
@@ -57,7 +58,7 @@ const main = async () => {
   });
 
   // Write an updated copy of the file
-  await promises.writeFile(filePath, fileContents);
+  await promises.writeFile(outPath, fileContents);
 };
 
 main();

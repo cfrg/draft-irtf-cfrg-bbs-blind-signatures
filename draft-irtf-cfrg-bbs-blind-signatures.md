@@ -1473,9 +1473,7 @@ This document uses the `BBS_BLS12381G1_XOF:SHAKE-256_SSWU_RO_` and `BBS_BLS12381
 
 # Test Vectors
 
-Test vectors are being revised to include new committed disclosure functionality.
-
-<!--
+**UPDATE IN PROGRESS**
 
 ## BLS12-381-SHA-256
 
@@ -1485,7 +1483,7 @@ Test vectors are being revised to include new committed disclosure functionality
 api_id = {{ $generatorFixtures.bls12-381-sha-256.generators.api_id }}
 
 P1 = {{ $generatorFixtures.bls12-381-sha-256.generators.P1 }}
-Q1 = {{ $generatorFixtures.bls12-381-sha-256.generators.Q1 }}
+Q_1 = {{ $generatorFixtures.bls12-381-sha-256.generators.Q1 }}
 
 Generators = {
 
@@ -1509,7 +1507,7 @@ H_9 = {{ $generatorFixtures.bls12-381-sha-256.generators.MsgGenerators[9] }}
 api_id = {{ $generatorFixtures.bls12-381-sha-256.blindGenerators.api_id }}
 
 P1 = {{ $generatorFixtures.bls12-381-sha-256.blindGenerators.P1 }}
-Q1 = {{ $generatorFixtures.bls12-381-sha-256.blindGenerators.Q1 }}
+Q_2 = {{ $generatorFixtures.bls12-381-sha-256.blindGenerators.Q2 }}
 
 Blind Generators = {
 
@@ -1534,7 +1532,7 @@ dst = {{ $commitmentFixtures.bls12-381-sha-256.commit001.mockRngParameters.commi
 #### valid no committed messages commitment with proof
 
 ```
-committedMessages = {{ $commitmentFixtures.bls12-381-sha-256.commit001.committedMessages }}
+blindMessages = {{ $commitmentFixtures.bls12-381-sha-256.commit001.blindMessages }}
 proverBlind = {{ $commitmentFixtures.bls12-381-sha-256.commit001.proverBlind }}
 
 Trace:
@@ -1548,7 +1546,7 @@ commitmentWithProof = {{ $commitmentFixtures.bls12-381-sha-256.commit001.commitm
 #### valid multiple committed messages commitment with proof
 
 ```
-committedMessages = {{ $commitmentFixtures.bls12-381-sha-256.commit002.committedMessages }}
+blindMessages = {{ $commitmentFixtures.bls12-381-sha-256.commit002.blindMessages }}
 proverBlind = {{ $commitmentFixtures.bls12-381-sha-256.commit002.proverBlind }}
 
 Trace:
@@ -2590,7 +2588,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof008.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof008.proof }}
 ```
--->
+
 
 # IANA Considerations
 
