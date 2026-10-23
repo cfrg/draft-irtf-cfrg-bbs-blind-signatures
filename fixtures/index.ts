@@ -12,6 +12,7 @@ const DRAFT_NAME = "../draft-irtf-cfrg-bbs-blind-signatures.md";
 const main = async () => {
   // Read the text of the draft out
   const filePath = path.join(process.env.PWD as string, DRAFT_NAME);
+  const outPath = path.join(process.env.PWD as string,  "../temp/output.md");
   let fileContents = (await promises.readFile(filePath)).toString();
 
   const results = Array.from(fileContents.matchAll(VARIABLE_REGEX)).map(
@@ -27,7 +28,14 @@ const main = async () => {
     if (Array.isArray(value)) {
       let array_value = "[ ";
       for (let el of value.slice(0, -1)) {
-        array_value = array_value + el + ", ";
+        // GB added for arrays in arrays
+        let temp = "";
+        if (Array.isArray(el)) {
+          temp = "[ " + el.join(", ") + " ]";
+        } else  {
+          temp = el;
+        }
+        array_value = array_value + temp + ", ";
       }
       array_value = array_value + value.slice(-1) + " ]";
       value = array_value;
@@ -57,7 +65,8 @@ const main = async () => {
   });
 
   // Write an updated copy of the file
-  await promises.writeFile(filePath, fileContents);
+  // If you don't want to over write the current markdown draft use outPath instead of path.
+  await promises.writeFile(path, fileContents);
 };
 
 main();
