@@ -28,7 +28,14 @@ const main = async () => {
     if (Array.isArray(value)) {
       let array_value = "[ ";
       for (let el of value.slice(0, -1)) {
-        array_value = array_value + el + ", ";
+        // GB added for arrays in arrays
+        let temp = "";
+        if (Array.isArray(el)) {
+          temp = "[ " + el.join(", ") + " ]";
+        } else  {
+          temp = el;
+        }
+        array_value = array_value + temp + ", ";
       }
       array_value = array_value + value.slice(-1) + " ]";
       value = array_value;
