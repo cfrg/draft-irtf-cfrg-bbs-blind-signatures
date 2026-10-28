@@ -1,4 +1,4 @@
-import * as messages from "./fixture_data/messages.json";
+// import * as messages from "./fixture_data/messages.json";
 import * as path from "path";
 import { readdirSync  } from 'fs';
 
@@ -181,4 +181,4 @@ export const commitmentFixtures = fetchPerSuiteFixtures<CommitmentFixture>("/com
 export const signatureFixtures = fetchPerSuiteFixtures<SignatureFixtureData>("/signature");
 export const proofFixtures = fetchPerSuiteFixtures<ProofFixtureData>("/proof");
 
-export { messages };
+// export { messages };
