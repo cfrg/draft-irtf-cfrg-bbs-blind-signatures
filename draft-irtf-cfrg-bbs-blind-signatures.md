@@ -197,6 +197,7 @@ This document makes use of various operations defined by the BBS Signature Schem
 - `BBS.calculate_domain`: Refers to the `calculate_domain` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.3].
 - `BBS.serialize`: Refers to the `serialize` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.5.1].
 - `BBS.signature_to_octets`: Refers to the `signature_to_octets` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.5.2].
+- `BBS.octets_to_signature`: Refers to the `octets_to_signature` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.5.3].
 - `BBS.octets_to_proof`: Refers to the `octets_to_proof` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.5.5].
 
 
@@ -872,7 +873,7 @@ Outputs:
 
 Deserialization:
 
-1. signature_result = octets_to_signature(signature)
+1. signature_result = BBS.octets_to_signature(signature)
 2. if signature_result is INVALID, return INVALID
 3. (A, e) = signature_result
 
