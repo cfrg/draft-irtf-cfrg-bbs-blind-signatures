@@ -414,8 +414,7 @@ Outputs:
 Deserialization:
 
 1. L = length(messages)
-2. if issuer_known_messages_no > L, return INVALID
-3. M = length(blind_messages)
+2. M = length(blind_messages)
 
 Procedure:
 
