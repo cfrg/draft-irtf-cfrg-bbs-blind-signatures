@@ -1363,9 +1363,10 @@ Outputs:
 
 Procedure:
 
-1. oct = I2OSP(length(bbs_proof_octs), 8) || bbs_proof_octs ||
-            BBS.serialize(commitments_proof)
-2. return oct
+1. (C, s^) = commitments_proof
+2. oct = I2OSP(length(bbs_proof_octs), 8) || bbs_proof_octs ||
+            BBS.serialize(C.append(s^))
+3. return oct
 
 ```
 
