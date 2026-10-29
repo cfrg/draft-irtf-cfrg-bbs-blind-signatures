@@ -199,6 +199,7 @@ This document makes use of various operations defined by the BBS Signature Schem
 - `BBS.signature_to_octets`: Refers to the `signature_to_octets` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.5.2].
 - `BBS.octets_to_signature`: Refers to the `octets_to_signature` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.5.3].
 - `BBS.octets_to_proof`: Refers to the `octets_to_proof` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.5.5].
+- `BBS.octets_to_pubkey`: Refers to the `octets_to_pubkey` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.5.6].
 
 
 
@@ -991,7 +992,7 @@ Outputs:
 
 Deserialization:
 
-1.  W = octets_to_pubkey(PK)
+1.  W = BBS.octets_to_pubkey(PK)
 2.  if W is INVALID, return INVALID
 
 3.  proof_res = octets_to_proof(proof, length(commitment_indexes))
