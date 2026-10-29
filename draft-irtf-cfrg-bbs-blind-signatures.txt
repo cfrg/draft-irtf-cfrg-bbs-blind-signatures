@@ -5,8 +5,8 @@
 CFRG                                                            V. Kalos
 Internet-Draft                                                     MATTR
 Intended status: Informational                              G. Bernstein
-Expires: 1 May 2027                                    Grotto Networking
-                                                         28 October 2026
+Expires: 2 May 2027                                    Grotto Networking
+                                                         29 October 2026
 
 
                           Blind BBS Signatures
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 1 May 2027.
+   This Internet-Draft will expire on 2 May 2027.
 
 Copyright Notice
 
@@ -3165,9 +3165,9 @@ proof = {{ $proofFixtures.bls12-381-shake-256.proof011.proof }}
               Looker, T., Kalos, V., Whitehead, A., Lodder, M., and G.
               M. Bernstein, "The BBS Signature Scheme", Work in
               Progress, Internet-Draft, draft-irtf-cfrg-bbs-signatures-
-              13, 13 October 2026,
+              14, 29 October 2026,
               <https://datatracker.ietf.org/doc/html/draft-irtf-cfrg-
-              bbs-signatures-13>.
+              bbs-signatures-14>.
 
    [RFC2119]  Bradner, S., "Key words for use in RFCs to Indicate
               Requirement Levels", BCP 14, RFC 2119,
@@ -3244,6 +3244,8 @@ Appendix A.  Document History
       through
    *  API updates for BlindVerify, ProofGen for separate issuer and
       blind messages
+   *  Update test vectors (not independently verified yet)
+   *  Editorial fixes
 
 Authors' Addresses
 
