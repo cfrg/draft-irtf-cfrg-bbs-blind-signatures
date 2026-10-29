@@ -1353,7 +1353,6 @@ proof_octets = proof_to_octets(bbs_proof_octs, commitments_proof)
 
 Inputs:
 
-- bbs_proof_len (REQUIRED), a non negative integer.
 - bbs_proof_octs (REQUIRED), an octet string.
 - commitments_proof (REQUIRED), a tuple with two arrays, the first with
                                 points in G1 and the second with Scalars
@@ -1364,7 +1363,7 @@ Outputs:
 
 Procedure:
 
-1. oct = I2OSP(length(bbs_proof), 8) || bbs_proof_octs ||
+1. oct = I2OSP(length(bbs_proof_octs), 8) || bbs_proof_octs ||
             BBS.serialize(commitments_proof)
 2. return oct
 
