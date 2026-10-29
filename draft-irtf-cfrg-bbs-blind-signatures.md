@@ -2930,6 +2930,8 @@ This document does not make any requests of IANA.
 * Unified commitment terminology and simplified proof serialization
 * Add message_to_scalar function that supports "raw" scalar pass through
 * API updates for BlindVerify, ProofGen for separate issuer and blind messages
+* Update test vectors (not independently verified yet)
+* Editorial fixes
 
 <reference anchor="Chaum85" target="https://dl.acm.org/doi/pdf/10.1145/4372.4373">
  <front>
