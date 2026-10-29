@@ -9,6 +9,14 @@ const VARIABLE_REGEX = /(([^\S\n\t]*[a-zA-Z0-9_~]+\d*)\s=\s)?({{ \$)([a-zA-Z_|.|
 
 const DRAFT_NAME = "../draft-irtf-cfrg-bbs-blind-signatures.md";
 
+function formatArray(el: string | any[]): string {
+  if (Array.isArray(el)) {
+    return "[ " + el.map(formatArray).join(", ") + " ]";
+  } else {
+    return el;
+  }
+}
+
 const main = async () => {
   // Read the text of the draft out
   const filePath = path.join(process.env.PWD as string, DRAFT_NAME);
@@ -22,26 +30,7 @@ const main = async () => {
   );
 
   results.forEach((result) => {
-    var value = get(fixtures, result.path);
-
-    // handle values that are arrays
-    if (Array.isArray(value)) {
-      let array_value = "[ ";
-      for (let el of value.slice(0, -1)) {
-        // GB added for arrays in arrays
-        let temp = "";
-        if (Array.isArray(el)) {
-          temp = "[ " + el.join(", ") + " ]";
-        } else  {
-          temp = el;
-        }
-        array_value = array_value + temp + ", ";
-      }
-      array_value = array_value + value.slice(-1) + " ]";
-      value = array_value;
-    }
-
-    value = "\x22" + value + "\x22";
+    var value = "\x22" + formatArray(get(fixtures, result.path)) + "\x22";
 
     let intent_len = result.intent ? result.intent.length : 0;
     let max_len = 71 - intent_len;
