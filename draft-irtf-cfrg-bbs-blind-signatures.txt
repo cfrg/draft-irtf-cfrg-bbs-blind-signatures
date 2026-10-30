@@ -3249,6 +3249,12 @@ Appendix A.  Document History
    *  Update test vectors (not independently verified yet)
    *  Editorial fixes
 
+   -05
+
+   *  More editorial fixes
+   *  Formalize BBS.serialize call in proof_to_octets
+   *  Fix and improve array formatting in test vectors
+
 Authors' Addresses
 
    Vasilis Kalos
