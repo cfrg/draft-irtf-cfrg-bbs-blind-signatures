@@ -2934,6 +2934,12 @@ This document does not make any requests of IANA.
 * Update test vectors (not independently verified yet)
 * Editorial fixes
 
+-05
+
+* More editorial fixes
+* Formalize BBS.serialize call in proof_to_octets
+* Fix and improve array formatting in test vectors
+
 <reference anchor="Chaum85" target="https://dl.acm.org/doi/pdf/10.1145/4372.4373">
  <front>
    <title>Security without identification: transaction systems to make big brother obsolete</title>
