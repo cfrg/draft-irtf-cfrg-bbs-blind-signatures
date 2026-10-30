@@ -199,6 +199,7 @@ This document makes use of various operations defined by the BBS Signature Schem
 - `BBS.signature_to_octets`: Refers to the `signature_to_octets` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.5.2].
 - `BBS.octets_to_signature`: Refers to the `octets_to_signature` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.5.3].
 - `BBS.octets_to_proof`: Refers to the `octets_to_proof` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.5.5].
+- `BBS.octets_to_pubkey`: Refers to the `octets_to_pubkey` operation defined in [@!I-D.irtf-cfrg-bbs-signatures, section 4.2.5.6].
 
 
 
@@ -991,7 +992,7 @@ Outputs:
 
 Deserialization:
 
-1.  W = octets_to_pubkey(PK)
+1.  W = BBS.octets_to_pubkey(PK)
 2.  if W is INVALID, return INVALID
 
 3.  proof_res = octets_to_proof(proof, length(commitment_indexes))
@@ -1352,7 +1353,6 @@ proof_octets = proof_to_octets(bbs_proof_octs, commitments_proof)
 
 Inputs:
 
-- bbs_proof_len (REQUIRED), a non negative integer.
 - bbs_proof_octs (REQUIRED), an octet string.
 - commitments_proof (REQUIRED), a tuple with two arrays, the first with
                                 points in G1 and the second with Scalars
@@ -1363,7 +1363,7 @@ Outputs:
 
 Procedure:
 
-1. oct = I2OSP(length(bbs_proof), 8) || bbs_proof_octs ||
+1. oct = I2OSP(length(bbs_proof_octs), 8) || bbs_proof_octs ||
             BBS.serialize(commitments_proof)
 2. return oct
 
