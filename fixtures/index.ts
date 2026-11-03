@@ -5,8 +5,8 @@ import get from "lodash.get";
 
 // matching lines of the form "name = {{ $<fixture_path> }}" (for
 // example "m_1 = {{ $messages[1] }}" etc).
-// The opening bracket may be `{{` or `{{#`, and is captured by group 4.
-const VARIABLE_REGEX = /(([^\S\n\t]*[a-zA-Z0-9_~]+\d*)\s=\s)?(({{|{{#) \$)([a-zA-Z_|.|\-|\d|\[|\]]*)( }},?)$/gm
+// The opening bracket may be `{{` or `{{ #`, and is captured by group 4.
+const VARIABLE_REGEX = /(([^\S\n\t]*[a-zA-Z0-9_~]+\d*)\s=\s)?(({{|{{ #) \$)([a-zA-Z_|.|\-|\d|\[|\]]*)( }},?)$/gm
 
 const DRAFT_NAME = "../draft-irtf-cfrg-bbs-blind-signatures.md";
 
@@ -33,7 +33,7 @@ const main = async () => {
         match: openBracket + " $" + path + " }}",
         path,
         intent: indent,
-        isHeading: openBracket === '{{#',
+        isHeading: openBracket === '{{ #',
       };
     }
   );
