@@ -1519,7 +1519,7 @@ J_4 = {{ $generatorFixtures.bls12-381-sha-256.blindGenerators.MsgGenerators[4] }
 }
 ```
 
-### Commitment
+### Blind Commitment
 
 Mocked random scalar parameters
 
@@ -2229,7 +2229,7 @@ J_4 = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.MsgGenerators[4]
 }
 ```
 
-### Commitment
+### Blind Commitment
 
 Mocked random scalar parameters
 
