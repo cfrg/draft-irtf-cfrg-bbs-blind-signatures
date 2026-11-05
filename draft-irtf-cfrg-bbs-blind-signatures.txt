@@ -5,8 +5,8 @@
 CFRG                                                            V. Kalos
 Internet-Draft                                                     MATTR
 Intended status: Informational                              G. Bernstein
-Expires: 7 May 2027                                    Grotto Networking
-                                                         3 November 2026
+Expires: 9 May 2027                                    Grotto Networking
+                                                         5 November 2026
 
 
                           Blind BBS Signatures
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 7 May 2027.
+   This Internet-Draft will expire on 9 May 2027.
 
 Copyright Notice
 
@@ -107,13 +107,13 @@ Table of Contents
      10.1.  BLS12-381-SHA-256
        10.1.1.  Generators
        10.1.2.  Blind Generators
-       10.1.3.  Commitment
+       10.1.3.  Blind Commitment
        10.1.4.  Signature Test Vectors
        10.1.5.  Proof Test Vectors
      10.2.  BLS12-381-SHAKE-256
        10.2.1.  Generators
        10.2.2.  Blind Generators
-       10.2.3.  Commitment
+       10.2.3.  Blind Commitment
        10.2.4.  Blind Generators
        10.2.5.  Signature Test Vectors
        10.2.6.  Proof Test Vectors
@@ -1839,7 +1839,7 @@ J_4 = {{ $generatorFixtures.bls12-381-sha-256.blindGenerators.MsgGenerators[4] }
 
 }
 
-10.1.3.  Commitment
+10.1.3.  Blind Commitment
 
    Mocked random scalar parameters
 
@@ -2519,7 +2519,7 @@ J_4 = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.MsgGenerators[4]
 
 }
 
-10.2.3.  Commitment
+10.2.3.  Blind Commitment
 
    Mocked random scalar parameters
 
