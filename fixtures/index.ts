@@ -5,13 +5,16 @@ import get from "lodash.get";
 
 // matching lines of the form "name = {{ $<fixture_path> }}" (for
 // example "m_1 = {{ $messages[1] }}" etc).
-const VARIABLE_REGEX = /(([^\S\n\t]*[a-zA-Z0-9_~]+\d*)\s=\s)?({{ \$)([a-zA-Z_|.|\-|\d|\[|\]]*)( }},?)$/gm
+// The opening bracket may be `{{` or `{{ #`, and is captured by group 4.
+const VARIABLE_REGEX = /(([^\S\n\t]*[a-zA-Z0-9_~]+\d*)\s=\s)?(({{|{{ #) \$)([a-zA-Z_|.|\-|\d|\[|\]]*)( }},?)$/gm
 
 const DRAFT_NAME = "../draft-irtf-cfrg-bbs-blind-signatures.md";
 
-function formatValue(el: string | any[]): string {
+function formatValue(el: string | any[], skipQuotes: boolean): string {
   if (Array.isArray(el)) {
-    return "[ " + el.map(formatValue).join(", ") + " ]";
+    return "[ " + el.map(elel => formatValue(elel, skipQuotes)).join(", ") + " ]";
+  } else if (skipQuotes) {
+    return el;
   } else {
     return "\x22" + el + "\x22";
   }
@@ -25,24 +28,32 @@ const main = async () => {
 
   const results = Array.from(fileContents.matchAll(VARIABLE_REGEX)).map(
     (item: any) => {
-      return { match: "{{ $" + item[4] + " }}", path: item[4], intent: item[1] };
+      const [_fullmatch, indent, _varname, _substitee, openBracket, path] = item;
+      return {
+        match: openBracket + " $" + path + " }}",
+        path,
+        intent: indent,
+        isHeading: openBracket === '{{ #',
+      };
     }
   );
 
   results.forEach((result) => {
-    var value = formatValue(get(fixtures, result.path));
+    var value = formatValue(get(fixtures, result.path), result.isHeading);
 
-    let intent_len = result.intent ? result.intent.length : 0;
-    let max_len = 71 - intent_len;
-    if (max_len <= 0) {throw Error("Not enough space in the line to add the fixture")}
+    if (!result.isHeading) {
+      let intent_len = result.intent ? result.intent.length : 0;
+      let max_len = 71 - intent_len;
+      if (max_len <= 0) {throw Error("Not enough space in the line to add the fixture")}
 
-    // make everything 72 chars long
-    if (value.length + intent_len > 72) {
-      value = value.slice(0, max_len + 1) + "\n" + " ".repeat(intent_len + 1) + value.slice(max_len + 1);
-    }
-                                                                        
-    for (let i = 1; i < ~~(value.length/72); i++) {
-      value = value.slice(0, 145 - intent_len + (i - 1)*73) + "\n" + " ".repeat(intent_len + 1) + value.slice(145 - intent_len + (i - 1)*73);
+      // make everything 72 chars long
+      if (value.length + intent_len > 72) {
+        value = value.slice(0, max_len + 1) + "\n" + " ".repeat(intent_len + 1) + value.slice(max_len + 1);
+      }
+
+      for (let i = 1; i < ~~(value.length/72); i++) {
+        value = value.slice(0, 145 - intent_len + (i - 1)*73) + "\n" + " ".repeat(intent_len + 1) + value.slice(145 - intent_len + (i - 1)*73);
+      }
     }
 
     // remove trailing whitespace from the value to be added in the draft
