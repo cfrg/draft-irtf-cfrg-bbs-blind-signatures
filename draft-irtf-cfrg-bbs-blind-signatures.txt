@@ -5,8 +5,8 @@
 CFRG                                                            V. Kalos
 Internet-Draft                                                     MATTR
 Intended status: Informational                              G. Bernstein
-Expires: 9 May 2027                                    Grotto Networking
-                                                         5 November 2026
+Expires: 10 May 2027                                   Grotto Networking
+                                                         6 November 2026
 
 
                           Blind BBS Signatures
@@ -44,7 +44,7 @@ Status of This Memo
    time.  It is inappropriate to use Internet-Drafts as reference
    material or to cite them other than as "work in progress."
 
-   This Internet-Draft will expire on 9 May 2027.
+   This Internet-Draft will expire on 10 May 2027.
 
 Copyright Notice
 
@@ -1846,7 +1846,8 @@ J_4 = {{ $generatorFixtures.bls12-381-sha-256.blindGenerators.MsgGenerators[4] }
 seed = {{ $commitmentFixtures.bls12-381-sha-256.commit001.mockRngParameters.SEED }}
 dst = {{ $commitmentFixtures.bls12-381-sha-256.commit001.mockRngParameters.commit.DST }}
 
-10.1.3.1.  valid no committed messages commitment with proof
+10.1.3.1.  {{ # $commitmentFixtures.bls12-381-sha-256.commit001.caseName
+           }}
 
 blindMessages = {{ $commitmentFixtures.bls12-381-sha-256.commit001.blindMessages }}
 proverBlind = {{ $commitmentFixtures.bls12-381-sha-256.commit001.proverBlind }}
@@ -1858,7 +1859,8 @@ m_tildes = {{ $commitmentFixtures.bls12-381-sha-256.commit001.trace.random_scala
 
 commitmentWithProof = {{ $commitmentFixtures.bls12-381-sha-256.commit001.commitmentWithProof }}
 
-10.1.3.2.  valid multiple committed messages commitment with proof
+10.1.3.2.  {{ # $commitmentFixtures.bls12-381-sha-256.commit002.caseName
+           }}
 
 blindMessages = {{ $commitmentFixtures.bls12-381-sha-256.commit002.blindMessages }}
 proverBlind = {{ $commitmentFixtures.bls12-381-sha-256.commit002.proverBlind }}
@@ -1872,8 +1874,8 @@ commitmentWithProof = {{ $commitmentFixtures.bls12-381-sha-256.commit002.commitm
 
 10.1.4.  Signature Test Vectors
 
-10.1.4.1.  valid no prover committed messages, no signer messages
-           signature
+10.1.4.1.  {{ # $signatureFixtures.bls12-381-sha-
+           256.signature001.caseName }}
 
 Signature Label: signature001
 
@@ -1896,8 +1898,8 @@ domain = {{ $signatureFixtures.bls12-381-sha-256.signature001.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-sha-256.signature001.signature }}
 
-10.1.4.2.  valid multi prover committed messages, no signer messages
-           signature
+10.1.4.2.  {{ # $signatureFixtures.bls12-381-sha-
+           256.signature002.caseName }}
 
 Signature Label: signature002
 
@@ -1920,8 +1922,8 @@ domain = {{ $signatureFixtures.bls12-381-sha-256.signature002.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-sha-256.signature002.signature }}
 
-10.1.4.3.  valid no prover committed messages, multiple signer messages
-           signature
+10.1.4.3.  {{ # $signatureFixtures.bls12-381-sha-
+           256.signature003.caseName }}
 
 Signature Label: signature003
 
@@ -1944,7 +1946,8 @@ domain = {{ $signatureFixtures.bls12-381-sha-256.signature003.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-sha-256.signature003.signature }}
 
-10.1.4.4.  valid multiple signer and prover committed messages signature
+10.1.4.4.  {{ # $signatureFixtures.bls12-381-sha-
+           256.signature004.caseName }}
 
 Signature Label: signature004
 
@@ -1967,7 +1970,8 @@ domain = {{ $signatureFixtures.bls12-381-sha-256.signature004.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-sha-256.signature004.signature }}
 
-10.1.4.5.  valid no commitment signature
+10.1.4.5.  {{ # $signatureFixtures.bls12-381-sha-
+           256.signature005.caseName }}
 
 Signature Label: signature005
 
@@ -1997,8 +2001,7 @@ signature = {{ $signatureFixtures.bls12-381-sha-256.signature005.signature }}
 seed = {{ $proofFixtures.bls12-381-sha-256.proof001.mockRngParameters.SEED }}
 dst = {{ $proofFixtures.bls12-381-sha-256.proof001.mockRngParameters.proof.DST }}
 
-10.1.5.1.  valid all prover committed messages and signer messages
-           revealed proof
+10.1.5.1.  {{ # $proofFixtures.bls12-381-sha-256.proof001.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-sha-256.proof001.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof001.signerPublicKey }}
@@ -2047,8 +2050,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof001.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof001.proof }}
 
-10.1.5.2.  valid half prover committed messages and all signer messages
-           revealed proof
+10.1.5.2.  {{ # $proofFixtures.bls12-381-sha-256.proof002.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-sha-256.proof002.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof002.signerPublicKey }}
@@ -2094,8 +2096,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof002.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof002.proof }}
 
-10.1.5.3.  valid half prover committed messages and all signer messages
-           revealed proof
+10.1.5.3.  {{ # $proofFixtures.bls12-381-sha-256.proof003.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-sha-256.proof003.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof003.signerPublicKey }}
@@ -2141,8 +2142,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof003.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof003.proof }}
 
-10.1.5.4.  valid half prover committed messages and half signer messages
-           revealed proof
+10.1.5.4.  {{ # $proofFixtures.bls12-381-sha-256.proof004.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-sha-256.proof004.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof004.signerPublicKey }}
@@ -2190,8 +2190,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof004.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof004.proof }}
 
-10.1.5.5.  valid no prover committed messages and half signer messages
-           revealed proof
+10.1.5.5.  {{ # $proofFixtures.bls12-381-sha-256.proof005.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-sha-256.proof005.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof005.signerPublicKey }}
@@ -2231,8 +2230,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof005.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof005.proof }}
 
-10.1.5.6.  valid half prover committed messages and no signer messages
-           revealed proof
+10.1.5.6.  {{ # $proofFixtures.bls12-381-sha-256.proof006.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-sha-256.proof006.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof006.signerPublicKey }}
@@ -2278,8 +2276,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof006.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof006.proof }}
 
-10.1.5.7.  valid no prover committed messages and no signer messages
-           revealed proof
+10.1.5.7.  {{ # $proofFixtures.bls12-381-sha-256.proof007.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-sha-256.proof007.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof007.signerPublicKey }}
@@ -2309,8 +2306,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof007.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof007.proof }}
 
-10.1.5.8.  valid no prover commitment and half signer messages revealed
-           proof
+10.1.5.8.  {{ # $proofFixtures.bls12-381-sha-256.proof008.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-sha-256.proof008.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof008.signerPublicKey }}
@@ -2337,8 +2333,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof008.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof008.proof }}
 
-10.1.5.9.  valid partial prover reveal messages and partial signer
-           reveal with commitments revealed proof
+10.1.5.9.  {{ # $proofFixtures.bls12-381-sha-256.proof009.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-sha-256.proof009.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof009.signerPublicKey }}
@@ -2384,8 +2379,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof009.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof009.proof }}
 
-10.1.5.10.  valid partial prover reveal and commit messages and partial
-            signer reveal proof
+10.1.5.10.  {{ # $proofFixtures.bls12-381-sha-256.proof010.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-sha-256.proof010.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof010.signerPublicKey }}
@@ -2431,8 +2425,7 @@ L = {{ $proofFixtures.bls12-381-sha-256.proof010.L }}
 
 proof = {{ $proofFixtures.bls12-381-sha-256.proof010.proof }}
 
-10.1.5.11.  valid partial prover reveal and commit messages and partial
-            signer reveal and commit proof
+10.1.5.11.  {{ # $proofFixtures.bls12-381-sha-256.proof011.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-sha-256.proof011.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-sha-256.proof011.signerPublicKey }}
@@ -2526,7 +2519,8 @@ J_4 = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.MsgGenerators[4]
 seed = {{ $commitmentFixtures.bls12-381-shake-256.commit001.mockRngParameters.SEED }}
 dst = {{ $commitmentFixtures.bls12-381-shake-256.commit001.mockRngParameters.commit.DST }}
 
-10.2.3.1.  valid no committed messages commitment with proof
+10.2.3.1.  {{ # $commitmentFixtures.bls12-381-shake-
+           256.commit001.caseName }}
 
 blindMessages = {{ $commitmentFixtures.bls12-381-shake-256.commit001.blindMessages }}
 proverBlind = {{ $commitmentFixtures.bls12-381-shake-256.commit001.proverBlind }}
@@ -2538,7 +2532,8 @@ m_tildes = {{ $commitmentFixtures.bls12-381-shake-256.commit001.trace.random_sca
 
 commitmentWithProof = {{ $commitmentFixtures.bls12-381-shake-256.commit001.commitmentWithProof }}
 
-10.2.3.2.  valid multiple committed messages commitment with proof
+10.2.3.2.  {{ # $commitmentFixtures.bls12-381-shake-
+           256.commit002.caseName }}
 
 blindMessages = {{ $commitmentFixtures.bls12-381-shake-256.commit002.blindMessages }}
 proverBlind = {{ $commitmentFixtures.bls12-381-shake-256.commit002.proverBlind }}
@@ -2569,8 +2564,8 @@ J_4 = {{ $generatorFixtures.bls12-381-shake-256.blindGenerators.MsgGenerators[4]
 
 10.2.5.  Signature Test Vectors
 
-10.2.5.1.  valid no prover committed messages, no signer messages
-           signature
+10.2.5.1.  {{ # $signatureFixtures.bls12-381-shake-
+           256.signature001.caseName }}
 
 secretKey = {{ $signatureFixtures.bls12-381-shake-256.signature001.signerKeyPair.secretKey }}
 publicKey = {{ $signatureFixtures.bls12-381-shake-256.signature001.signerKeyPair.publicKey }}
@@ -2589,8 +2584,8 @@ domain = {{ $signatureFixtures.bls12-381-shake-256.signature001.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-shake-256.signature001.signature }}
 
-10.2.5.2.  valid multi prover committed messages, no signer messages
-           signature
+10.2.5.2.  {{ # $signatureFixtures.bls12-381-shake-
+           256.signature002.caseName }}
 
 secretKey = {{ $signatureFixtures.bls12-381-shake-256.signature002.signerKeyPair.secretKey }}
 publicKey = {{ $signatureFixtures.bls12-381-shake-256.signature002.signerKeyPair.publicKey }}
@@ -2609,8 +2604,8 @@ domain = {{ $signatureFixtures.bls12-381-shake-256.signature002.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-shake-256.signature002.signature }}
 
-10.2.5.3.  valid no prover committed messages, multiple signer messages
-           signature
+10.2.5.3.  {{ # $signatureFixtures.bls12-381-shake-
+           256.signature003.caseName }}
 
 secretKey = {{ $signatureFixtures.bls12-381-shake-256.signature003.signerKeyPair.secretKey }}
 publicKey = {{ $signatureFixtures.bls12-381-shake-256.signature003.signerKeyPair.publicKey }}
@@ -2629,7 +2624,8 @@ domain = {{ $signatureFixtures.bls12-381-shake-256.signature003.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-shake-256.signature003.signature }}
 
-10.2.5.4.  valid multiple signer and prover committed messages signature
+10.2.5.4.  {{ # $signatureFixtures.bls12-381-shake-
+           256.signature004.caseName }}
 
 secretKey = {{ $signatureFixtures.bls12-381-shake-256.signature004.signerKeyPair.secretKey }}
 publicKey = {{ $signatureFixtures.bls12-381-shake-256.signature004.signerKeyPair.publicKey }}
@@ -2648,7 +2644,8 @@ domain = {{ $signatureFixtures.bls12-381-shake-256.signature004.trace.domain }}
 
 signature = {{ $signatureFixtures.bls12-381-shake-256.signature004.signature }}
 
-10.2.5.5.  valid no commitment signature
+10.2.5.5.  {{ # $signatureFixtures.bls12-381-shake-
+           256.signature005.caseName }}
 
 secretKey = {{ $signatureFixtures.bls12-381-shake-256.signature005.signerKeyPair.secretKey }}
 publicKey = {{ $signatureFixtures.bls12-381-shake-256.signature005.signerKeyPair.publicKey }}
@@ -2674,8 +2671,7 @@ signature = {{ $signatureFixtures.bls12-381-shake-256.signature005.signature }}
 seed = {{ $proofFixtures.bls12-381-shake-256.proof001.mockRngParameters.SEED }}
 dst = {{ $proofFixtures.bls12-381-shake-256.proof001.mockRngParameters.proof.DST }}
 
-10.2.6.1.  valid all prover committed messages and signer messages
-           revealed proof
+10.2.6.1.  {{ # $proofFixtures.bls12-381-shake-256.proof001.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-shake-256.proof001.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof001.signerPublicKey }}
@@ -2724,8 +2720,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof001.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof001.proof }}
 
-10.2.6.2.  valid half prover committed messages and all signer messages
-           revealed proof
+10.2.6.2.  {{ # $proofFixtures.bls12-381-shake-256.proof002.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-shake-256.proof002.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof002.signerPublicKey }}
@@ -2771,8 +2766,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof002.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof002.proof }}
 
-10.2.6.3.  valid half prover committed messages and all signer messages
-           revealed proof
+10.2.6.3.  {{ # $proofFixtures.bls12-381-shake-256.proof003.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-shake-256.proof003.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof003.signerPublicKey }}
@@ -2818,8 +2812,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof003.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof003.proof }}
 
-10.2.6.4.  valid half prover committed messages and half signer messages
-           revealed proof
+10.2.6.4.  {{ # $proofFixtures.bls12-381-shake-256.proof004.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-shake-256.proof004.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof004.signerPublicKey }}
@@ -2867,8 +2860,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof004.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof004.proof }}
 
-10.2.6.5.  valid no prover committed messages and half signer messages
-           revealed proof
+10.2.6.5.  {{ # $proofFixtures.bls12-381-shake-256.proof005.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-shake-256.proof005.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof005.signerPublicKey }}
@@ -2908,8 +2900,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof005.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof005.proof }}
 
-10.2.6.6.  valid half prover committed messages and no signer messages
-           revealed proof
+10.2.6.6.  {{ # $proofFixtures.bls12-381-shake-256.proof006.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-shake-256.proof006.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof006.signerPublicKey }}
@@ -2955,8 +2946,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof006.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof006.proof }}
 
-10.2.6.7.  valid no prover committed messages and no signer messages
-           revealed proof
+10.2.6.7.  {{ # $proofFixtures.bls12-381-shake-256.proof007.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-shake-256.proof007.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof007.signerPublicKey }}
@@ -2986,8 +2976,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof007.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof007.proof }}
 
-10.2.6.8.  valid no prover commitment and half signer messages revealed
-           proof
+10.2.6.8.  {{ # $proofFixtures.bls12-381-shake-256.proof008.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-shake-256.proof008.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof008.signerPublicKey }}
@@ -3014,8 +3003,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof008.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof008.proof }}
 
-10.2.6.9.  valid partial prover reveal messages and partial signer
-           reveal with commitments revealed proof
+10.2.6.9.  {{ # $proofFixtures.bls12-381-shake-256.proof009.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-shake-256.proof009.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof009.signerPublicKey }}
@@ -3061,8 +3049,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof009.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof009.proof }}
 
-10.2.6.10.  valid partial prover reveal and commit messages and partial
-            signer reveal proof
+10.2.6.10.  {{ # $proofFixtures.bls12-381-shake-256.proof010.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-shake-256.proof010.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof010.signerPublicKey }}
@@ -3108,8 +3095,7 @@ L = {{ $proofFixtures.bls12-381-shake-256.proof010.L }}
 
 proof = {{ $proofFixtures.bls12-381-shake-256.proof010.proof }}
 
-10.2.6.11.  valid partial prover reveal and commit messages and partial
-            signer reveal and commit proof
+10.2.6.11.  {{ # $proofFixtures.bls12-381-shake-256.proof011.caseName }}
 
 Based on signature: {{ $proofFixtures.bls12-381-shake-256.proof011.signatureFile }}
 signerPublicKey = {{ $proofFixtures.bls12-381-shake-256.proof011.signerPublicKey }}
